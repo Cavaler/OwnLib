@@ -284,8 +284,8 @@ bool CFarMaskSet::operator()(const char *szFileName) {
 	string strName = (szName) ? szName + 1 :szFileName;
 	if (strName.find('.') == string::npos) strName += '.';
 
-	if (pcre_exec(m_pExclude, m_pExcludeExtra, strName.c_str(), strName.length(), 0, PCRE_CASELESS, NULL, 0) >= 0) return false;
-	return (pcre_exec(m_pInclude, m_pIncludeExtra, strName.c_str(), strName.length(), 0, PCRE_CASELESS, NULL, 0) >= 0);
+	if (m_pExclude && (pcre_exec(m_pExclude, m_pExcludeExtra, strName.c_str(), strName.length(), 0, 0, NULL, 0) >= 0)) return false;
+	return (m_pInclude && (pcre_exec(m_pInclude, m_pIncludeExtra, strName.c_str(), strName.length(), 0, 0, NULL, 0)) >= 0);
 }
 
 bool CFarMaskSet::Valid() {
