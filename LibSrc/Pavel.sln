@@ -38,11 +38,8 @@ Global
 		Debug ML = Debug ML
 		Debug MT = Debug MT
 		Release MD = Release MD
-		Release MD Intel = Release MD Intel
 		Release ML = Release ML
-		Release ML Intel = Release ML Intel
 		Release MT = Release MT
-		Release MT Intel = Release MT Intel
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Debug MD.ActiveCfg = Debug MD|Win32
@@ -53,16 +50,10 @@ Global
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Debug MT.Build.0 = Debug MT|Win32
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MD.ActiveCfg = Release MD|Win32
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MD.Build.0 = Release MD|Win32
-		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MD Intel.ActiveCfg = Release MD Intel|Win32
-		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MD Intel.Build.0 = Release MD Intel|Win32
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release ML.ActiveCfg = Release ML|Win32
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release ML.Build.0 = Release ML|Win32
-		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release ML Intel.ActiveCfg = Release ML Intel|Win32
-		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release ML Intel.Build.0 = Release ML Intel|Win32
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MT.ActiveCfg = Release MT|Win32
 		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MT.Build.0 = Release MT|Win32
-		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MT Intel.ActiveCfg = Release MT Intel|Win32
-		{A50F974E-DD4C-4C6A-82E6-45EBB76E0930}.Release MT Intel.Build.0 = Release MT Intel|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Debug MD.ActiveCfg = Debug MD|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Debug MD.Build.0 = Debug MD|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Debug ML.ActiveCfg = Debug ML|Win32
@@ -71,16 +62,10 @@ Global
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Debug MT.Build.0 = Debug MT|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MD.ActiveCfg = Release MD|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MD.Build.0 = Release MD|Win32
-		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MD Intel.ActiveCfg = Release MD Intel|Win32
-		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MD Intel.Build.0 = Release MD Intel|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release ML.ActiveCfg = Release ML|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release ML.Build.0 = Release ML|Win32
-		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release ML Intel.ActiveCfg = Release ML Intel|Win32
-		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release ML Intel.Build.0 = Release ML Intel|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MT.ActiveCfg = Release MT|Win32
 		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MT.Build.0 = Release MT|Win32
-		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MT Intel.ActiveCfg = Release MT Intel|Win32
-		{34C5E439-F46B-4CE4-B5F7-024E7FAA862A}.Release MT Intel.Build.0 = Release MT Intel|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Debug MD.ActiveCfg = Debug MD|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Debug MD.Build.0 = Debug MD|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Debug ML.ActiveCfg = Debug ML|Win32
@@ -89,16 +74,10 @@ Global
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Debug MT.Build.0 = Debug MT|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MD.ActiveCfg = Release MD|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MD.Build.0 = Release MD|Win32
-		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MD Intel.ActiveCfg = Release MD Intel|Win32
-		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MD Intel.Build.0 = Release MD Intel|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release ML.ActiveCfg = Release ML|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release ML.Build.0 = Release ML|Win32
-		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release ML Intel.ActiveCfg = Release ML Intel|Win32
-		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release ML Intel.Build.0 = Release ML Intel|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MT.ActiveCfg = Release MT|Win32
 		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MT.Build.0 = Release MT|Win32
-		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MT Intel.ActiveCfg = Release MT Intel|Win32
-		{E5B6FDA8-727B-4530-888D-4CFF4F35CF30}.Release MT Intel.Build.0 = Release MT Intel|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
