@@ -1,6 +1,7 @@
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 #include "CString.h"
+using namespace std;
 
 istream &operator >>(istream &stm, CString &Str) {
 	stm >> Str.S;

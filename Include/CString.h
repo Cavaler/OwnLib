@@ -3,7 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 class CString {
 public:
@@ -14,8 +14,8 @@ public:
 	friend CString operator +(CString &S1, char *S2);
 	friend CString operator +(char *S1, CString &S2);
 	char operator [](int Index) {return S[Index];};
-	friend istream &operator >>(istream &stm, CString &Str);
-	friend ostream &operator <<(ostream &stm, CString &Str);
+	friend std::istream &operator >>(std::istream &stm, CString &Str);
+	friend std::ostream &operator <<(std::ostream &stm, CString &Str);
 	CString operator =(CString &Str);
 	CString operator =(char *Str);
 	CString operator =(int I);
@@ -33,7 +33,7 @@ protected:
 	char *S;
 };
 
-istream &operator >>(istream &stm, CString Str);
-ostream &operator <<(ostream &stm, CString Str);
+std::istream &operator >>(std::istream &stm, CString Str);
+std::ostream &operator <<(std::ostream &stm, CString Str);
 
 #endif
