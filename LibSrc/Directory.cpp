@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <Directory.h>
+#include <string>
+using namespace std;
 
 BOOL DirectoryExists(char *DirName) {
 	int Length=strlen(DirName);
@@ -70,4 +72,18 @@ BOOL CreateDirectoriesForFile(const char *FileName) {
 	BOOL Result=CreateDirectories(FileName);
 	*FName='\\';
 	return Result;
+}
+
+string CatFile(const string &strPath, const string &strFile) {
+	return strPath + ((strPath.length() && (strPath[strPath.length() - 1] != '\\') ) ? "\\" : "") + strFile;
+}
+
+string GetFileName(const string &strPath) {
+	int nPosS = strPath.rfind('\\');
+	int nPosC = strPath.rfind(':');
+	int nPos = (nPosS == string::npos) ? nPosC :
+		(nPosC == string::npos) ? nPosS :
+		(nPosS > nPosC) ? nPosS : nPosC;
+
+	return (nPos == string::npos) ? strPath : strPath.substr(nPos + 1);
 }

@@ -7,4 +7,9 @@ char *DelSlash(char *Path);				// Returns same pointer or NULL in case 'D:\' or 
 BOOL CreateDirectories(const char *DirName);
 BOOL CreateDirectoriesForFile(const char *FileName);
 
+#ifdef _STRING_
+std::string CatFile(const std::string &strPath, const std::string &strFile);
+std::string GetFileName(const std::string &strPath);
+#endif
+
 #endif
