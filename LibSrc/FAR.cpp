@@ -269,6 +269,11 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 		m_pExclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
 		if (m_pExclude) m_pExcludeExtra = pcre_study(m_pInclude, 0, &szErr);
 	} else {
+		const char *szErr;
+		int nErr;
+		m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
+		if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
+
 		m_pExclude = NULL;
 		m_pExcludeExtra = NULL;
 	}
