@@ -137,7 +137,7 @@ string CRegExp::CreateReplaceString(string &strReplacePattern, vector<string> &a
 				iParam = iParam*10 + (pszReplace[1]-'0');
 				pszReplace++;
 			}
-			if (iParam < arrReferences.size())
+			if (iParam < (int)arrReferences.size())
 				strResult += arrReferences[iParam];
 			break;
 				 }
