@@ -50,7 +50,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir ".\DebugML"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /G5 /Zp2 /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
+# ADD CPP /nologo /G5 /Zp2 /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -75,7 +75,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G5 /Zp2 /MTd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MTd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -99,7 +99,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir ".\DebugMD"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -123,7 +123,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir ".\ReleaseML"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /G5 /Zp2 /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
+# ADD CPP /nologo /G5 /Zp2 /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -148,7 +148,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G5 /Zp2 /MT /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MT /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -172,7 +172,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir ".\ReleaseMD"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /W3 /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -197,7 +197,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /W3 /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G6 /Zp2 /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
+# ADD CPP /nologo /G6 /Zp2 /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /O3 /c
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -220,7 +220,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir ".\ReleaseMT_Intel"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G6 /Zp2 /W3 /GX /Ob2 /D "FAR_USE_NAMESPACE" /D "ICL" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
-# ADD CPP /nologo /G6 /Zp2 /MT /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
+# ADD CPP /nologo /G6 /Zp2 /MT /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /O3 /c
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -244,7 +244,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /MD /W3 /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
+# ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /O3 /c
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -268,7 +268,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D _USE_COMPILER=VC7 /FR /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D _USE_COMPILER=VC7 /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -293,7 +293,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D _USE_COMPILER=VC7 /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D _USE_COMPILER=VC7 /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
