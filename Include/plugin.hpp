@@ -7,14 +7,14 @@
   Plugin API for FAR Manager 1.70
 
   Copyright (c) 1996-2000 Eugene Roshal
-  Copyright (c) 2000-2003 FAR group
+  Copyright (c) 2000-2004 FAR group
 */
-/* Revision: 1.226 09.04.2003 $ */
+/* Revision: 1.246 29.05.2004 $ */
 
 
 #define MAKEFARVERSION(major,minor,build) ( ((major)<<8) | (minor) | ((build)<<16))
 
-#define FARMANAGERVERSION MAKEFARVERSION(1,70,1634)
+#define FARMANAGERVERSION MAKEFARVERSION(1,70,1790)
 
 
 #if !defined(_INC_WINDOWS) && !defined(_WINDOWS_)
@@ -70,6 +70,10 @@
 
 #define NM 260
 
+#define FARMACRO_KEY_EVENT  (KEY_EVENT|0x8000)
+
+#include "plugin_viewer.hpp"
+
 // To ensure compatibility of plugin.hpp with compilers not supporting C++,
 // you can #define _FAR_NO_NAMELESS_UNIONS. In this case, to access,
 // for example, the Data field of the FarDialogItem structure
@@ -89,7 +93,7 @@ typedef struct _INPUT_RECORD INPUT_RECORD;
 typedef struct _CHAR_INFO    CHAR_INFO;
 #endif
 
-enum {
+enum FARMESSAGEFLAGS{
   FMSG_WARNING             = 0x00000001,
   FMSG_ERRORTYPE           = 0x00000002,
   FMSG_KEEPBACKGROUND      = 0x00000004,
@@ -134,37 +138,38 @@ enum DialogItemTypes {
 };
 
 enum FarDialogItemFlags {
-  DIF_COLORMASK         = 0x000000ffUL,
-  DIF_SETCOLOR          = 0x00000100UL,
-  DIF_BOXCOLOR          = 0x00000200UL,
-  DIF_GROUP             = 0x00000400UL,
-  DIF_LEFTTEXT          = 0x00000800UL,
-  DIF_MOVESELECT        = 0x00001000UL,
-  DIF_SHOWAMPERSAND     = 0x00002000UL,
-  DIF_CENTERGROUP       = 0x00004000UL,
-  DIF_NOBRACKETS        = 0x00008000UL,
-  DIF_MANUALADDHISTORY  = 0x00008000UL,
-  DIF_SEPARATOR         = 0x00010000UL,
-  DIF_VAREDIT           = 0x00010000UL,
-  DIF_SEPARATOR2        = 0x00020000UL,
-  DIF_EDITOR            = 0x00020000UL,
-  DIF_LISTNOAMPERSAND   = 0x00020000UL,
-  DIF_LISTNOBOX         = 0x00040000UL,
-  DIF_HISTORY           = 0x00040000UL,
-  DIF_BTNNOCLOSE        = 0x00040000UL,
-  DIF_CENTERTEXT        = 0x00040000UL,
-  DIF_EDITEXPAND        = 0x00080000UL,
-  DIF_DROPDOWNLIST      = 0x00100000UL,
-  DIF_USELASTHISTORY    = 0x00200000UL,
-  DIF_MASKEDIT          = 0x00400000UL,
-  DIF_SELECTONENTRY     = 0x00800000UL,
-  DIF_3STATE            = 0x00800000UL,
-  DIF_LISTWRAPMODE      = 0x01000000UL,
-  DIF_LISTAUTOHIGHLIGHT = 0x02000000UL,
-  DIF_HIDDEN            = 0x10000000UL,
-  DIF_READONLY          = 0x20000000UL,
-  DIF_NOFOCUS           = 0x40000000UL,
-  DIF_DISABLE           = 0x80000000UL,
+  DIF_COLORMASK             = 0x000000ffUL,
+  DIF_SETCOLOR              = 0x00000100UL,
+  DIF_BOXCOLOR              = 0x00000200UL,
+  DIF_GROUP                 = 0x00000400UL,
+  DIF_LEFTTEXT              = 0x00000800UL,
+  DIF_MOVESELECT            = 0x00001000UL,
+  DIF_SHOWAMPERSAND         = 0x00002000UL,
+  DIF_CENTERGROUP           = 0x00004000UL,
+  DIF_NOBRACKETS            = 0x00008000UL,
+  DIF_MANUALADDHISTORY      = 0x00008000UL,
+  DIF_SEPARATOR             = 0x00010000UL,
+  DIF_VAREDIT               = 0x00010000UL,
+  DIF_SEPARATOR2            = 0x00020000UL,
+  DIF_EDITOR                = 0x00020000UL,
+  DIF_LISTNOAMPERSAND       = 0x00020000UL,
+  DIF_LISTNOBOX             = 0x00040000UL,
+  DIF_HISTORY               = 0x00040000UL,
+  DIF_BTNNOCLOSE            = 0x00040000UL,
+  DIF_CENTERTEXT            = 0x00040000UL,
+  DIF_EDITEXPAND            = 0x00080000UL,
+  DIF_DROPDOWNLIST          = 0x00100000UL,
+  DIF_USELASTHISTORY        = 0x00200000UL,
+  DIF_MASKEDIT              = 0x00400000UL,
+  DIF_SELECTONENTRY         = 0x00800000UL,
+  DIF_3STATE                = 0x00800000UL,
+  DIF_LISTWRAPMODE          = 0x01000000UL,
+  DIF_LISTAUTOHIGHLIGHT     = 0x02000000UL,
+  DIF_LISTNOCLOSE           = 0x04000000UL,
+  DIF_HIDDEN                = 0x10000000UL,
+  DIF_READONLY              = 0x20000000UL,
+  DIF_NOFOCUS               = 0x40000000UL,
+  DIF_DISABLE               = 0x80000000UL,
 };
 
 enum FarMessagesProc{
@@ -240,6 +245,11 @@ enum FarMessagesProc{
 
   DM_LISTGETDATASIZE,
 
+  DM_GETSELECTION,
+  DM_SETSELECTION,
+
+  DN_LISTHOTKEY,
+
   DN_FIRST=0x1000,
   DN_BTNCLICK,
   DN_CTLCOLORDIALOG,
@@ -259,6 +269,7 @@ enum FarMessagesProc{
   DN_DRAGGED,
   DN_RESIZECONSOLE,
   DN_MOUSEEVENT,
+  DN_DRAWDIALOGDONE,
 
   DN_CLOSE=DM_CLOSE,
   DN_KEY=DM_KEY,
@@ -267,13 +278,18 @@ enum FarMessagesProc{
 
 };
 
-enum CHECKEDSTATE {
+enum FARCHECKEDSTATE {
   BSTATE_UNCHECKED = 0,
   BSTATE_CHECKED   = 1,
   BSTATE_3STATE    = 2,
   BSTATE_TOGGLE    = 3,
 };
 
+enum FARLISTMOUSEREACTIONTYPE{
+  LMRT_ONLYFOCUS   = 0,
+  LMRT_ALWAYS      = 1,
+  LMRT_NEVER       = 2,
+};
 
 enum LISTITEMFLAGS {
   LIF_SELECTED           = 0x00010000UL,
@@ -314,7 +330,7 @@ struct FarListPos
   int TopPos;
 };
 
-enum{
+enum FARLISTFINDFLAGS{
   LIFIND_EXACTMATCH = 0x00000001,
 };
 
@@ -332,7 +348,7 @@ struct FarListDelete
   int Count;
 };
 
-enum {
+enum FARLISTINFOFLAGS{
   LINFO_SHOWNOBOX             = 0x00000400,
   LINFO_AUTOHIGHLIGHT         = 0x00000800,
   LINFO_REVERSEHIGHLIGHT      = 0x00001000,
@@ -453,7 +469,7 @@ struct FarDialogItemData
 #define DlgList_GetItemData(Info,hDlg,ID,Index)          Info.SendDlgMessage(hDlg,DM_LISTGETDATA,ID,Index)
 #define DlgList_SetItemStrAsData(Info,hDlg,ID,Index,Str) {struct FarListItemData FLID{Index,0,Str,0}; Info.SendDlgMessage(hDlg,DM_LISTSETDATA,ID,(long)&FLID);}
 
-enum {
+enum FARDIALOGFLAGS{
   FDLG_WARNING             = 0x00000001,
   FDLG_SMALLDIALOG         = 0x00000002,
   FDLG_NODRAWSHADOW        = 0x00000004,
@@ -536,12 +552,13 @@ struct FarMenuItemEx
   DWORD UserData;
 };
 
-enum {
+enum FARMENUFLAGS{
   FMENU_SHOWAMPERSAND        = 0x0001,
   FMENU_WRAPMODE             = 0x0002,
   FMENU_AUTOHIGHLIGHT        = 0x0004,
   FMENU_REVERSEAUTOHIGHLIGHT = 0x0008,
   FMENU_USEEXT               = 0x0020,
+  FMENU_CHANGECONSOLETITLE   = 0x0040,
 };
 
 typedef int (WINAPI *FARAPIMENU)(
@@ -560,7 +577,7 @@ typedef int (WINAPI *FARAPIMENU)(
 );
 
 
-enum {
+enum PLUGINPANELITEMFLAGS{
   PPIF_PROCESSDESCR           = 0x80000000,
   PPIF_SELECTED               = 0x40000000,
   PPIF_USERDATA               = 0x20000000,
@@ -570,16 +587,16 @@ enum {
 
 struct FAR_FIND_DATA
 {
-    DWORD    dwFileAttributes;
-    FILETIME ftCreationTime;
-    FILETIME ftLastAccessTime;
-    FILETIME ftLastWriteTime;
-    DWORD    nFileSizeHigh;
-    DWORD    nFileSizeLow;
-    DWORD    dwReserved0;
-    DWORD    dwReserved1;
-    CHAR     cFileName[MAX_PATH];
-    CHAR     cAlternateFileName[14];
+  DWORD    dwFileAttributes;
+  FILETIME ftCreationTime;
+  FILETIME ftLastAccessTime;
+  FILETIME ftLastWriteTime;
+  DWORD    nFileSizeHigh;
+  DWORD    nFileSizeLow;
+  DWORD    dwReserved0;
+  DWORD    dwReserved1;
+  CHAR     cFileName[MAX_PATH];
+  CHAR     cAlternateFileName[14];
 };
 
 #endif
@@ -621,9 +638,10 @@ enum PANELINFOFLAGS {
   PFLAGS_USESORTGROUPS      = 0x00000008,
   PFLAGS_SELECTEDFIRST      = 0x00000010,
   PFLAGS_REALNAMES          = 0x00000020,
+  PFLAGS_NUMERICSORT        = 0x00000040,
 };
 
-enum {
+enum PANELINFOTYPE{
   PTYPE_FILEPANEL,
   PTYPE_TREEPANEL,
   PTYPE_QVIEWPANEL,
@@ -696,6 +714,8 @@ enum FILE_CONTROL_COMMANDS{
   FCTL_GETPANELSHORTINFO,
   FCTL_GETANOTHERPANELSHORTINFO,
   FCTL_CHECKPANELSEXIST,
+  FCTL_SETNUMERICSORT,
+  FCTL_SETANOTHERNUMERICSORT,
 };
 
 typedef int (WINAPI *FARAPICONTROL)(
@@ -787,7 +807,7 @@ typedef int (WINAPI *FARAPICMPNAME)(
 );
 
 
-enum {
+enum FARCHARTABLE_COMMAND{
   FCT_DETECT=0x40000000,
 };
 
@@ -848,6 +868,9 @@ enum ADVANCED_CONTROL_COMMANDS{
   ACTL_GETCONFIRMATIONS,
   ACTL_GETDESCSETTINGS,
   ACTL_SETARRAYCOLOR,
+  ACTL_GETWCHARMODE,
+  ACTL_GETPLUGINMAXREADDATA,
+  ACTL_GETDIALOGSETTINGS,
 };
 
 
@@ -862,6 +885,7 @@ enum FarSystemSettings{
   FSS_SAVEVIEWANDEDITHISTORY         = 0x00000080,
   FSS_USEWINDOWSREGISTEREDTYPES      = 0x00000100,
   FSS_AUTOSAVESETUP                  = 0x00000200,
+  FSS_SCANSYMLINK                    = 0x00000400,
 };
 
 enum FarPanelSettings{
@@ -879,18 +903,22 @@ enum FarPanelSettings{
   FPS_SHOWSORTMODELETTER             = 0x00000800,
 };
 
+enum FarDialogSettings{
+  FDIS_HISTORYINDIALOGEDITCONTROLS    = 0x00000001,
+  FDIS_PERSISTENTBLOCKSINEDITCONTROLS = 0x00000002,
+  FDIS_AUTOCOMPLETEININPUTLINES       = 0x00000004,
+  FDIS_BSDELETEUNCHANGEDTEXT          = 0x00000008,
+};
+
 enum FarInterfaceSettings{
   FIS_CLOCKINPANELS                  = 0x00000001,
   FIS_CLOCKINVIEWERANDEDITOR         = 0x00000002,
   FIS_MOUSE                          = 0x00000004,
   FIS_SHOWKEYBAR                     = 0x00000008,
   FIS_ALWAYSSHOWMENUBAR              = 0x00000010,
-  FIS_HISTORYINDIALOGEDITCONTROLS    = 0x00000020,
-  FIS_PERSISTENTBLOCKSINEDITCONTROLS = 0x00000040,
   FIS_USERIGHTALTASALTGR             = 0x00000080,
   FIS_SHOWTOTALCOPYPROGRESSINDICATOR = 0x00000100,
   FIS_SHOWCOPYINGTIMEINFO            = 0x00000200,
-  FIS_AUTOCOMPLETEININPUTLINES       = 0x00000400,
   FIS_USECTRLPGUPTOCHANGEDRIVE       = 0x00000800,
 };
 
@@ -921,7 +949,7 @@ enum FarDescriptionSettings {
 #define FAR_CONSOLE_WINDOWED       (0)
 #define FAR_CONSOLE_FULLSCREEN     (1)
 
-enum {
+enum FAREJECTMEDIAFLAGS{
  EJECT_NO_MESSAGE                    = 0x00000001,
  EJECT_LOAD_MEDIA                    = 0x00000002,
 };
@@ -932,24 +960,32 @@ struct ActlEjectMedia {
 };
 
 
-enum MacroCommand{
-  MCMD_LOADALL,
-  MCMD_SAVEALL
-};
-
-struct ActlKeyMacro{
-  int Command;
-  DWORD Reserved[3];
-};
-
-enum KeySequenceFlags {
+enum FARKEYSEQUENCEFLAGS {
   KSFLAGS_DISABLEOUTPUT       = 0x00000001,
+  KSFLAGS_NOSENDKEYSTOPLUGINS = 0x00000002,
 };
 
 struct KeySequence{
   DWORD Flags;
   int Count;
   DWORD *Sequence;
+};
+
+enum FARMACROCOMMAND{
+  MCMD_LOADALL,
+  MCMD_SAVEALL,
+  MCMD_POSTMACROSTRING,
+};
+
+struct ActlKeyMacro{
+  int Command;
+  union{
+    struct {
+      char *SequenceText;
+      DWORD Flags;
+    } PlainText;
+    DWORD Reserved[3];
+  } Param;
 };
 
 enum FARCOLORFLAGS{
@@ -963,7 +999,7 @@ struct FarSetColors{
   LPBYTE Colors;
 };
 
-enum {
+enum WINDOWINFO_TYPE{
   WTYPE_PANELS=1,
   WTYPE_VIEWER,
   WTYPE_EDITOR,
@@ -1040,7 +1076,9 @@ enum EDITOR_SETPARAMETER_TYPES {
   ESPT_CHARCODEBASE,
   ESPT_CHARTABLE,
   ESPT_SAVEFILEPOSITION,
-  ESPT_LOCKMODE
+  ESPT_LOCKMODE,
+  ESPT_SETWORDDIV,
+  ESPT_GETWORDDIV,
 };
 
 struct EditorSetParameter
@@ -1154,7 +1192,7 @@ struct EditorSelect
 
 struct EditorConvertText
 {
-  const char *Text;
+  char *Text;
   int TextLength;
 };
 
@@ -1201,7 +1239,7 @@ typedef int (WINAPI *FARAPIINPUTBOX)(
   const char *SubTitle,
   const char *HistoryName,
   const char *SrcText,
-  const char *DestText,
+  char *DestText,
   int   DestLength,
   const char *HelpTopic,
   DWORD Flags
@@ -1245,7 +1283,8 @@ typedef void    (WINAPI *FARSTDLOCALSTRLWR)(char *s1);
 typedef int     (WINAPI *FARSTDLOCALSTRICMP)(const char *s1,const char *s2);
 typedef int     (WINAPI *FARSTDLOCALSTRNICMP)(const char *s1,const char *s2,int n);
 
-enum {
+
+enum PROCESSNAME_FLAGS{
  PN_CMPNAME      = 0x00000000UL,
  PN_CMPNAMELIST  = 0x00001000UL,
  PN_GENERATENAME = 0x00002000UL,
@@ -1278,8 +1317,9 @@ typedef int (WINAPI *FRSUSERFUNC)(
 );
 
 enum FRSMODE{
-  FRS_RETUPDIR = 0x0001,
-  FRS_RECUR    = 0x0002
+  FRS_RETUPDIR             = 0x01,
+  FRS_RECUR                = 0x02,
+  FRS_SCANSYMLINK          = 0x04,
 };
 
 typedef void    (WINAPI *FARSTDRECURSIVESEARCH)(const char *InitDir,const char *Mask,FRSUSERFUNC Func,DWORD Flags,void *Param);
@@ -1388,7 +1428,8 @@ struct PluginStartupInfo
   FARAPIDIALOGEX         DialogEx;
   FARAPISENDDLGMESSAGE   SendDlgMessage;
   FARAPIDEFDLGPROC       DefDlgProc;
-  DWORD                  Reserved[2];
+  DWORD                  Reserved[1];
+  FARAPIVIEWERCONTROL    ViewerControl;
 };
 
 
@@ -1440,22 +1481,22 @@ struct PanelMode
 
 
 enum OPENPLUGININFO_FLAGS {
-  OPIF_USEFILTER               = 0x0001,
-  OPIF_USESORTGROUPS           = 0x0002,
-  OPIF_USEHIGHLIGHTING         = 0x0004,
-  OPIF_ADDDOTS                 = 0x0008,
-  OPIF_RAWSELECTION            = 0x0010,
-  OPIF_REALNAMES               = 0x0020,
-  OPIF_SHOWNAMESONLY           = 0x0040,
-  OPIF_SHOWRIGHTALIGNNAMES     = 0x0080,
-  OPIF_SHOWPRESERVECASE        = 0x0100,
-  OPIF_FINDFOLDERS             = 0x0200,
-  OPIF_COMPAREFATTIME          = 0x0400,
-  OPIF_EXTERNALGET             = 0x0800,
-  OPIF_EXTERNALPUT             = 0x1000,
-  OPIF_EXTERNALDELETE          = 0x2000,
-  OPIF_EXTERNALMKDIR           = 0x4000,
-  OPIF_USEATTRHIGHLIGHTING     = 0x8000
+  OPIF_USEFILTER               = 0x00000001,
+  OPIF_USESORTGROUPS           = 0x00000002,
+  OPIF_USEHIGHLIGHTING         = 0x00000004,
+  OPIF_ADDDOTS                 = 0x00000008,
+  OPIF_RAWSELECTION            = 0x00000010,
+  OPIF_REALNAMES               = 0x00000020,
+  OPIF_SHOWNAMESONLY           = 0x00000040,
+  OPIF_SHOWRIGHTALIGNNAMES     = 0x00000080,
+  OPIF_SHOWPRESERVECASE        = 0x00000100,
+  OPIF_FINDFOLDERS             = 0x00000200,
+  OPIF_COMPAREFATTIME          = 0x00000400,
+  OPIF_EXTERNALGET             = 0x00000800,
+  OPIF_EXTERNALPUT             = 0x00001000,
+  OPIF_EXTERNALDELETE          = 0x00002000,
+  OPIF_EXTERNALMKDIR           = 0x00004000,
+  OPIF_USEATTRHIGHLIGHTING     = 0x00008000,
 };
 
 
@@ -1522,7 +1563,7 @@ struct OpenPluginInfo
   long                  Reserverd;
 };
 
-enum {
+enum OPENPLUGIN_OPENFROM{
   OPEN_DISKMENU,
   OPEN_PLUGINSMENU,
   OPEN_FINDLIST,
@@ -1532,7 +1573,7 @@ enum {
   OPEN_VIEWER,
 };
 
-enum {
+enum FAR_PKF_FLAGS {
   PKF_CONTROL = 0x0001,
   PKF_ALT     = 0x0002,
   PKF_SHIFT   = 0x0004,
