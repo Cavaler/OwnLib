@@ -9,7 +9,7 @@
 #include <string>
 using namespace std;
 
-void QueryRegStringValue(HKEY hKey,const const char *pszKeyName,char *pszBuffer,DWORD dwBufSize,const char *pszDefault) {
+void QueryRegStringValue(HKEY hKey, const char *pszKeyName,char *pszBuffer,DWORD dwBufSize,const char *pszDefault) {
 	DWORD Type;
 	LONG Res=RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(LPBYTE)pszBuffer,&dwBufSize);
 	if ((Res!=ERROR_SUCCESS)||(Type!=REG_SZ)) {
@@ -17,7 +17,7 @@ void QueryRegStringValue(HKEY hKey,const const char *pszKeyName,char *pszBuffer,
 	}
 }
 
-void AllocAndQueryRegStringValue(HKEY hKey,const const char *pszKeyName,char **ppszBuffer,DWORD *BufSize,const char *pszDefault) {
+void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName,char **ppszBuffer,DWORD *BufSize,const char *pszDefault) {
 	DWORD Type;
 	DWORD Size;
 	LONG Res=RegQueryValueEx(hKey,pszKeyName,NULL,&Type,NULL,&Size);
