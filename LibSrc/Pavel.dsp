@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=Pavel - Win32 Debug MT
+CFG=Pavel - Win32 Debug MD NET
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,7 +13,7 @@ CFG=Pavel - Win32 Debug MT
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "Pavel.mak" CFG="Pavel - Win32 Debug MT"
+!MESSAGE NMAKE /f "Pavel.mak" CFG="Pavel - Win32 Debug MD NET"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -26,6 +26,8 @@ CFG=Pavel - Win32 Debug MT
 !MESSAGE "Pavel - Win32 Release ML Intel" (based on "Win32 (x86) Static Library")
 !MESSAGE "Pavel - Win32 Release MT Intel" (based on "Win32 (x86) Static Library")
 !MESSAGE "Pavel - Win32 Release MD Intel" (based on "Win32 (x86) Static Library")
+!MESSAGE "Pavel - Win32 Debug MD NET" (based on "Win32 (x86) Static Library")
+!MESSAGE "Pavel - Win32 Release MD NET" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -51,7 +53,7 @@ RSC=rc.exe
 # ADD CPP /nologo /G5 /Zp2 /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -76,7 +78,7 @@ LIB32=link.exe -lib
 # ADD CPP /nologo /G5 /Zp2 /MTd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -100,7 +102,7 @@ LIB32=link.exe -lib
 # ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -124,7 +126,7 @@ LIB32=link.exe -lib
 # ADD CPP /nologo /G5 /Zp2 /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -149,7 +151,7 @@ LIB32=link.exe -lib
 # ADD CPP /nologo /G5 /Zp2 /MT /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -173,7 +175,7 @@ LIB32=link.exe -lib
 # ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -197,7 +199,7 @@ LIB32=link.exe -lib
 # SUBTRACT BASE CPP /YX
 # ADD CPP /nologo /G6 /Zp2 /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -220,7 +222,7 @@ LIB32=link.exe -lib
 # ADD BASE CPP /nologo /G6 /Zp2 /W3 /GX /Ob2 /D "FAR_USE_NAMESPACE" /D "ICL" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
 # ADD CPP /nologo /G6 /Zp2 /MT /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -244,13 +246,63 @@ LIB32=link.exe -lib
 # SUBTRACT BASE CPP /YX
 # ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
 # ADD BASE RSC /l 0x419
-# ADD RSC /l 0x419
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo /out:"E:\CPP\Lib\PavelRD.lib"
 # ADD LIB32 /nologo /out:"..\Lib\PavelMDI.lib"
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "Pavel___Win32_Debug_MD_NET"
+# PROP BASE Intermediate_Dir "Pavel___Win32_Debug_MD_NET"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "..\Lib"
+# PROP Intermediate_Dir ".\DebugMD7"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D _USE_COMPILER=VC7 /FD /c
+# SUBTRACT CPP /YX
+# ADD BASE RSC /l 0x419
+# ADD RSC /l 0x409
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo /out:"..\Lib\PavelMDd.lib"
+# ADD LIB32 /nologo /out:"..\Lib\PavelMDd7.lib"
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Pavel___Win32_Release_MD_NET"
+# PROP BASE Intermediate_Dir "Pavel___Win32_Release_MD_NET"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\Lib"
+# PROP Intermediate_Dir ".\ReleaseMD7"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D _USE_COMPILER=VC7 /FD /c
+# SUBTRACT CPP /YX
+# ADD BASE RSC /l 0x409
+# ADD RSC /l 0x409
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo /out:"..\Lib\PavelMD.lib"
+# ADD LIB32 /nologo /out:"..\Lib\PavelMD7.lib"
 
 !ENDIF 
 
@@ -265,13 +317,63 @@ LIB32=link.exe -lib
 # Name "Pavel - Win32 Release ML Intel"
 # Name "Pavel - Win32 Release MT Intel"
 # Name "Pavel - Win32 Release MD Intel"
+# Name "Pavel - Win32 Debug MD NET"
+# Name "Pavel - Win32 Release MD NET"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;for;f90"
 # Begin Source File
 
 SOURCE=.\Ansi.cpp
+
+!IF  "$(CFG)" == "Pavel - Win32 Debug ML"
+
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -284,12 +386,108 @@ SOURCE=.\CMapping.cpp
 # Begin Source File
 
 SOURCE=.\Collect.cpp
+
+!IF  "$(CFG)" == "Pavel - Win32 Debug ML"
+
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\CString.cpp
+
+!IF  "$(CFG)" == "Pavel - Win32 Debug ML"
+
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -346,7 +544,55 @@ SOURCE=.\XLat.cpp
 # Begin Source File
 
 SOURCE=..\Include\Ansi.h
+
+!IF  "$(CFG)" == "Pavel - Win32 Debug ML"
+
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -359,12 +605,108 @@ SOURCE=..\Include\CMapping.h
 # Begin Source File
 
 SOURCE=..\Include\Collect.h
+
+!IF  "$(CFG)" == "Pavel - Win32 Debug ML"
+
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\Include\CString.h
+
+!IF  "$(CFG)" == "Pavel - Win32 Debug ML"
+
 # PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release ML Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MT Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD Intel"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 

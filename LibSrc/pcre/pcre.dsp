@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=pcre - Win32 Debug MT
+CFG=pcre - Win32 Debug MD NET
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,7 +13,7 @@ CFG=pcre - Win32 Debug MT
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "pcre.mak" CFG="pcre - Win32 Debug MT"
+!MESSAGE NMAKE /f "pcre.mak" CFG="pcre - Win32 Debug MD NET"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -26,6 +26,8 @@ CFG=pcre - Win32 Debug MT
 !MESSAGE "pcre - Win32 Release ML Intel" (based on "Win32 (x86) Static Library")
 !MESSAGE "pcre - Win32 Release MT Intel" (based on "Win32 (x86) Static Library")
 !MESSAGE "pcre - Win32 Release MD Intel" (based on "Win32 (x86) Static Library")
+!MESSAGE "pcre - Win32 Debug MD NET" (based on "Win32 (x86) Static Library")
+!MESSAGE "pcre - Win32 Release MD NET" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -251,6 +253,56 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD LIB32 /nologo /out:"..\..\Lib\pcreMDI.lib"
 
+!ELSEIF  "$(CFG)" == "pcre - Win32 Debug MD NET"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "pcre___Win32_Debug_MD_NET"
+# PROP BASE Intermediate_Dir "pcre___Win32_Debug_MD_NET"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "..\..\Lib"
+# PROP Intermediate_Dir "..\DebugMD7"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "STATIC" /D "WIN32" /D "_WINDOWS" /D POSIX_MALLOC_THRESHOLD=16 /D "SUPPORT_UTF8" /D "PCRE_STATIC" /FR /FD /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "STATIC" /D POSIX_MALLOC_THRESHOLD=16 /D "SUPPORT_UTF8" /D "PCRE_STATIC" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D _USE_COMPILER=VC7 /FR /FD /c
+# SUBTRACT CPP /YX
+# ADD BASE RSC /l 0x419
+# ADD RSC /l 0x419
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo /o"..\DebugDLL\pcre.bsc"
+# ADD BSC32 /nologo /o"..\DebugDLL\pcre.bsc"
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo /out:"..\..\Lib\pcreMDd.lib"
+# ADD LIB32 /nologo /out:"..\..\Lib\pcreMDd7.lib"
+
+!ELSEIF  "$(CFG)" == "pcre - Win32 Release MD NET"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "pcre___Win32_Release_MD_NET"
+# PROP BASE Intermediate_Dir "pcre___Win32_Release_MD_NET"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\..\Lib"
+# PROP Intermediate_Dir "..\ReleaseMD7"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "STATIC" /D "WIN32" /D "_WINDOWS" /D POSIX_MALLOC_THRESHOLD=16 /D "SUPPORT_UTF8" /D "PCRE_STATIC" /FD /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "STATIC" /D POSIX_MALLOC_THRESHOLD=16 /D "SUPPORT_UTF8" /D "PCRE_STATIC" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D _USE_COMPILER=VC7 /FD /c
+# SUBTRACT CPP /YX
+# ADD BASE RSC /l 0x419
+# ADD RSC /l 0x419
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo /out:"..\..\Lib\pcreMD.lib"
+# ADD LIB32 /nologo /out:"..\..\Lib\pcreMD7.lib"
+
 !ENDIF 
 
 # Begin Target
@@ -264,6 +316,8 @@ LIB32=link.exe -lib
 # Name "pcre - Win32 Release ML Intel"
 # Name "pcre - Win32 Release MT Intel"
 # Name "pcre - Win32 Release MD Intel"
+# Name "pcre - Win32 Debug MD NET"
+# Name "pcre - Win32 Release MD NET"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;for;f90"
@@ -348,6 +402,16 @@ SOURCE=.\DOS866.c
 
 # PROP Exclude_From_Build 1
 
+!ELSEIF  "$(CFG)" == "pcre - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "pcre - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
 !ENDIF 
 
 # End Source File
@@ -396,6 +460,16 @@ SOURCE=.\OEM.c
 
 !ELSEIF  "$(CFG)" == "pcre - Win32 Release MD Intel"
 
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "pcre - Win32 Debug MD NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "pcre - Win32 Release MD NET"
+
+# PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
 !ENDIF 
