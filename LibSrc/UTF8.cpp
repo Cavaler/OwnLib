@@ -56,7 +56,7 @@ wstring DecodeUTF8(const char *pszValue, int nLength)
 	ptr<wchar_t> pwData;
 	pwData.SetLength(nLength);
 	unsigned int nOutLen = 0;
-	for (unsigned int nPos = 0; nPos < nLength; nPos++)
+	for (int nPos = 0; nPos < nLength; nPos++)
 	{
 		char ch = pszValue[nPos];
 		wchar_t wch = 0;
@@ -79,8 +79,8 @@ wstring DecodeUTF8(const char *pszValue, int nLength)
 			continue;
 		pwData[nOutLen++] = wch;
 	}
-	wstring strResult(pwData, nOutLen);
-	return strResult;
+
+	return wstring(pwData, nOutLen);
 }
 
 wstring DecodeUTF8(const string &strValue)

@@ -88,7 +88,7 @@ int  CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, long Param2) {
 	if (m_pHandler && m_pHandler->ProcessChain(hDlg, Msg, Param1, Param2, lResult))
 		return lResult;
 
-	if ((Param1 >= 0) && (Param1 < m_arrItemHandlers.size()) &&
+	if ((Param1 >= 0) && (Param1 < (int)m_arrItemHandlers.size()) &&
 		m_arrItemHandlers[Param1] && m_arrItemHandlers[Param1]->ProcessChain(hDlg, Msg, Param1, Param2, lResult))
 		return lResult;
 
@@ -190,7 +190,7 @@ CFarListData::CFarListData(const char **ppszItems,int iItemCount) : m_bFree(true
 CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true) {
 	m_pList = new FarList;
 	m_pList->Items = new FarListItem[m_pList->ItemsNumber = arrItems.size()];
-	for (int nIndex = 0; nIndex < arrItems.size(); nIndex++) {
+	for (int nIndex = 0; nIndex < (int)arrItems.size(); nIndex++) {
 		m_pList->Items[nIndex].Flags = 0;
 		memset(m_pList->Items[nIndex].Reserved, 0, sizeof(m_pList->Items[nIndex].Reserved));
 		strncpy(m_pList->Items[nIndex].Text, arrItems[nIndex], sizeof(m_pList->Items[nIndex].Text));
@@ -254,7 +254,7 @@ bool CFarSizeConverter::FromString(const char *pszBuffer, int &iValue) {
 	if (toupper(szUnit[0] == 'M')) fValue *= 1024*1024; else
 	if (toupper(szUnit[0] == 'G')) fValue *= 1024*1024*1024;
 
-	iValue = fValue;
+	iValue = (int)fValue;
 	return true;
 }
 

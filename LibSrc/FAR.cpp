@@ -91,7 +91,7 @@ int  ChooseMenu(const char *Title, const char *Bottom, const char *HelpTopic, in
 int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
 	FarMenuItem *Items=new FarMenuItem[arrItems.size()];
-	for (int I=0;I<arrItems.size();I++) {
+	for (int I = 0; I < (int)arrItems.size(); I++) {
 		Items[I].Checked=Items[I].Selected=FALSE;
 		if (I == iDefault)
 			Items[I].Selected = TRUE;
@@ -121,7 +121,7 @@ int  Message(UINT uiFlags, const char *szHelpTopic, int iItemsNumber, int iButto
 
 int  Message(UINT uiFlags, const char *szHelpTopic, int iButtonsNumber, std::vector<std::string> &arrItems) {
 	const char **ppszItems = new const char *[arrItems.size()];
-	for (int I=0; I<arrItems.size(); I++)
+	for (int I=0; I < (int)arrItems.size(); I++)
 		ppszItems[I]=arrItems[I].c_str();
 
 	int Result = StartupInfo.Message(StartupInfo.ModuleNumber, uiFlags, szHelpTopic, ppszItems, arrItems.size(), iButtonsNumber);
