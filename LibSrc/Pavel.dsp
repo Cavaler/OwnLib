@@ -396,6 +396,10 @@ SOURCE=..\Include\plugin.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\Include\plugin_viewer.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\Include\ptr.h
 # End Source File
 # Begin Source File
