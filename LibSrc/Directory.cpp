@@ -40,7 +40,7 @@ char *DelSlash(char *Path) {
 	return Path;
 }
 
-BOOL CreateDirectories(char *DirName) {
+BOOL CreateDirectories(const char *DirName) {
 	char FullName[MAX_PATH];
 	if (DirName[0]==0) return TRUE;
 	if (!GetFullPathName(DirName,MAX_PATH,FullName,NULL)) return FALSE;
@@ -63,7 +63,7 @@ BOOL CreateDirectories(char *DirName) {
 	return TRUE;
 }
 
-BOOL CreateDirectoriesForFile(char *FileName) {
+BOOL CreateDirectoriesForFile(const char *FileName) {
 	char *FName=strrchr(FileName,'\\');
 	if (!FName) return TRUE;
 	*FName=0;
