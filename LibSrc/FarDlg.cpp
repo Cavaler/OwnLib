@@ -47,6 +47,16 @@ int CFarDialog::AddFrame(const char *Title) {
 int CFarDialog::AddFrame(int TitleId) {return AddFrame(GetMsg(TitleId));}
 int CFarDialog::AddFrame() {return AddFrame((char *)NULL);}
 
+int CFarDialog::AddButton(const char *szTitle) {
+	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
+	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,szTitle));
+}
+
+int CFarDialog::AddButton(int nId) {
+	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
+	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,nId));
+}
+
 int CFarDialog::AddButtons(const char *OKTitle,const char *CancelTitle) {
 	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
 	Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,TRUE,OKTitle));

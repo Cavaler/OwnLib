@@ -26,6 +26,8 @@ public:
 	int  AddFrame();
 	int  Add(CFarDialogItem *Item);
 	int  Add(CFarDialogItem *Item,CFarEventHandler *pHandler);
+	int  AddButton(const char *szTitle);
+	int  AddButton(int nId);
 	int  AddButtons(const char *OKTitle,const char *CancelTitle);
 	int  AddButtons(int OKId,int CancelId);
 	void SetFocus(int Focus);
