@@ -99,7 +99,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir ".\DebugMD"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
@@ -268,7 +268,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D _USE_COMPILER=VC7 /FD /c
+# ADD CPP /nologo /G5 /Zp2 /MDd /W3 /GX /Z7 /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D _USE_COMPILER=VC7 /FR /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
