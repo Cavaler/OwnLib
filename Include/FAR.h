@@ -8,6 +8,7 @@
 #include <windows.h>
 #endif
 #include <plugin.hpp>
+#include <pcre\pcre.h>
 
 #define PSI140SIZE	312
 #define PSI150SIZE	324
@@ -35,6 +36,23 @@ extern const char *g_pszErrorTopic;
 extern const char *g_pszLastErrorTopic;
 extern const char *g_pszOKButton;
 extern HANDLE g_hSaveScreen;
+
+#ifdef _STRING_
+string FarMaskToRE(const char *szMask);
+#endif
+
+class CFarMaskSet {
+public:
+	CFarMaskSet(const char *szMasks);
+	bool operator()(const char *szFileName);
+	bool Valid();
+	~CFarMaskSet();
+protected:
+	pcre *m_pInclude;
+	pcre_extra *m_pIncludeExtra;
+	pcre *m_pExclude;
+	pcre_extra *m_pExcludeExtra;
+};
 
 #ifdef _VECTOR_
 int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,

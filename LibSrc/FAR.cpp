@@ -169,6 +169,131 @@ void HideWaitMessage() {
 	StartupInfo.RestoreScreen(g_hSaveScreen);
 }
 
+string FarMaskToRE(const char *szMask) {
+	string strRE = "^";
+	const char *szCur = szMask;
+
+	while (*szCur) {
+		switch (*szCur) {
+		case '.':
+			strRE += "\\.";
+			break;
+		case '?':
+			strRE += ".";
+			break;
+		case '*':
+			strRE += ".*";
+			break;
+		case '[':{
+			strRE += '[';
+			do {
+				szCur++;
+				switch (*szCur) {
+				case 0:
+				case ']':
+				case ',':
+					break;
+				default:
+					strRE += *szCur;
+					break;
+				}
+			} while (*szCur && (*szCur != ']'));
+			strRE += ']';
+			    }
+			break;
+		case '{':		case '}':
+		case '(':		case ')':
+		case ']':		case '+':
+		case '^':		case '$':
+			strRE += '\\';
+			strRE += *szCur;
+			break;
+
+		default:
+			strRE += *szCur;
+			break;
+		}
+		szCur++;
+	}
+
+	if (strspn(szMask, ".?*[")) strRE += "$";	// Masks without any of these are non-terminal
+	return strRE;
+}
+
+CFarMaskSet::CFarMaskSet(const char *szMasks) {
+	bool bExclude = false;
+	string strCurMask = "";
+
+	while (*szMasks) {
+		switch (*szMasks) {
+		case ' ':
+		case ';':
+		case ',':
+			szMasks++;
+			break;
+		case '|':
+			if (!bExclude) {
+				bExclude = true;
+				const char *szErr;
+				int nErr;
+				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
+				if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
+			}
+			szMasks++;
+			break;
+		case '"':{
+			const char *szEnd = strchr(szMasks+1, '"');
+			if (!strCurMask.empty()) strCurMask += '|';
+			if (szEnd) {
+				strCurMask += '(' + FarMaskToRE(string(szMasks+1, szEnd - szMasks - 1).c_str()) + ')';
+				szMasks = szEnd+1;
+			} else {
+				strCurMask += '(' + FarMaskToRE(szMasks) + ')';
+				szMasks = strchr(szMasks, 0);
+			}
+			    }
+			break;
+		default:{
+			int nLen = strcspn(szMasks, ",;|");
+			if (!strCurMask.empty()) strCurMask += '|';
+			strCurMask += '(' + FarMaskToRE(string(szMasks, nLen).c_str()) + ')';
+			szMasks += nLen;
+			   }
+			break;
+		}
+	}
+
+	if (bExclude) {
+		const char *szErr;
+		int nErr;
+		m_pExclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
+		if (m_pExclude) m_pExcludeExtra = pcre_study(m_pInclude, 0, &szErr);
+	} else {
+		m_pExclude = NULL;
+		m_pExcludeExtra = NULL;
+	}
+}
+
+bool CFarMaskSet::operator()(const char *szFileName) {
+	const char *szName = strrchr(szFileName, '\\');
+	string strName = (szName) ? szName + 1 :szFileName;
+	if (strName.find('.') == string::npos) strName += '.';
+
+	if (pcre_exec(m_pExclude, m_pExcludeExtra, strName.c_str(), strName.length(), 0, PCRE_CASELESS, NULL, 0) >= 0) return false;
+	return (pcre_exec(m_pInclude, m_pIncludeExtra, strName.c_str(), strName.length(), 0, PCRE_CASELESS, NULL, 0) >= 0);
+}
+
+bool CFarMaskSet::Valid() {
+	return m_pInclude != NULL;
+}
+
+CFarMaskSet::~CFarMaskSet() {
+	if (m_pInclude) pcre_free(m_pInclude);
+	if (m_pIncludeExtra) pcre_free(m_pIncludeExtra);
+	if (m_pExclude) pcre_free(m_pExclude);
+	if (m_pExcludeExtra) pcre_free(m_pExcludeExtra);
+}
+
 #ifndef FAR_NO_NAMESPACE
 };
 #endif
