@@ -7,6 +7,10 @@ Project: "LibCTiny"=.\LibCTiny\LibCTiny.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/CPP/LibSrc/LibCTiny", MLAAAAAA
+    .\libctiny
+    end source code control
 }}}
 
 Package=<4>
@@ -19,6 +23,10 @@ Project: "Pavel"=.\Pavel.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/CPP/LibSrc", GLAAAAAA
+    .
+    end source code control
 }}}
 
 Package=<4>
@@ -31,6 +39,10 @@ Project: "pcre"=.\pcre\pcre.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/CPP/LibSrc/pcre", NLAAAAAA
+    .\pcre
+    end source code control
 }}}
 
 Package=<4>
@@ -43,6 +55,10 @@ Global:
 
 Package=<5>
 {{{
+    begin source code control
+    "$/CPP/LibSrc", GLAAAAAA
+    .
+    end source code control
 }}}
 
 Package=<3>

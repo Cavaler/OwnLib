@@ -30,8 +30,8 @@ CFG=Pavel - Win32 Debug MT
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
-# PROP Scc_ProjName ""
-# PROP Scc_LocalPath ""
+# PROP Scc_ProjName "$/CPP/LibSrc"
+# PROP Scc_LocalPath "N:\SS"
 CPP=cl.exe
 RSC=rc.exe
 
@@ -171,7 +171,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /W3 /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /G5 /Zp2 /MD /W3 /GX /Ot /Og /Oi /Oy /Ob2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /FD /c
-# SUBTRACT CPP /Z<none> /YX
+# SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x419
 BSC32=bscmake.exe
@@ -271,6 +271,7 @@ LIB32=link.exe -lib
 # Begin Source File
 
 SOURCE=.\Ansi.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -283,10 +284,12 @@ SOURCE=.\CMapping.cpp
 # Begin Source File
 
 SOURCE=.\Collect.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
 SOURCE=.\CString.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -343,6 +346,7 @@ SOURCE=.\XLat.cpp
 # Begin Source File
 
 SOURCE=..\Include\Ansi.h
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -355,10 +359,12 @@ SOURCE=..\Include\CMapping.h
 # Begin Source File
 
 SOURCE=..\Include\Collect.h
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
 SOURCE=..\Include\CString.h
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
