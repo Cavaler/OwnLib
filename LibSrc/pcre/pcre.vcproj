@@ -14,8 +14,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug ML|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\DebugML"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\DebugML7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -62,8 +62,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release MT Intel|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseMT_Intel"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\ReleaseMT_Intel7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -113,8 +113,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release ML|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseML"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\ReleaseML7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -164,8 +164,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release MD Intel|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseMD_Intel"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\ReleaseMD_Intel7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -215,8 +215,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug MT|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\DebugMT"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\DebugMT7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -263,8 +263,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug MD|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\DebugMD"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\DebugMD7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -311,8 +311,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release MT|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseMT"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\ReleaseMT7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -362,8 +362,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release MD|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseMD"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\ReleaseMD7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -413,8 +413,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release ML Intel|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseML_Intel"
+			OutputDirectory=".\..\..\Lib7"
+			IntermediateDirectory=".\..\ReleaseML_Intel7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
