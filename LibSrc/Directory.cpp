@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <Directory.h>
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -86,4 +87,22 @@ string GetFileName(const string &strPath) {
 		(nPosS > nPosC) ? nPosS : nPosC;
 
 	return (nPos == string::npos) ? strPath : strPath.substr(nPos + 1);
+}
+
+string GetFullFileName(const string &strPath) {
+	DWORD dwSize = GetFullPathName(strPath.c_str(), 0, NULL, NULL);
+	if (!dwSize) return "";
+
+	vector<char> arrFull(dwSize);
+	GetFullPathName(strPath.c_str(), dwSize, &arrFull[0], NULL);
+	return &arrFull[0];
+}
+
+string GetFullFileName(const string &strPath, const string &strBase) {
+	char szCurDir[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, szCurDir);
+	SetCurrentDirectory(strBase.c_str());
+	string strFull = GetFullFileName(strPath);
+	SetCurrentDirectory(szCurDir);
+	return strFull;
 }

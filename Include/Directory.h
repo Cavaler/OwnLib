@@ -10,6 +10,8 @@ BOOL CreateDirectoriesForFile(const char *FileName);
 #ifdef _STRING_
 std::string CatFile(const std::string &strPath, const std::string &strFile);
 std::string GetFileName(const std::string &strPath);
+std::string GetFullFileName(const std::string &strPath);
+std::string GetFullFileName(const std::string &strPath, const std::string &strBase);
 #endif
 
 #endif
