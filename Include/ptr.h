@@ -133,7 +133,7 @@ public:
 	}
 };
 
-#if defined(_MSC_VER) && !defined (__ICL)
+#if defined(_MSC_VER) && (_MSC_VER < 1300) && !defined (__ICL)
 
 inline template ptrs<char>::ptrs<char>(ptrs::CPT pData)
 {
