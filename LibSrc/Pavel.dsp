@@ -244,7 +244,7 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /Zp2 /MD /W3 /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /FD /c
 # SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ob2 /X /I "E:\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /O3 /c
+# ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ox /Ot /Oa /Og /Oi /Ob2 /X /I "\CPP\STLport-4.5.3\stlport" /I "D:\MSDEV\VC98\Include" /I "\CPP\Include" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /D "_USE_INTEL_COMPILER" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /FD /O3 /c
 # ADD BASE RSC /l 0x419
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
