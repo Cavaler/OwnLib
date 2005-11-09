@@ -350,20 +350,46 @@ void CFarComboBoxItem::CreateItem(FarDialogItem *Item) {
 	CFarEditItem::CreateItem(Item);
 	Item->ListItems = *m_pData;
 
-	string strData(*m_pStorage);
-	for (int iItem = 0; iItem < Item->ListItems->ItemsNumber; iItem++) {
-		if (!strcmp(Item->ListItems->Items[iItem].Text, strData.c_str())) {
-			Item->ListItems->Items[iItem].Flags |= LIF_SELECTED;
-			break;
+	for (int iItem = 0; iItem < Item->ListItems->ItemsNumber; iItem++)
+		Item->ListItems->Items[iItem].Flags &= ~LIF_SELECTED;
+
+	CFarIntegerStorage *pInt = dynamic_cast<CFarIntegerStorage *>(m_pStorage);
+	if (pInt) {
+		int nValue = pInt->Get();
+		if ((nValue >= 0) && (nValue < Item->ListItems->ItemsNumber)) {
+			Item->ListItems->Items[nValue].Flags |= LIF_SELECTED;
+			strncpy(Item->Data, Item->ListItems->Items[nValue].Text, sizeof(Item->Data));
+		}
+	} else {
+		string strData(*m_pStorage);
+		for (int iItem = 0; iItem < Item->ListItems->ItemsNumber; iItem++) {
+			if (!strcmp(Item->ListItems->Items[iItem].Text, strData.c_str())) {
+				Item->ListItems->Items[iItem].Flags |= LIF_SELECTED;
+				break;
+			}
 		}
 	}
 }
 
+bool CFarComboBoxItem::Validate(FarDialogItem *Item) {
+	if (m_pValidator) {
+		if (Item->Flags & DIF_VAREDIT) {
+			if (!m_pValidator->Validate(Item->Ptr.PtrData, Item->Ptr.PtrLength)) return false;
+		} else {
+			if (!m_pValidator->Validate(Item->Data, sizeof(Item->Data))) return false;
+		}
+	}
+	return true;
+}
+
 void CFarComboBoxItem::StoreData(FarDialogItem *Item) {
-	if ((Item->ListPos >= 0) && (Item->ListPos < Item->ListItems->ItemsNumber))
-		m_pStorage->Put(Item->ListItems->Items[Item->ListPos].Text);
-	else
-		m_pStorage->Put("");
+//	if ((Item->ListPos >= 0) && (Item->ListPos < Item->ListItems->ItemsNumber))
+//		m_pStorage->Put(Item->ListItems->Items[Item->ListPos].Text);
+//	else
+//		m_pStorage->Put("");
+	char szText[16];
+	sprintf(szText, "%d", Item->ListPos);
+	m_pStorage->Put(szText);
 }
 
 CFarComboBoxItem::~CFarComboBoxItem() {

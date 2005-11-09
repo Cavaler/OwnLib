@@ -67,6 +67,7 @@ public:
 	CFarListData(FarList *pList, bool bCopy = false);
 	CFarListData(const char **ppszItems,int iItemCount);
 	CFarListData(const vector<CFarText> arrItems);
+	void Append(const char *szItem);
 	operator FarList *() const {return m_pList;}
 	~CFarListData();
 protected:
@@ -369,6 +370,7 @@ public:
 	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL);
 	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL);
 	virtual void CreateItem(FarDialogItem *Item);
+	virtual bool Validate(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual ~CFarComboBoxItem();
 protected:
