@@ -179,7 +179,7 @@ CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy) {
 
 CFarListData::CFarListData(const char **ppszItems,int iItemCount) : m_bFree(true) {
 	m_pList = new FarList;
-	m_pList->Items = new FarListItem[m_pList->ItemsNumber = iItemCount];
+	m_pList->Items = (FarListItem *)malloc((m_pList->ItemsNumber = iItemCount) * sizeof(FarListItem));
 	for (int nIndex = 0; nIndex < iItemCount; nIndex++) {
 		m_pList->Items[nIndex].Flags = 0;
 		memset(m_pList->Items[nIndex].Reserved, 0, sizeof(m_pList->Items[nIndex].Reserved));
@@ -189,7 +189,7 @@ CFarListData::CFarListData(const char **ppszItems,int iItemCount) : m_bFree(true
 
 CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true) {
 	m_pList = new FarList;
-	m_pList->Items = new FarListItem[m_pList->ItemsNumber = arrItems.size()];
+	m_pList->Items = (FarListItem *)malloc((m_pList->ItemsNumber = arrItems.size()) * sizeof(FarListItem));
 	for (int nIndex = 0; nIndex < (int)arrItems.size(); nIndex++) {
 		m_pList->Items[nIndex].Flags = 0;
 		memset(m_pList->Items[nIndex].Reserved, 0, sizeof(m_pList->Items[nIndex].Reserved));
@@ -197,9 +197,18 @@ CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true) {
 	}
 }
 
+void CFarListData::Append(const char *szItem) {
+	if (!m_bFree) return;
+	m_pList->Items = (FarListItem *)realloc(m_pList->Items, (m_pList->ItemsNumber + 1) * sizeof(FarListItem));
+	m_pList->Items[m_pList->ItemsNumber].Flags = 0;
+	memset(m_pList->Items[m_pList->ItemsNumber].Reserved, 0, sizeof(m_pList->Items[m_pList->ItemsNumber].Reserved));
+	strncpy(m_pList->Items[m_pList->ItemsNumber].Text, szItem, sizeof(m_pList->Items[m_pList->ItemsNumber].Text));
+	m_pList->ItemsNumber++;
+}
+
 CFarListData::~CFarListData() {
 	if (m_bFree) {
-		delete[] m_pList->Items;
+		free(m_pList->Items);
 		delete m_pList;
 	}
 }
