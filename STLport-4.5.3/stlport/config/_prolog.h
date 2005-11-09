@@ -9,8 +9,8 @@
 # if !(defined (_STLP_MSVC) && (_STLP_MSVC < 1200))
 #  pragma warning(push)
 # endif
-# pragma pack(push,8)
 # include <config/_msvc_warnings_off.h>
+# pragma pack(push,8)
 # endif
 
 
