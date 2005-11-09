@@ -37,7 +37,7 @@ extern const char *g_pszLastErrorTopic;
 extern const char *g_pszOKButton;
 extern HANDLE g_hSaveScreen;
 
-#ifdef _STRING_
+#if defined(_STRING_) || defined (_STLP_STRING)
 string FarMaskToRE(const char *szMask);
 #endif
 
@@ -54,7 +54,7 @@ protected:
 	pcre_extra *m_pExcludeExtra;
 };
 
-#ifdef _VECTOR_
+#if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
 			 const int *piBreakKeys = NULL, int *nBreakCode = NULL);
