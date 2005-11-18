@@ -3,11 +3,12 @@
 
 template<class HandleType, int Null = (int)INVALID_HANDLE_VALUE, void *Close = CloseHandle> class CHandleTempl {
 public:
-	CHandle() : m_hHandle((HandleType)Null) {}
-	CHandle(HandleType handle) : m_hHandle(handle) {}
-	void operator = (HandleType handle) {m_hHandle = handle;}
-	~CHandle() {if (m_hHandle != (HandleType)Null) ((CloseFunc)Close)(m_hHandle);}
+	CHandleTempl() : m_hHandle((HandleType)Null) {}
+	CHandleTempl(HandleType handle) : m_hHandle(handle) {}
+	void operator =(HandleType handle) {m_hHandle = handle;}
+	~CHandleTempl() {if (m_hHandle != (HandleType)Null) ((CloseFunc)Close)(m_hHandle);}
 
+	HandleType *operator &() {return &m_hHandle;}
 	operator HandleType &() {return m_hHandle;}
 protected:
 	typedef void (* CloseFunc)(HandleType _h);
@@ -15,6 +16,7 @@ protected:
 };
 
 typedef CHandleTempl<HANDLE> CHandle;
+typedef CHandleTempl<HANDLE, (int)INVALID_HANDLE_VALUE, FindClose> CHFind;
 typedef CHandleTempl<HKEY, NULL, RegCloseKey> CHKey;
 
 #endif
