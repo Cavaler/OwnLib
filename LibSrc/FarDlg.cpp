@@ -245,11 +245,11 @@ void CFarSizeConverter::ToString(int iValue, char *pszBuffer, int nSize) {
 	if ((iValue >= 1024) && (iValue%256 == 0)) {
 		if ((iValue >= 1024*1024) && (iValue % (256*1024) == 0)) {
 			if ((iValue >= 1024*1024*1024) && (iValue % (256*1024*1024) == 0))
-				_snprintf(pszBuffer, nSize, "%f Gb", (float)iValue/(1024*1024*1024));
+				_snprintf(pszBuffer, nSize, "%.2f Gb", (float)iValue/(1024*1024*1024));
 			else
-				_snprintf(pszBuffer, nSize, "%f Mb", (float)iValue/(1024*1024));
+				_snprintf(pszBuffer, nSize, "%.2f Mb", (float)iValue/(1024*1024));
 		} else
-			_snprintf(pszBuffer, nSize, "%f Kb", (float)iValue/1024);
+			_snprintf(pszBuffer, nSize, "%.2f Kb", (float)iValue/1024);
 	} else
 		_snprintf(pszBuffer, nSize, "%d", iValue);
 }
