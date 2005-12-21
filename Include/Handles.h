@@ -11,7 +11,7 @@ public:
 	HandleType *operator &() {return &m_hHandle;}
 	operator HandleType &() {return m_hHandle;}
 protected:
-	typedef void (* CloseFunc)(HandleType _h);
+	typedef void (WINAPI * CloseFunc)(HandleType _h);
 	HandleType m_hHandle;
 };
 
