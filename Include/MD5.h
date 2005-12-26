@@ -35,9 +35,6 @@
 
 #define MD5_MSG_DIGEST_SIZE ( 16 )
 
-/*----------------------------------------------------------
-	@class MD5 context.
-----------------------------------------------------------*/
 class CMD5 {
 	private:
 	DWORD m_State[4];	// state (ABCD)
@@ -48,12 +45,12 @@ class CMD5 {
 	void Transform(const BYTE block[64]);
 
 	public:
-	//@cmember Constructor.
-	CMD5(void);
-	//@cmember Adds a new data to the hash generator.
-	void Update(const BYTE*InpBuf,UINT InpLen);
-	//@cmember Generates output buffer.
+	CMD5();
+	CMD5(const BYTE* InpBuf, UINT InpLen);
+
+	void Update(const BYTE* InpBuf, UINT InpLen);
 	void Final(BYTE Result[16]);
+	void FinalHex(char *Buffer);
 };
 
 #endif

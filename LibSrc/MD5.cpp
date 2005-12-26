@@ -27,6 +27,7 @@
 ***********************************************************/
 
 #include <memory.h>
+#include <stdio.h>
 #include "MD5.h"
 
 // Constants for MD5Transform routine.
@@ -231,6 +232,17 @@ CMD5::CMD5( void )
 	m_State[ 3 ] = 0x10325476;
 	}
 
+CMD5::CMD5(const BYTE* InpBuf, UINT InpLen) {
+	m_Count[ 0 ] = 0;
+	m_Count[ 1 ] = 0;
+	// Load magic initialization constants.
+	m_State[ 0 ] = 0x67452301;
+	m_State[ 1 ] = 0xefcdab89;
+	m_State[ 2 ] = 0x98badcfe;
+	m_State[ 3 ] = 0x10325476;
+	Update(InpBuf, InpLen);
+}
+
 /*----------------------------------------------------------
 	MD5 block update operation.
 	Continues an MD5 message-digest operation, processing 
@@ -300,3 +312,10 @@ void CMD5::Final(
 	// Zeroize sensitive information.
 	memset( this, 0, sizeof( *this ) );
 	}
+
+void CMD5::FinalHex(char *Buffer) {
+	BYTE Digest[16];
+	Final(Digest);
+	for (int c = 0; c < 16; c++)
+		sprintf(Buffer+c*2, "%02x", Digest[c]);
+}
