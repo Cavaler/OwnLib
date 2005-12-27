@@ -1,10 +1,6 @@
 #ifndef __STRINGEX_H
 #define __STRINGEX_H
 
-#ifdef StrDup
-#undef StrDup
-#endif
-#define StrDup(Str) strcpy((char *)malloc(strlen(Str)+1),Str)
 char *strechr(const char *str, int ch);
 void *memechr(const void *buf, int c, size_t count);
 
@@ -23,6 +19,7 @@ void ParseWordsTo(char *Line,CStringCollection &Coll);
 #if (defined _XSTRING_) || (defined _STLP_STRING)
 int  GetWord(string Line,string &Word,int RetWhat=GW_SKIPLEN);
 int  GetStripWord(string &Line,string &Word);
+string FormatStr(const char *szFormat, ...);
 
 #if (defined _VECTOR_) || (defined _STLP_VECTOR)
 void ParseWordsTo(string Line,vector<string> &Coll);

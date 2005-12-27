@@ -2,6 +2,7 @@
 #include "Collect.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include <vector>
 #include <string>
@@ -89,6 +90,17 @@ int  GetStripWord(string &strLine, string &strWord) {
 	return nStrip;
 }
 
+string FormatStr(const char *szFormat, ...) {
+	va_list List;
+	va_start(List, szFormat);
+	vector<char> strBuffer(1024);
+	while (_vsnprintf(&strBuffer[0], strBuffer.size(), szFormat, List) == -1) {
+		strBuffer.resize(strBuffer.size()*2);
+	}
+	va_end(List);
+	return &strBuffer[0];
+}
+
 void ParseWordsTo(string Line,vector<string> &Coll);
 
 void ParseWordsTo(char *Line,CStringCollection &Coll) {
@@ -99,7 +111,7 @@ void ParseWordsTo(char *Line,CStringCollection &Coll) {
 		J=0;
 		while ((Line[I]!=' ')&&(Line[I]!='\t')&&(Line[I])) Word[J++]=Line[I++];
 		Word[J]=0;
-		if (Word[0]) Coll.Insert(StrDup(Word));
+		if (Word[0]) Coll.Insert(_strdup(Word));
 	}
 }
 
