@@ -7,7 +7,7 @@
 #include <string>
 using namespace std;
 
-BOOL DirectoryExists(char *DirName) {
+BOOL DirectoryExists(const char *DirName) {
 	int Length=strlen(DirName);
 	if (Length==0) return TRUE;
 	if ((Length==1)&&(DirName[0]=='\\')) return TRUE;
@@ -18,10 +18,9 @@ BOOL DirectoryExists(char *DirName) {
 		return ((Drive>='A')&&(Drive<='Z'))?(Drives&(1<<(Drive-'A'))):FALSE;
 	}
 
-	BOOL Slashed=FALSE;
-	if (DirName[Length-1]=='\\') {Slashed=TRUE;DirName[Length-1]=0;}
-	DWORD Attr=GetFileAttributes(DirName);
-	if (Slashed) DirName[Length-1]='\\';
+	string strPath = DirName;
+	if (DirName[Length-1]=='\\') strPath.erase(strPath.end()-1);
+	DWORD Attr=GetFileAttributes(strPath.c_str());
 	return ((Attr!=0xFFFFFFFF)&&(Attr&FILE_ATTRIBUTE_DIRECTORY));
 }
 
@@ -75,8 +74,15 @@ BOOL CreateDirectoriesForFile(const char *FileName) {
 	return Result;
 }
 
+string AddSlash(const string &strPath) {
+	if (strPath.length() == 0) return strPath;
+	if ((strPath.length() == 2) && (strPath[1] == ':')) return strPath;
+	if (strPath[strPath.length() - 1] != '\\') return strPath + '\\';
+	return strPath;
+}
+
 string CatFile(const string &strPath, const string &strFile) {
-	return strPath + ((strPath.length() && (strPath[strPath.length() - 1] != '\\') ) ? "\\" : "") + strFile;
+	return AddSlash(strPath) + strFile;
 }
 
 string GetFileName(const string &strPath) {
