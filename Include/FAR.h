@@ -54,6 +54,15 @@ protected:
 	pcre_extra *m_pExcludeExtra;
 };
 
+class CFarSaveScreen {
+public:
+	CFarSaveScreen(const char *szMessage = NULL);
+	CFarSaveScreen(int X1, int Y1, int X2, int Y2, const char *szMessage = NULL);
+	~CFarSaveScreen();
+protected:
+	HANDLE m_hSave;
+};
+
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,

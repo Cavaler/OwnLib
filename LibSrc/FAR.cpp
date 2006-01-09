@@ -299,6 +299,20 @@ CFarMaskSet::~CFarMaskSet() {
 	if (m_pExcludeExtra) pcre_free(m_pExcludeExtra);
 }
 
+CFarSaveScreen::CFarSaveScreen(const char *szMessage) {
+	m_hSave = StartupInfo.SaveScreen(0, 0, -1, -1);
+	if (szMessage) Message(0, NULL, 2, 0, "", szMessage);
+}
+
+CFarSaveScreen::CFarSaveScreen(int X1, int Y1, int X2, int Y2, const char *szMessage) {
+	m_hSave = StartupInfo.SaveScreen(X1, Y1, X2, Y2);
+	if (szMessage) Message(0, NULL, 2, 0, "", szMessage);
+}
+
+CFarSaveScreen::~CFarSaveScreen() {
+	StartupInfo.RestoreScreen(m_hSave);
+}
+
 #ifndef FAR_NO_NAMESPACE
 };
 #endif
