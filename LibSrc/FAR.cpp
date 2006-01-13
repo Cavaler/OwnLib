@@ -238,6 +238,7 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 				int nErr;
 				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
 				if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
+				strCurMask = "";
 			}
 			szMasks++;
 			break;
