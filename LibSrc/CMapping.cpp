@@ -7,6 +7,11 @@ void *CFileMapping::Open(const char *szFileName) {
 	m_hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (m_hFile == INVALID_HANDLE_VALUE) return NULL;
 
+	if (GetFileSize(m_hFile, NULL) == 0) {		// Cannot map, emulating
+		m_pData = (void *)!NULL;
+		return m_pData;
+	}
+
 	m_hMapping = CreateFileMapping(m_hFile, NULL, PAGE_READONLY|SEC_COMMIT, 0, 0, NULL);
 	if (m_hMapping == NULL) {
 		CloseHandle(m_hFile);m_hFile = INVALID_HANDLE_VALUE;
