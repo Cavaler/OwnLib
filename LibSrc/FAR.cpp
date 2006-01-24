@@ -216,7 +216,7 @@ string FarMaskToRE(const char *szMask) {
 		szCur++;
 	}
 
-	if (strspn(szMask, ".?*[")) strRE += "$";	// Masks without any of these are non-terminal
+	if (strcspn(szMask, ".?*[") != strlen(szMask)) strRE += "$";	// Masks without any of these are non-terminal
 	return strRE;
 }
 
