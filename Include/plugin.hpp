@@ -7,14 +7,14 @@
   Plugin API for FAR Manager 1.70
 
   Copyright (c) 1996-2000 Eugene Roshal
-  Copyright (c) 2000-2004 FAR group
+  Copyright (c) 2000-2006 FAR group
 */
-/* Revision: 1.246 29.05.2004 $ */
+/* Revision: 1.256 29.03.2006 $ */
 
 
 #define MAKEFARVERSION(major,minor,build) ( ((major)<<8) | (minor) | ((build)<<16))
 
-#define FARMANAGERVERSION MAKEFARVERSION(1,70,1790)
+#define FARMANAGERVERSION MAKEFARVERSION(1,70,2087)
 
 
 #if !defined(_INC_WINDOWS) && !defined(_WINDOWS_)
@@ -64,6 +64,9 @@
 #else
   #pragma pack(push,2)
   #if _MSC_VER
+    #ifdef _export
+      #undef _export
+    #endif
     #define _export
   #endif
 #endif
@@ -71,8 +74,6 @@
 #define NM 260
 
 #define FARMACRO_KEY_EVENT  (KEY_EVENT|0x8000)
-
-#include "plugin_viewer.hpp"
 
 // To ensure compatibility of plugin.hpp with compilers not supporting C++,
 // you can #define _FAR_NO_NAMELESS_UNIONS. In this case, to access,
@@ -384,9 +385,9 @@ struct FarList
 struct FarListTitles
 {
   int   TitleLen;
-  const char *Title;
+  char *Title;
   int   BottomLen;
-  const char *Bottom;
+  char *Bottom;
 };
 
 struct FarListColors{
@@ -436,7 +437,7 @@ struct FarDialogItem
 struct FarDialogItemData
 {
   int   PtrLength;
-  const char *PtrData;
+  char *PtrData;
 };
 
 #define Dlg_RedrawDialog(Info,hDlg)            Info.SendDlgMessage(hDlg,DM_REDRAW,0,0)
@@ -871,6 +872,7 @@ enum ADVANCED_CONTROL_COMMANDS{
   ACTL_GETWCHARMODE,
   ACTL_GETPLUGINMAXREADDATA,
   ACTL_GETDIALOGSETTINGS,
+  ACTL_GETSHORTWINDOWINFO,
 };
 
 
@@ -1025,6 +1027,85 @@ typedef int (WINAPI *FARAPIADVCONTROL)(
 );
 
 
+enum VIEWER_CONTROL_COMMANDS {
+  VCTL_GETINFO,
+  VCTL_QUIT,
+  VCTL_REDRAW,
+  VCTL_SETKEYBAR,
+  VCTL_SETPOSITION,
+  VCTL_SELECT,
+};
+
+enum VIEWER_OPTIONS {
+  VOPT_SAVEFILEPOSITION=1,
+  VOPT_AUTODETECTTABLE=2,
+};
+
+typedef union {
+  __int64 i64;
+  struct {
+    DWORD LowPart;
+    LONG  HighPart;
+  } Part;
+} FARINT64;
+
+struct ViewerSelect
+{
+  FARINT64 BlockStartPos;
+  int      BlockLen;
+};
+
+enum VIEWER_SETPOS_FLAGS {
+  VSP_NOREDRAW    = 0x0001,
+  VSP_PERCENT     = 0x0002,
+  VSP_RELATIVE    = 0x0004,
+  VSP_NORETNEWPOS = 0x0008,
+};
+
+struct ViewerSetPosition
+{
+  DWORD Flags;
+  FARINT64 StartPos;
+  int   LeftPos;
+};
+
+struct ViewerMode{
+  int UseDecodeTable;
+  int TableNum;
+  int AnsiMode;
+  int Unicode;
+  int Wrap;
+  int TypeWrap;
+  int Hex;
+  DWORD Reserved[4];
+};
+
+struct ViewerInfo
+{
+  int    StructSize;
+  int    ViewerID;
+  const char *FileName;
+  FARINT64 FileSize;
+  FARINT64 FilePos;
+  int    WindowSizeX;
+  int    WindowSizeY;
+  DWORD  Options;
+  int    TabSize;
+  struct ViewerMode CurMode;
+  int    LeftPos;
+  DWORD  Reserved3;
+};
+
+typedef int (WINAPI *FARAPIVIEWERCONTROL)(
+  int Command,
+  void *Param
+);
+
+enum VIEWER_EVENTS {
+  VE_READ     =0,
+  VE_CLOSE    =1
+};
+
 
 enum EDITOR_EVENTS {
   EE_READ,
@@ -1086,7 +1167,7 @@ struct EditorSetParameter
   int Type;
   union {
     int iParam;
-    const char *cParam;
+    char *cParam;
     DWORD Reserved1;
   } Param;
   DWORD Flags;
@@ -1107,19 +1188,27 @@ struct EditorGetString
 struct EditorSetString
 {
   int StringNumber;
-  const char *StringText;
-  const char *StringEOL;
+  char *StringText;
+  char *StringEOL;
   int StringLength;
 };
 
+enum EXPAND_TABS {
+  EXPAND_NOTABS,
+  EXPAND_ALLTABS,
+  EXPAND_NEWTABS
+};
+
+
 enum EDITOR_OPTIONS {
-  EOPT_EXPANDTABS        = 0x00000001,
+  EOPT_EXPANDALLTABS     = 0x00000001,
   EOPT_PERSISTENTBLOCKS  = 0x00000002,
   EOPT_DELREMOVESBLOCKS  = 0x00000004,
   EOPT_AUTOINDENT        = 0x00000008,
   EOPT_SAVEFILEPOSITION  = 0x00000010,
   EOPT_AUTODETECTTABLE   = 0x00000020,
   EOPT_CURSORBEYONDEOL   = 0x00000040,
+  EOPT_EXPANDONLYNEWTABS = 0x00000080,
 };
 
 
@@ -1205,6 +1294,10 @@ struct EditorConvertPos
 };
 
 
+enum EDITORCOLORFLAGS{
+  ECF_TAB1 = 0x10000,
+};
+
 struct EditorColor
 {
   int StringNumber;
@@ -1217,7 +1310,7 @@ struct EditorColor
 struct EditorSaveFile
 {
   char FileName[NM];
-  const char *FileEOL;
+  char *FileEOL;
 };
 
 typedef int (WINAPI *FARAPIEDITORCONTROL)(
@@ -1302,8 +1395,8 @@ typedef DWORD (WINAPI *FARSTDEXPANDENVIRONMENTSTR)(
 );
 
 enum XLATMODE{
-  XLAT_SWITCHKEYBLAYOUT = 0x0000001UL,
-  XLAT_SWITCHKEYBBEEP   = 0x0000002UL,
+  XLAT_SWITCHKEYBLAYOUT  = 0x00000001UL,
+  XLAT_SWITCHKEYBBEEP    = 0x00000002UL,
 };
 
 typedef char*   (WINAPI *FARSTDXLAT)(char *Line,int StartPos,int EndPos,const struct CharTableSet *TableSet,DWORD Flags);
@@ -1428,7 +1521,7 @@ struct PluginStartupInfo
   FARAPIDIALOGEX         DialogEx;
   FARAPISENDDLGMESSAGE   SendDlgMessage;
   FARAPIDEFDLGPROC       DefDlgProc;
-  DWORD                  Reserved[1];
+  DWORD                  Reserved;
   FARAPIVIEWERCONTROL    ViewerControl;
 };
 
@@ -1467,15 +1560,15 @@ struct InfoPanelLine
 
 struct PanelMode
 {
-  const char  *ColumnTypes;
-  const char  *ColumnWidths;
-  const char **ColumnTitles;
+  char  *ColumnTypes;
+  char  *ColumnWidths;
+  char **ColumnTitles;
   int    FullScreen;
   int    DetailedStatus;
   int    AlignExtensions;
   int    CaseConversion;
-  const char  *StatusColumnTypes;
-  const char  *StatusColumnWidths;
+  char  *StatusColumnTypes;
+  char  *StatusColumnWidths;
   DWORD  Reserved[2];
 };
 
@@ -1518,14 +1611,14 @@ enum OPENPLUGININFO_SORTMODES {
 
 struct KeyBarTitles
 {
-  const char *Titles[12];
-  const char *CtrlTitles[12];
-  const char *AltTitles[12];
-  const char *ShiftTitles[12];
+  char *Titles[12];
+  char *CtrlTitles[12];
+  char *AltTitles[12];
+  char *ShiftTitles[12];
 
-  const char *CtrlShiftTitles[12];
-  const char *AltShiftTitles[12];
-  const char *CtrlAltTitles[12];
+  char *CtrlShiftTitles[12];
+  char *AltShiftTitles[12];
+  char *CtrlAltTitles[12];
 };
 
 
@@ -1574,18 +1667,19 @@ enum OPENPLUGIN_OPENFROM{
 };
 
 enum FAR_PKF_FLAGS {
-  PKF_CONTROL = 0x0001,
-  PKF_ALT     = 0x0002,
-  PKF_SHIFT   = 0x0004,
+  PKF_CONTROL     = 0x00000001,
+  PKF_ALT         = 0x00000002,
+  PKF_SHIFT       = 0x00000004,
+  PKF_PREPROCESS  = 0x00080000, // for "Key", function ProcessKey()
 };
 
 enum FAR_EVENTS {
-  FE_CHANGEVIEWMODE,
-  FE_REDRAW,
-  FE_IDLE,
-  FE_CLOSE,
-  FE_BREAK,
-  FE_COMMAND
+  FE_CHANGEVIEWMODE =0,
+  FE_REDRAW         =1,
+  FE_IDLE           =2,
+  FE_CLOSE          =3,
+  FE_BREAK          =4,
+  FE_COMMAND        =5,
 };
 
 
@@ -1616,11 +1710,11 @@ int    WINAPI _export ProcessEditorInput(const INPUT_RECORD *Rec);
 int    WINAPI _export ProcessEvent(HANDLE hPlugin,int Event,void *Param);
 int    WINAPI _export ProcessHostFile(HANDLE hPlugin,struct PluginPanelItem *PanelItem,int ItemsNumber,int OpMode);
 int    WINAPI _export ProcessKey(HANDLE hPlugin,int Key,unsigned int ControlState);
+int    WINAPI _export ProcessViewerEvent(int Event,void *Param);
 int    WINAPI _export PutFiles(HANDLE hPlugin,struct PluginPanelItem *PanelItem,int ItemsNumber,int Move,int OpMode);
 int    WINAPI _export SetDirectory(HANDLE hPlugin,const char *Dir,int OpMode);
 int    WINAPI _export SetFindList(HANDLE hPlugin,const struct PluginPanelItem *PanelItem,int ItemsNumber);
 void   WINAPI _export SetStartupInfo(const struct PluginStartupInfo *Info);
-
 
 #ifdef __cplusplus
 };
