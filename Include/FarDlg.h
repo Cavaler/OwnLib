@@ -52,14 +52,15 @@ protected:
 
 class CFarText {
 public:
-	CFarText() : m_pszText(NULL) {}
-	CFarText(const CFarText &Text) : m_pszText(Text.m_pszText) {}
-	CFarText(int nMsgID) : m_pszText(GetMsg(nMsgID)) {}
-	CFarText(int nMsgID, const char *pszModule) : m_pszText(GetMsgEx(nMsgID, pszModule)) {}
-	CFarText(const char *pszText) : m_pszText(pszText) {}
-	operator const char *() const {return m_pszText;}
+	CFarText() : m_strHolder() {}
+	CFarText(const CFarText &Text) : m_strHolder(Text.m_strHolder.c_str()) {}
+	CFarText(int nMsgID) : m_strHolder(GetMsg(nMsgID)) {}
+	CFarText(int nMsgID, const char *pszModule) : m_strHolder(GetMsgEx(nMsgID, pszModule)) {}
+	CFarText(const char *pszText) : m_strHolder(pszText) {}
+	CFarText(const string &strText) : m_strHolder(strText.c_str()) {}
+	operator const char *() const {return m_strHolder.c_str();}
 protected:
-	const char *m_pszText;
+	string m_strHolder;
 };
 
 class CFarListData {
@@ -244,7 +245,7 @@ public:
 protected:
 	int X1,Y1,X2,Y2;
 	DWORD Flags;
-	const char *Text;
+	string Text;
 };
 
 class CFarCustomItem:public CFarDialogItem {

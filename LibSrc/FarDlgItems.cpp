@@ -27,7 +27,7 @@ void CFarDialogItem::CreateItem(FarDialogItem *Item) {
 	Item->Selected=FALSE;
 	Item->Flags=Flags;
 	Item->DefaultButton=FALSE;
-	if (Text) strcpy(Item->Data,Text); else Item->Data[0]=0;
+	strcpy(Item->Data,Text.c_str());
 }
 
 CFarDialogItem::~CFarDialogItem() {
