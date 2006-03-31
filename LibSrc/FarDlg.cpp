@@ -125,7 +125,9 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 		}
 		if (Result<0) break;
 
-		if (ValidExitCodes==-1) {
+		if (ValidExitCodes==0) {
+//			break;
+		} else if (ValidExitCodes==-1) {
 			if (Result!=ItemsNumber-2) break;
 			Result=0;
 		} else {
