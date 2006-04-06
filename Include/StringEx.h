@@ -16,6 +16,7 @@ const char *NextWord(const char *&szLine, int &nLength, int &nCount);
 void ParseWordsTo(char *Line,CStringCollection &Coll);
 #endif
 
+char *FormatSz(const char *szFormat, ...);
 #if (defined _XSTRING_) || (defined _STLP_STRING)
 int  GetWord(string Line,string &Word,int RetWhat=GW_SKIPLEN);
 int  GetStripWord(string &Line,string &Word);

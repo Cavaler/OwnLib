@@ -101,6 +101,17 @@ string FormatStr(const char *szFormat, ...) {
 	return &strBuffer[0];
 }
 
+char *FormatSz(const char *szFormat, ...) {
+	va_list List;
+	va_start(List, szFormat);
+	vector<char> strBuffer(1024);
+	while (_vsnprintf(&strBuffer[0], strBuffer.size(), szFormat, List) == -1) {
+		strBuffer.resize(strBuffer.size()*2);
+	}
+	va_end(List);
+	return strdup(&strBuffer[0]);
+}
+
 void ParseWordsTo(string Line,vector<string> &Coll);
 
 void ParseWordsTo(char *Line,CStringCollection &Coll) {
