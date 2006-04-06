@@ -1188,8 +1188,8 @@ struct EditorGetString
 struct EditorSetString
 {
   int StringNumber;
-  char *StringText;
-  char *StringEOL;
+  const char *StringText;
+  const char *StringEOL;
   int StringLength;
 };
 
@@ -1560,15 +1560,15 @@ struct InfoPanelLine
 
 struct PanelMode
 {
-  char  *ColumnTypes;
-  char  *ColumnWidths;
-  char **ColumnTitles;
+  const char  *ColumnTypes;
+  const char  *ColumnWidths;
+  const char **ColumnTitles;
   int    FullScreen;
   int    DetailedStatus;
   int    AlignExtensions;
   int    CaseConversion;
-  char  *StatusColumnTypes;
-  char  *StatusColumnWidths;
+  const char  *StatusColumnTypes;
+  const char  *StatusColumnWidths;
   DWORD  Reserved[2];
 };
 
@@ -1611,14 +1611,14 @@ enum OPENPLUGININFO_SORTMODES {
 
 struct KeyBarTitles
 {
-  char *Titles[12];
-  char *CtrlTitles[12];
-  char *AltTitles[12];
-  char *ShiftTitles[12];
+  const char *Titles[12];
+  const char *CtrlTitles[12];
+  const char *AltTitles[12];
+  const char *ShiftTitles[12];
 
-  char *CtrlShiftTitles[12];
-  char *AltShiftTitles[12];
-  char *CtrlAltTitles[12];
+  const char *CtrlShiftTitles[12];
+  const char *AltShiftTitles[12];
+  const char *CtrlAltTitles[12];
 };
 
 
