@@ -383,13 +383,17 @@ bool CFarComboBoxItem::Validate(FarDialogItem *Item) {
 }
 
 void CFarComboBoxItem::StoreData(FarDialogItem *Item) {
-//	if ((Item->ListPos >= 0) && (Item->ListPos < Item->ListItems->ItemsNumber))
-//		m_pStorage->Put(Item->ListItems->Items[Item->ListPos].Text);
-//	else
-//		m_pStorage->Put("");
-	char szText[16];
-	sprintf(szText, "%d", Item->ListPos);
-	m_pStorage->Put(szText);
+	CFarIntegerStorage *pInt = dynamic_cast<CFarIntegerStorage *>(m_pStorage);
+	CFarTextStorage *pTxt = dynamic_cast<CFarTextStorage *>(m_pStorage);
+	if (pInt) {
+		pInt->Put(Item->ListPos);
+	} else if (pTxt) {
+		pTxt->Put(Item->Data);
+	} else {
+		char szText[16];
+		sprintf(szText, "%d", Item->ListPos);
+		m_pStorage->Put(szText);
+	}
 }
 
 CFarComboBoxItem::~CFarComboBoxItem() {
