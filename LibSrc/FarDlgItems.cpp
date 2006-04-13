@@ -386,7 +386,16 @@ void CFarComboBoxItem::StoreData(FarDialogItem *Item) {
 	CFarIntegerStorage *pInt = dynamic_cast<CFarIntegerStorage *>(m_pStorage);
 	CFarTextStorage *pTxt = dynamic_cast<CFarTextStorage *>(m_pStorage);
 	if (pInt) {
-		pInt->Put(Item->ListPos);
+//		pInt->Put(Item->ListPos);
+		pInt->Put(-1);
+
+		FarList *pList = *m_pData;
+		for (int nPos = 0; nPos < pList->ItemsNumber; nPos++) {
+			if (!strcmp(pList->Items[nPos].Text, Item->Data)) {
+				pInt->Put(nPos);
+				break;
+			}
+		}
 	} else if (pTxt) {
 		pTxt->Put(Item->Data);
 	} else {
