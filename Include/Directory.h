@@ -8,6 +8,7 @@ BOOL CreateDirectories(const char *DirName);
 BOOL CreateDirectoriesForFile(const char *FileName);
 
 #ifdef _STRING_
+std::string DelSlash(const std::string &strPath);
 std::string AddSlash(const std::string &strPath);
 std::string CatFile(const std::string &strPath, const std::string &strFile);
 std::string GetFileName(const std::string &strPath);

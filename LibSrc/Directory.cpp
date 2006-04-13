@@ -74,6 +74,13 @@ BOOL CreateDirectoriesForFile(const char *FileName) {
 	return Result;
 }
 
+string DelSlash(const string &strPath) {
+	if (strPath.length() == 0) return strPath;
+	if ((strPath.length() == 3) && (strPath[1] == ':')) return strPath;
+	if (strPath[strPath.length() - 1] == '\\') return strPath.substr(0, strPath.length()-1);
+	return strPath;
+}
+
 string AddSlash(const string &strPath) {
 	if (strPath.length() == 0) return strPath;
 	if ((strPath.length() == 2) && (strPath[1] == ':')) return strPath;
