@@ -22,6 +22,7 @@ CFG=pcre - Win32 Debug
 !MESSAGE "pcre - Win32 Release Intel" (based on "Win32 (x86) Static Library")
 !MESSAGE "pcre - Win32 Debug NET" (based on "Win32 (x86) Static Library")
 !MESSAGE "pcre - Win32 Release NET" (based on "Win32 (x86) Static Library")
+!MESSAGE "pcre - Win32 Release WDebug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -152,6 +153,31 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo /out:"..\..\Lib\pcreMD.lib"
 # ADD LIB32 /nologo /out:"..\..\Lib\pcreMD7.lib"
 
+!ELSEIF  "$(CFG)" == "pcre - Win32 Release WDebug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "pcre___Win32_Release_WDebug"
+# PROP BASE Intermediate_Dir "pcre___Win32_Release_WDebug"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\..\Lib"
+# PROP Intermediate_Dir "..\ReleaseMD+d"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ot /Oa /Og /Oi /Oy /Ob2 /Gy /D "NDEBUG" /D "STATIC" /D "WIN32" /D "_WINDOWS" /D POSIX_MALLOC_THRESHOLD=16 /D "SUPPORT_UTF8" /D "PCRE_STATIC" /FD /GF /c
+# SUBTRACT BASE CPP /Ox /YX
+# ADD CPP /nologo /G6 /Zp2 /MD /W3 /GX /Ot /Oa /Og /Oi /Oy /Ob2 /Gy /D "NDEBUG" /D "STATIC" /D "WIN32" /D "_WINDOWS" /D POSIX_MALLOC_THRESHOLD=16 /D "SUPPORT_UTF8" /D "PCRE_STATIC" /FD /GF /c
+# SUBTRACT CPP /Ox /YX
+# ADD BASE RSC /l 0x419
+# ADD RSC /l 0x419
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo /out:"..\..\Lib\pcreMD.lib"
+# ADD LIB32 /nologo /out:"..\..\Lib\pcreMD+d.lib"
+
 !ENDIF 
 
 # Begin Target
@@ -161,6 +187,7 @@ LIB32=link.exe -lib
 # Name "pcre - Win32 Release Intel"
 # Name "pcre - Win32 Debug NET"
 # Name "pcre - Win32 Release NET"
+# Name "pcre - Win32 Release WDebug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;for;f90"
@@ -228,6 +255,11 @@ SOURCE=.\DOS866.c
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
+!ELSEIF  "$(CFG)" == "pcre - Win32 Release WDebug"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
 !ENDIF 
 
 # End Source File
@@ -257,6 +289,11 @@ SOURCE=.\OEM.c
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "pcre - Win32 Release NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "pcre - Win32 Release WDebug"
 
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1

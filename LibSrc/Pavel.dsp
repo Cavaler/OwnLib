@@ -22,6 +22,7 @@ CFG=Pavel - Win32 Debug NET
 !MESSAGE "Pavel - Win32 Release Intel" (based on "Win32 (x86) Static Library")
 !MESSAGE "Pavel - Win32 Debug NET" (based on "Win32 (x86) Static Library")
 !MESSAGE "Pavel - Win32 Release NET" (based on "Win32 (x86) Static Library")
+!MESSAGE "Pavel - Win32 Release WDebug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -154,6 +155,31 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo /out:"..\Lib\PavelMD.lib"
 # ADD LIB32 /nologo /out:"..\Lib\PavelMD7.lib"
 
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Pavel___Win32_Release_WDebug"
+# PROP BASE Intermediate_Dir "Pavel___Win32_Release_WDebug"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "..\Lib"
+# PROP Intermediate_Dir ".\ReleaseMD+d"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G5 /Zp2 /MD /W3 /GR /GX /Ot /Oa /Og /Oi /Oy /Ob2 /Gy /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /GF /c
+# SUBTRACT BASE CPP /Ox /YX
+# ADD CPP /nologo /G5 /Zp2 /MD /W3 /GR /GX /Zi /Ot /Oa /Og /Oi /Oy /Ob2 /Gy /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "FAR_USE_NAMESPACE" /D "PCRE_STATIC" /FD /GF /c
+# SUBTRACT CPP /Ox /YX
+# ADD BASE RSC /l 0x409
+# ADD RSC /l 0x409
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo /out:"..\Lib\PavelMD.lib"
+# ADD LIB32 /nologo /out:"..\Lib\PavelMD+d.lib"
+
 !ENDIF 
 
 # Begin Target
@@ -163,6 +189,7 @@ LIB32=link.exe -lib
 # Name "Pavel - Win32 Release Intel"
 # Name "Pavel - Win32 Debug NET"
 # Name "Pavel - Win32 Release NET"
+# Name "Pavel - Win32 Release WDebug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;for;f90"
@@ -188,6 +215,11 @@ SOURCE=.\Ansi.cpp
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "Pavel - Win32 Release NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
 
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
@@ -229,6 +261,11 @@ SOURCE=.\Collect.cpp
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
 !ENDIF 
 
 # End Source File
@@ -254,6 +291,11 @@ SOURCE=.\CString.cpp
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "Pavel - Win32 Release NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
 
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
@@ -339,6 +381,11 @@ SOURCE=..\Include\Ansi.h
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
 !ENDIF 
 
 # End Source File
@@ -376,6 +423,11 @@ SOURCE=..\Include\Collect.h
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
 !ENDIF 
 
 # End Source File
@@ -401,6 +453,11 @@ SOURCE=..\Include\CString.h
 # PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "Pavel - Win32 Release NET"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Pavel - Win32 Release WDebug"
 
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
@@ -439,10 +496,6 @@ SOURCE=..\Include\MD5.h
 # Begin Source File
 
 SOURCE=..\Include\plugin.hpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\Include\plugin_viewer.hpp
 # End Source File
 # Begin Source File
 
