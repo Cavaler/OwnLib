@@ -13,13 +13,13 @@ namespace FarLib {
 
 // ************************ DIALOG ************************
 
-CFarDialog::CFarDialog(int iX,int iY,const char *szHelpTopic):
+CFarDialog::CFarDialog(int iX,int iY,const char *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false) {}
+Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFlags(dwFlags) {}
 
-CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const char *szHelpTopic):
+CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const char *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false) {}
+Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFlags(dwFlags) {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items=(CFarDialogItem **)realloc(Items,(ItemsNumber+1)*sizeof(CFarDialogItem *));
@@ -118,8 +118,8 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	do {
 		int I,Code=-1;
 
-		if (m_bHandled) {
-			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,0,s_WindowProc,(long)this);
+		if (m_bHandled || m_dwFlags) {
+			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
 		} else {
 			Result=StartupInfo.Dialog(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber);
 		}

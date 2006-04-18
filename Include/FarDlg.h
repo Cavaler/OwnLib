@@ -19,8 +19,8 @@ class CFarEventHandler;
 
 class CFarDialog {
 public:
-	CFarDialog(int iX,int iY,const char *szHelpTopic);
-	CFarDialog(int iX1,int iY1,int iX2,int iY2,const char *szHelpTopic);
+	CFarDialog(int iX,int iY,const char *szHelpTopic,DWORD dwFlags=0);
+	CFarDialog(int iX1,int iY1,int iX2,int iY2,const char *szHelpTopic,DWORD dwFlags=0);
 	int  AddFrame(const char *Title);
 	int  AddFrame(int TitleId);
 	int  AddFrame();
@@ -44,8 +44,10 @@ protected:
 	int ItemsNumber;
 	CFarEventHandler *m_pHandler;
 	vector<CFarEventHandler *> m_arrItemHandlers;
+
 	long m_lParam;
 	bool m_bHandled;
+	DWORD m_dwFlags;
 };
 
 // *********************** HELPERS ***********************
@@ -56,7 +58,7 @@ public:
 	CFarText(const CFarText &Text) : m_strHolder(Text.m_strHolder.c_str()) {}
 	CFarText(int nMsgID) : m_strHolder(GetMsg(nMsgID)) {}
 	CFarText(int nMsgID, const char *pszModule) : m_strHolder(GetMsgEx(nMsgID, pszModule)) {}
-	CFarText(const char *pszText) : m_strHolder(pszText) {}
+	CFarText(const char *pszText) : m_strHolder(pszText ? pszText : "") {}
 	CFarText(const string &strText) : m_strHolder(strText.c_str()) {}
 	operator const char *() const {return m_strHolder.c_str();}
 protected:
@@ -266,7 +268,7 @@ protected:
 
 class CFarTextItem:public CFarDialogItem {
 public:
-	CFarTextItem(int X,int Y,DWORD dwFlags,CFarText szText=(const char *)NULL);
+	CFarTextItem(int X,int Y,DWORD dwFlags,CFarText szText=NULL);
 	virtual void CreateItem(FarDialogItem *Item);
 protected:
 	BOOL Double;
