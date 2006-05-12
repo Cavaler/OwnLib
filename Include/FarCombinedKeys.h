@@ -1,0 +1,43 @@
+#ifndef __COMBINEDKEYS_H
+#define __COMBINEDKEYS_H
+
+#define VK_CTRL_F1	(VK_F1  | (PKF_CONTROL << 16))
+#define VK_CTRL_F2	(VK_F2  | (PKF_CONTROL << 16))
+#define VK_CTRL_F3	(VK_F3  | (PKF_CONTROL << 16))
+#define VK_CTRL_F4	(VK_F4  | (PKF_CONTROL << 16))
+#define VK_CTRL_F5	(VK_F5  | (PKF_CONTROL << 16))
+#define VK_CTRL_F6	(VK_F6  | (PKF_CONTROL << 16))
+#define VK_CTRL_F7	(VK_F7  | (PKF_CONTROL << 16))
+#define VK_CTRL_F8	(VK_F8  | (PKF_CONTROL << 16))
+#define VK_CTRL_F9	(VK_F9  | (PKF_CONTROL << 16))
+#define VK_CTRL_F10	(VK_F10 | (PKF_CONTROL << 16))
+#define VK_CTRL_F11	(VK_F11 | (PKF_CONTROL << 16))
+#define VK_CTRL_F12	(VK_F12 | (PKF_CONTROL << 16))
+
+#define VK_ALT_F1	(VK_F1  | (PKF_ALT << 16))
+#define VK_ALT_F2	(VK_F2  | (PKF_ALT << 16))
+#define VK_ALT_F3	(VK_F3  | (PKF_ALT << 16))
+#define VK_ALT_F4	(VK_F4  | (PKF_ALT << 16))
+#define VK_ALT_F5	(VK_F5  | (PKF_ALT << 16))
+#define VK_ALT_F6	(VK_F6  | (PKF_ALT << 16))
+#define VK_ALT_F7	(VK_F7  | (PKF_ALT << 16))
+#define VK_ALT_F8	(VK_F8  | (PKF_ALT << 16))
+#define VK_ALT_F9	(VK_F9  | (PKF_ALT << 16))
+#define VK_ALT_F10	(VK_F10 | (PKF_ALT << 16))
+#define VK_ALT_F11	(VK_F11 | (PKF_ALT << 16))
+#define VK_ALT_F12	(VK_F12 | (PKF_ALT << 16))
+
+#define VK_SHIFT_F1		(VK_F1  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F2		(VK_F2  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F3		(VK_F3  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F4		(VK_F4  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F5		(VK_F5  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F6		(VK_F6  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F7		(VK_F7  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F8		(VK_F8  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F9		(VK_F9  | (PKF_SHIFT << 16))
+#define VK_SHIFT_F10	(VK_F10 | (PKF_SHIFT << 16))
+#define VK_SHIFT_F11	(VK_F11 | (PKF_SHIFT << 16))
+#define VK_SHIFT_F12	(VK_F12 | (PKF_SHIFT << 16))
+
+#endif
