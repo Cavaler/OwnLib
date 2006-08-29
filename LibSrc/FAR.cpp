@@ -22,26 +22,6 @@ HANDLE g_hSaveScreen;
 const char *GetMsg(int MsgId) {return const_cast<char *>(StartupInfo.GetMsg(StartupInfo.ModuleNumber,MsgId));}
 #define strccpy(to,from) strncpy(to,from,sizeof(to))
 
-void InitDialogItems(struct InitDialogItem *Init,struct FarDialogItem *Item,int ItemsNumber) {
-	for (int I=0;I<ItemsNumber;I++) {
-		Item[I].Type=Init[I].Type;
-		Item[I].X1=Init[I].X1;
-		Item[I].Y1=Init[I].Y1;
-		Item[I].X2=Init[I].X2;
-		Item[I].Y2=Init[I].Y2;
-		Item[I].Focus=Init[I].Focus;
-		Item[I].Selected=Init[I].Selected;
-		Item[I].Flags=Init[I].Flags;
-		Item[I].DefaultButton=Init[I].DefaultButton;
-		if (Init[I].Data==NULL) 
-			Item[I].Data[0]=0;
-		else if ((int)Init[I].Data<2000)
-			strccpy(Item[I].Data,GetMsg((int)Init[I].Data));
-		else
-			strccpy(Item[I].Data,Init[I].Data);
-	}
-}
-
 int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	for (int I=0;I<ItemsNumber;I++) if (Item[I].Selected) return I;
 	return -1;

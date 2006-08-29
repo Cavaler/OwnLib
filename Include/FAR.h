@@ -20,16 +20,6 @@
 namespace FarLib {
 #endif
 
-struct InitDialogItem {
-  unsigned char Type;
-  unsigned char X1,Y1,X2,Y2;
-  unsigned char Focus;
-  unsigned int Selected;
-  unsigned int Flags;
-  unsigned char DefaultButton;
-  char *Data;
-};
-
 extern PluginStartupInfo StartupInfo;
 extern const char *g_pszErrorTitle;
 extern const char *g_pszErrorTopic;
@@ -90,7 +80,6 @@ int  Message(UINT uiFlags, const char *szHelpTopic, int iButtonsNumber, std::vec
 #endif
 
 const char *GetMsg(int MsgId);
-void InitDialogItems(struct InitDialogItem *Init,struct FarDialogItem *Item,int ItemsNumber);
 int  WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber);
 int  ChooseMenu(int ItemCount, const char **ppszItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
