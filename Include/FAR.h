@@ -63,6 +63,25 @@ protected:
 	HANDLE m_hSave;
 };
 
+class CFarPanelMode {
+public:
+	CFarPanelMode();
+	CFarPanelMode(int iViewMode, int iSortMode, int iSortOrder);
+	void LoadReg(HKEY hKey);
+	void SaveReg(HKEY hKey);
+
+	void Assign(HANDLE hPlugin);
+	void Assign(PanelInfo &PInfo);
+	void Apply(HANDLE hPlugin, int nOpMode = 0);
+
+public:
+	int m_iViewMode;
+	int m_iSortMode;
+	int m_iSortOrder;
+
+	bool m_bNeedApply;
+};
+
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,

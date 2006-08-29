@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #undef _FAR_NO_NAMELESS_UNIONS
 #include <FAR.h>
+#include <EasyReg.h>
 
 #pragma warning(disable:4786)
 #include <vector>
@@ -312,6 +313,47 @@ CFarSaveScreen::CFarSaveScreen(int X1, int Y1, int X2, int Y2, const char *szMes
 
 CFarSaveScreen::~CFarSaveScreen() {
 	StartupInfo.RestoreScreen(m_hSave);
+}
+
+CFarPanelMode::CFarPanelMode()
+: m_iViewMode(4), m_iSortMode(SM_NAME), m_iSortOrder(0), m_bNeedApply(true)
+{
+}
+
+CFarPanelMode::CFarPanelMode(int iViewMode, int iSortMode, int iSortOrder)
+: m_iViewMode(iViewMode), m_iSortMode(iSortMode), m_iSortOrder(iSortOrder), m_bNeedApply(true)
+{
+}
+
+void CFarPanelMode::LoadReg(HKEY hKey) {
+	QueryRegIntValue(hKey, "ViewMode", &m_iViewMode, m_iViewMode, 0, 9);
+	QueryRegIntValue(hKey, "SortMode", &m_iSortMode, m_iSortMode, 0, 11);
+	QueryRegIntValue(hKey, "SortOrder", &m_iSortOrder, m_iSortOrder, 0, 1);
+}
+
+void CFarPanelMode::SaveReg(HKEY hKey) {
+	SetRegIntValue(hKey, "ViewMode", m_iViewMode);
+	SetRegIntValue(hKey, "SortMode", m_iSortMode);
+	SetRegIntValue(hKey, "SortOrder", m_iSortOrder);
+}
+
+void CFarPanelMode::Assign(HANDLE hPlugin) {
+	PanelInfo PInfo;
+	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, &PInfo)) Assign(PInfo);
+}
+
+void CFarPanelMode::Assign(PanelInfo &PInfo) {
+	m_iViewMode = PInfo.ViewMode;
+	m_iSortMode = PInfo.SortMode;
+	m_iSortOrder = (PInfo.Flags & PFLAGS_REVERSESORTORDER) ? 1 : 0;
+}
+
+void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
+	if (nOpMode & (OPM_SILENT | OPM_FIND)) return;
+
+	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, &m_iViewMode);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &m_iSortMode);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &m_iSortOrder);
 }
 
 #ifndef FAR_NO_NAMESPACE
