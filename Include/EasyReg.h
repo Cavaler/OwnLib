@@ -38,7 +38,7 @@ void SetRegIntValue(HKEY hKey, const char *pszKeyName, int iValue);
 #define SetRegBoolValue(hKey, pszKeyName, bValue) SetRegIntValue(hKey, pszKeyName, (bValue)?1:0)
 void SetRegBinaryValue(HKEY hKey, const char *pszKeyName, const void *pData,  int nLength);
 
-#if (defined _XSTRING_) || (defined _STLP_STRING)
+#if (defined _STRING_) || (defined _STLP_STRING)
 void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const char *pszDefault);
 void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const string &strDefault);
 void SetRegStringValue(HKEY hKey, const char *pszKeyName, const string &strValue);

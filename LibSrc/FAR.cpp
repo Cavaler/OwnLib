@@ -283,16 +283,27 @@ CFarMaskSet::~CFarMaskSet() {
 
 CFarSaveScreen::CFarSaveScreen(const char *szMessage) {
 	m_hSave = StartupInfo.SaveScreen(0, 0, -1, -1);
-	if (szMessage) Message(0, NULL, 2, 0, "", szMessage);
+	ViewMessage(szMessage);
 }
 
 CFarSaveScreen::CFarSaveScreen(int X1, int Y1, int X2, int Y2, const char *szMessage) {
 	m_hSave = StartupInfo.SaveScreen(X1, Y1, X2, Y2);
-	if (szMessage) Message(0, NULL, 2, 0, "", szMessage);
+	ViewMessage(szMessage);
+}
+
+void CFarSaveScreen::ViewMessage(const char *szMessage) {
+	m_strTitle.resize(256);
+	while (GetConsoleTitle(&m_strTitle[0], m_strTitle.size()) == 0) m_strTitle.resize(m_strTitle.size()*2);
+
+	if (szMessage) {
+		SetConsoleTitle(szMessage);
+		Message(0, NULL, 2, 0, "", szMessage);
+	}
 }
 
 CFarSaveScreen::~CFarSaveScreen() {
 	StartupInfo.RestoreScreen(m_hSave);
+	SetConsoleTitle(&m_strTitle[0]);
 }
 
 CFarPanelMode::CFarPanelMode()

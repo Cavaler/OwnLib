@@ -16,6 +16,8 @@
 #define PSI160SIZE	336
 #define PSI170SIZE	372
 
+#include <vector>
+
 #ifndef FAR_NO_NAMESPACE
 namespace FarLib {
 #endif
@@ -51,6 +53,9 @@ public:
 	~CFarSaveScreen();
 protected:
 	HANDLE m_hSave;
+
+	void ViewMessage(const char *szMessage);
+	std::vector<char> m_strTitle;
 };
 
 class CFarPanelMode {
