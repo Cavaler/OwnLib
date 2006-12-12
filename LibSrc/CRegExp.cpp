@@ -3,25 +3,38 @@
 #include <windows.h>
 #include <CRegExp.h>
 
-CRegExp::CRegExp(string strPattern, int iCompileFlags) : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL)
-{
+CRegExp::CRegExp() : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL), m_iRefCount(0) {
+}
+
+CRegExp::CRegExp(string strPattern, int iCompileFlags) : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL) {
+	Compile(strPattern, iCompileFlags);
+}
+
+bool CRegExp::Compile(string strPattern, int iCompileFlags) {
+	Release();
+
 	m_pPattern = pcre_compile(strPattern.c_str(), iCompileFlags, &m_pszErrPtr, &m_iErrOffset,NULL);
-	if (!m_pPattern) return;
+	if (!m_pPattern) return false;
 	m_pPatternExtra = pcre_study(m_pPattern, 0, &m_pszErrPtr);
 
 	m_iRefCount= pcre_info(m_pPattern, NULL, NULL) + 1;
 	m_piRefs = new int[m_iRefCount*3];
+
+	return true;
 }
 
-CRegExp::~CRegExp()
-{
-	delete[] m_piRefs;
-	pcre_free(m_pPattern);
-	pcre_free(m_pPatternExtra);
+void CRegExp::Release() {
+	if (m_piRefs) {delete[] m_piRefs; m_piRefs = NULL;}
+	if (m_pPattern) {pcre_free(m_pPattern); m_pPattern = NULL;}
+	if (m_pPatternExtra) {pcre_free(m_pPatternExtra); m_pPatternExtra = NULL;}
+	m_iRefCount = 0;
 }
 
-void CRegExp::FillReferences(string &strAnalyze, int iCount, vector<string> *arrReferences)
-{
+CRegExp::~CRegExp() {
+	Release();
+}
+
+void CRegExp::FillReferences(string &strAnalyze, int iCount, vector<string> *arrReferences) {
 	arrReferences->clear();
 	for (int i = 0; i < iCount; i++) {
 		if (m_piRefs[i*2] >= 0)
@@ -31,8 +44,7 @@ void CRegExp::FillReferences(string &strAnalyze, int iCount, vector<string> *arr
 	}
 }
 
-bool CRegExp::Match(string strAnalyze, int iExecFlags, vector<string> *arrReferences)
-{
+bool CRegExp::Match(string strAnalyze, int iExecFlags, vector<string> *arrReferences) {
 	int iResult = pcre_exec(m_pPattern, m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), 0, iExecFlags, m_piRefs, m_iRefCount*3);
 	if (iResult < 0)
 	{

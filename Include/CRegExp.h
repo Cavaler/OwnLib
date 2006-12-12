@@ -10,9 +10,15 @@ using namespace std;
 class CRegExp
 {
 public:
+	// Preparing
+	CRegExp();
 	CRegExp(string strPattern, int iCompileFlags = 0);
+	bool Compile(string strPattern, int iCompileFlags = 0);
+	operator bool() {return m_pPattern != NULL;}
+	int RefCount() {return m_iRefCount;}
 	~CRegExp();
 
+	// Using
 	bool Match(string strAnalyze, int iExecFlags = 0, vector<string> *arrReferences = NULL);
 	bool CreateReplace(string strAnalyze, string strReplacePattern, string &strResult, int iExecFlags = 0);
 	bool Replace(string &strAnalyze, string strReplacePattern,
@@ -30,6 +36,8 @@ public:
 	const char *m_pszErrPtr;
 	int m_iErrOffset;
 protected:
+	void Release();
+
 	char ConvertCase(char C);
 	void AddChar(string &strResult, char C);
 	void FillReferences(string &strAnalyze, int iCount, vector<string> *arrReferences);
