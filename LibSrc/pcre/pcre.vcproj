@@ -3,9 +3,10 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="pcre"
-	SccProjectName="&quot;$/CPP/LibSrc/pcre&quot;, NLAAAAAA"
+	ProjectGUID="{27A32067-1043-454E-9770-209B4C2E4A43}"
+	SccProjectName="&quot;$/CPP&quot;, ELAAAAAA"
 	SccAuxPath=""
-	SccLocalPath="."
+	SccLocalPath="..\.."
 	SccProvider="MSSCCI:Microsoft Visual SourceSafe">
 	<Platforms>
 		<Platform
@@ -13,83 +14,40 @@
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="Debug ML|Win32"
+			Name="Release Intel|Win32"
 			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\DebugML7"
+			IntermediateDirectory=".\..\ReleaseMD_Intel"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				OptimizeForProcessor="1"
-				PreprocessorDefinitions="_DEBUG;STATIC;WIN32;_WINDOWS;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC"
-				RuntimeLibrary="5"
-				StructMemberAlignment="2"
-				PrecompiledHeaderFile=".\..\DebugML7/pcre.pch"
-				AssemblerListingLocation=".\..\DebugML7/"
-				ObjectFile=".\..\DebugML7/"
-				ProgramDataBaseFileName=".\..\DebugML7/"
-				BrowseInformation="1"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="1"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMLd7.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				Culture="1049"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
-		</Configuration>
-		<Configuration
-			Name="Release ML|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseML7"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="4"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
-				PreprocessorDefinitions="NDEBUG;STATIC;WIN32;_WINDOWS;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC"
-				RuntimeLibrary="4"
+				AdditionalIncludeDirectories="\CPP\STLport-4.5.3\stlport,D:\MSDEV\VC98\Include,\CPP\Include"
+				PreprocessorDefinitions="STATIC;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC;_USE_INTEL_COMPILER;NDEBUG;WIN32;_WINDOWS"
+				IgnoreStandardIncludePath="TRUE"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
 				StructMemberAlignment="2"
-				PrecompiledHeaderFile=".\..\ReleaseML7/pcre.pch"
-				AssemblerListingLocation=".\..\ReleaseML7/"
-				ObjectFile=".\..\ReleaseML7/"
-				ProgramDataBaseFileName=".\..\ReleaseML7/"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\..\ReleaseMD_Intel/pcre.pch"
+				AssemblerListingLocation=".\..\ReleaseMD_Intel/"
+				ObjectFile=".\..\ReleaseMD_Intel/"
+				ProgramDataBaseFileName=".\..\ReleaseMD_Intel/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreML7.lib"
+				OutputFile="..\..\Lib\pcreMDI.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -112,32 +70,37 @@
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
-			Name="Debug MT|Win32"
+			Name="Release|Win32"
 			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\DebugMT7"
+			IntermediateDirectory=".\..\ReleaseMD7"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				OptimizeForProcessor="1"
-				PreprocessorDefinitions="_DEBUG;STATIC;WIN32;_WINDOWS;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC"
-				RuntimeLibrary="1"
+				Optimization="4"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="TRUE"
+				OptimizeForProcessor="2"
+				PreprocessorDefinitions="STATIC;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC;NDEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
 				StructMemberAlignment="2"
-				PrecompiledHeaderFile=".\..\DebugMT7/pcre.pch"
-				AssemblerListingLocation=".\..\DebugMT7/"
-				ObjectFile=".\..\DebugMT7/"
-				ProgramDataBaseFileName=".\..\DebugMT7/"
-				BrowseInformation="1"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\..\ReleaseMD7/pcre.pch"
+				AssemblerListingLocation=".\..\ReleaseMD7/"
+				ObjectFile=".\..\ReleaseMD7/"
+				ProgramDataBaseFileName=".\..\ReleaseMD7/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="1"/>
+				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMTd7.lib"
+				OutputFile="..\..\Lib\pcreMD7.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -160,7 +123,7 @@
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
-			Name="Debug MD|Win32"
+			Name="Debug|Win32"
 			OutputDirectory=".\..\..\Lib"
 			IntermediateDirectory=".\..\DebugMD7"
 			ConfigurationType="4"
@@ -170,9 +133,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="1"
-				PreprocessorDefinitions="_DEBUG;STATIC;WIN32;_WINDOWS;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC"
+				PreprocessorDefinitions="STATIC;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC;_DEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
+				StringPooling="TRUE"
 				RuntimeLibrary="3"
 				StructMemberAlignment="2"
+				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\..\DebugMD7/pcre.pch"
 				AssemblerListingLocation=".\..\DebugMD7/"
 				ObjectFile=".\..\DebugMD7/"
@@ -207,108 +172,6 @@
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
-		<Configuration
-			Name="Release MT|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseMT7"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="TRUE"
-				OptimizeForProcessor="2"
-				PreprocessorDefinitions="NDEBUG;STATIC;WIN32;_WINDOWS;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC"
-				RuntimeLibrary="0"
-				StructMemberAlignment="2"
-				PrecompiledHeaderFile=".\..\ReleaseMT7/pcre.pch"
-				AssemblerListingLocation=".\..\ReleaseMT7/"
-				ObjectFile=".\..\ReleaseMT7/"
-				ProgramDataBaseFileName=".\..\ReleaseMT7/"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMT7.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				Culture="1049"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
-		</Configuration>
-		<Configuration
-			Name="Release MD|Win32"
-			OutputDirectory=".\..\..\Lib"
-			IntermediateDirectory=".\..\ReleaseMD7"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="4"
-				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="TRUE"
-				OptimizeForProcessor="2"
-				PreprocessorDefinitions="NDEBUG;STATIC;WIN32;_WINDOWS;POSIX_MALLOC_THRESHOLD=16;SUPPORT_UTF8;PCRE_STATIC"
-				RuntimeLibrary="2"
-				StructMemberAlignment="2"
-				PrecompiledHeaderFile=".\..\ReleaseMD7/pcre.pch"
-				AssemblerListingLocation=".\..\ReleaseMD7/"
-				ObjectFile=".\..\ReleaseMD7/"
-				ProgramDataBaseFileName=".\..\ReleaseMD7/"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMD7.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				Culture="1049"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
-		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -319,247 +182,109 @@
 			<File
 				RelativePath="..\CRegExp.cpp">
 				<FileConfiguration
-					Name="Debug ML|Win32">
+					Name="Release Intel|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
+						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug MT|Win32">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="get.c">
 				<FileConfiguration
-					Name="Debug ML|Win32">
+					Name="Release Intel|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
+						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug MT|Win32">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="maketables.c">
 				<FileConfiguration
-					Name="Debug ML|Win32">
+					Name="Release Intel|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
+						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug MT|Win32">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="pcre.c">
 				<FileConfiguration
-					Name="Debug ML|Win32">
+					Name="Release Intel|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
+						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug MT|Win32">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="pcreposix.c">
 				<FileConfiguration
-					Name="Debug ML|Win32">
+					Name="Release Intel|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
+						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug MT|Win32">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="study.c">
 				<FileConfiguration
-					Name="Debug ML|Win32">
+					Name="Release Intel|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
+						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug MT|Win32">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 		</Filter>
@@ -569,54 +294,28 @@
 			<File
 				RelativePath="chartables.c">
 				<FileConfiguration
-					Name="Debug ML|Win32"
+					Name="Release Intel|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MT|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MD|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -625,54 +324,28 @@
 			<File
 				RelativePath="DOS866.c">
 				<FileConfiguration
-					Name="Debug ML|Win32"
+					Name="Release Intel|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release ML|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MT|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug MD|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MT|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MD|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"
-						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
 			<File
