@@ -18,6 +18,7 @@ const char *g_pszErrorTopic;
 const char *g_pszLastErrorTopic;
 const char *g_pszOKButton;
 HANDLE g_hSaveScreen;
+bool g_bInterrupted;
 
 const char *GetMsg(int MsgId) {return const_cast<char *>(StartupInfo.GetMsg(StartupInfo.ModuleNumber,MsgId));}
 #define strccpy(to,from) strncpy(to,from,sizeof(to))
@@ -148,6 +149,22 @@ void ShowWaitMessage(const char *pszTitle, const char *pszMessage1, const char *
 
 void HideWaitMessage() {
 	StartupInfo.RestoreScreen(g_hSaveScreen);
+}
+
+bool Interrupted() {
+	if (g_bInterrupted) return true;
+
+	static HANDLE hInput=GetStdHandle(STD_INPUT_HANDLE);
+	INPUT_RECORD rcInput;
+	DWORD dwRead;
+	do {
+		if (!PeekConsoleInput(hInput,&rcInput,1,&dwRead)) return false;
+		if (!dwRead) return FALSE;
+		if (!ReadConsoleInput(hInput,&rcInput,1,&dwRead)) return false;
+		if ((rcInput.EventType==KEY_EVENT) && (rcInput.Event.KeyEvent.bKeyDown)
+			&& (rcInput.Event.KeyEvent.wVirtualScanCode==VK_ESCAPE)) return g_bInterrupted=true;
+	} while (dwRead);
+	return false;
 }
 
 string FarMaskToRE(const char *szMask) {

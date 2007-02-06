@@ -28,6 +28,7 @@ extern const char *g_pszErrorTopic;
 extern const char *g_pszLastErrorTopic;
 extern const char *g_pszOKButton;
 extern HANDLE g_hSaveScreen;
+extern bool g_bInterrupted;
 
 #if defined(_STRING_) || defined (_STLP_STRING)
 string FarMaskToRE(const char *szMask);
@@ -96,6 +97,7 @@ void ShowError(const char *pszMessage1, const char *pszMessage2 = NULL);
 void ShowLastError(const char *pszMessage, const char *pszFileName = NULL);
 void ShowWaitMessage(const char *pszTitle, const char *pszMessage1, const char *pszMessage2 = NULL);
 void HideWaitMessage();
+bool Interrupted();
 
 // FarGetMsgEx.cpp
 void InitLanguageFiles();
