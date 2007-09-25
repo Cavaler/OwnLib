@@ -168,6 +168,11 @@ CFarDialog::~CFarDialog() {
 
 // *********************** HELPERS ***********************
 
+CFarListData::CFarListData() : m_bFree(true), m_pList (new FarList) {
+	m_pList->Items = NULL;
+	m_pList->ItemsNumber = 0;
+}
+
 CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy) {
 	if (bCopy) {
 		m_pList = new FarList;
@@ -199,13 +204,13 @@ CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true) {
 	}
 }
 
-void CFarListData::Append(const char *szItem) {
-	if (!m_bFree) return;
+int CFarListData::Append(const char *szItem) {
+	if (!m_bFree) return -1;
 	m_pList->Items = (FarListItem *)realloc(m_pList->Items, (m_pList->ItemsNumber + 1) * sizeof(FarListItem));
 	m_pList->Items[m_pList->ItemsNumber].Flags = 0;
 	memset(m_pList->Items[m_pList->ItemsNumber].Reserved, 0, sizeof(m_pList->Items[m_pList->ItemsNumber].Reserved));
 	strncpy(m_pList->Items[m_pList->ItemsNumber].Text, szItem, sizeof(m_pList->Items[m_pList->ItemsNumber].Text));
-	m_pList->ItemsNumber++;
+	return m_pList->ItemsNumber++;
 }
 
 CFarListData::~CFarListData() {

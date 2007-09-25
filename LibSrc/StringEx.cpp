@@ -8,13 +8,13 @@
 #include <string>
 using namespace std;
 
-char *strechr(const char *str, int ch) {
-	char *sz = strchr(str, ch);
+const char *strechr(const char *str, int ch) {
+	const char *sz = strchr(str, ch);
 	return sz ? sz : strchr(str, 0);
 }
 
-void *memechr(const void *buf, int c, size_t count) {
-	void *sz = memchr(buf, c, count);
+const void *memechr(const void *buf, int c, size_t count) {
+	const void *sz = memchr(buf, c, count);
 	return sz ? sz : (char *)buf+count;
 }
 
@@ -109,7 +109,7 @@ char *FormatSz(const char *szFormat, ...) {
 		strBuffer.resize(strBuffer.size()*2);
 	}
 	va_end(List);
-	return strdup(&strBuffer[0]);
+	return _strdup(&strBuffer[0]);
 }
 
 void ParseWordsTo(string Line,vector<string> &Coll);

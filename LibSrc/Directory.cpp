@@ -66,7 +66,7 @@ BOOL CreateDirectories(const char *DirName) {
 }
 
 BOOL CreateDirectoriesForFile(const char *FileName) {
-	char *FName=strrchr(FileName,'\\');
+	char *FName=(char *)strrchr(FileName,'\\');
 	if (!FName) return TRUE;
 	*FName=0;
 	BOOL Result=CreateDirectories(FileName);

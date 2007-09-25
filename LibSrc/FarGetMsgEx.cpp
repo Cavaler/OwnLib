@@ -81,17 +81,17 @@ ModuleName(NULL),SectionCount(1),Sections((SectionInformation *)malloc(sizeof(Se
 			char *Equal=strchr(CurLine,'=');
 			if (Equal) {
 				*Equal=0;Equal++;
-				if (!stricmp(CurLine,".Language")) {
+				if (!_stricmp(CurLine,".Language")) {
 					char *Comma=strchr(Equal,',');
 					if (Comma) *Comma=0;
 					if (GotLanguage||GotModule) {Text=CurLine;*(Equal-1)='=';Language=Equal;return;}
 					Language=Equal;GotLanguage=TRUE;
 				}
-				if (!stricmp(CurLine,".Module")) {
+				if (!_stricmp(CurLine,".Module")) {
 					if (GotModule) {Text=CurLine;*(Equal-1)='=';return;}
 					ModuleName=Equal;GotModule=TRUE;
 				}
-				if (!stricmp(CurLine,".Offset")) {
+				if (!_stricmp(CurLine,".Offset")) {
 					Sections=(SectionInformation *)realloc(Sections,++SectionCount*sizeof(SectionInformation));
 					sscanf(Equal,"%d",&Sections[SectionCount-1].StartNumber);
 					Sections[SectionCount-1].Length=0;
@@ -116,7 +116,7 @@ BOOL CModuleInformation::HasModule(char *Module) {
 		return Module==NULL;
 	}
 	if (Module==NULL) return FALSE;
-	return (stricmp(ModuleName,Module)==0);
+	return (_stricmp(ModuleName,Module)==0);
 }
 
 GetMsgResult CModuleInformation::GetMsg(int MsgId,char *&Message) {
@@ -146,7 +146,7 @@ CLanguagePack::~CLanguagePack() {
 	}
 }
 
-BOOL CLanguagePack::HasLanguage(char *Lang) {return stricmp(Language,Lang)==0;}
+BOOL CLanguagePack::HasLanguage(char *Lang) {return _stricmp(Language,Lang)==0;}
 
 void CLanguagePack::AddModule(CModuleInformation *Module) {
 	Modules=(CModuleInformation **)realloc(Modules,(ModuleCount+1)*sizeof(CModuleInformation *));
@@ -176,7 +176,8 @@ void LoadLanguageFile(char *FileName) {
 			char *Language=NULL;
 			while (ModuleText<Text+Read) {
 				CModuleInformation *Module=new CModuleInformation(ModuleText,Read-(ModuleText-Text),Language);
-				for (int I=0;I<LanguageCount;I++) {
+				int I;
+				for (I=0;I<LanguageCount;I++) {
 					if (Languages[I]->HasLanguage(Language)) break;
 				}
 				if (I==LanguageCount) {
@@ -233,7 +234,8 @@ const char *GetMsgEx(int MsgId,const char *Module) {
 	char *Message;
 
 	if (!Loaded) InitLanguageFiles();
-	for (int I=0;I<LanguageCount;I++) {
+	int I;
+	for (I=0;I<LanguageCount;I++) {
 		if (Languages[I]->HasLanguage(CurrentLanguage)) {
 			Result=Languages[I]->GetMsg(MsgId,(char *)Module,Message);
 			if (Result==GM_OK) return Message;

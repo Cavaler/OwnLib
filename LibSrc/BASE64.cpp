@@ -6,8 +6,8 @@ int Mul3Div4(int Size) {return (Size%4==0)?3*Size/4:3*(Size/4+1);}
 
 BYTE CodeTable[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 int BASE64Encode(const BYTE *In,int Length,BYTE *Out) {
-	int Pos=0;
-	for (int I=0;I<Length/3;I++) {
+	int I, Pos=0;
+	for (I=0;I<Length/3;I++) {
 		Out[Pos++]=CodeTable[(In[I*3]>>2)&0x3F];
 		Out[Pos++]=CodeTable[((In[I*3]<<4)&0x30)+((In[I*3+1]>>4)&0x0F)];
 		Out[Pos++]=CodeTable[((In[I*3+1]<<2)&0x3C)+((In[I*3+2]>>6)&0x03)];

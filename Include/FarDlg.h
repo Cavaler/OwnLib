@@ -67,10 +67,11 @@ protected:
 
 class CFarListData {
 public:
+	CFarListData();
 	CFarListData(FarList *pList, bool bCopy = false);
 	CFarListData(const char **ppszItems,int iItemCount);
 	CFarListData(const vector<CFarText> arrItems);
-	void Append(const char *szItem);
+	int Append(const char *szItem);
 	operator FarList *() const {return m_pList;}
 	~CFarListData();
 protected:

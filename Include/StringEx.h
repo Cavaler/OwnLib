@@ -1,8 +1,8 @@
 #ifndef __STRINGEX_H
 #define __STRINGEX_H
 
-char *strechr(const char *str, int ch);
-void *memechr(const void *buf, int c, size_t count);
+const char *strechr(const char *str, int ch);
+const void *memechr(const void *buf, int c, size_t count);
 
 enum {GW_WORDLEN=0,GW_SKIPLEN};
 
