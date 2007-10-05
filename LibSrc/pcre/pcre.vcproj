@@ -119,11 +119,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="4"
+				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
+				WholeProgramOptimization="false"
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
 				RuntimeLibrary="2"
