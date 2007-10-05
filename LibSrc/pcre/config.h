@@ -197,7 +197,7 @@ them both to 0; an emulation function will be used. */
    10. The possible values are 10 (LF), 13 (CR), 3338 (CRLF), -1 (ANY), or -2
    (ANYCRLF). */
 #ifndef NEWLINE
-#define NEWLINE 10
+#define NEWLINE -2
 #endif
 
 /* PCRE uses recursive function calls to handle backtracking while matching.
@@ -261,10 +261,10 @@ them both to 0; an emulation function will be used. */
 #endif
 
 /* Define to enable support for Unicode properties */
-/* #undef SUPPORT_UCP */
+#define SUPPORT_UCP
 
 /* Define to enable support for the UTF-8 Unicode encoding. */
-/* #undef SUPPORT_UTF8 */
+#define SUPPORT_UTF8
 
 /* Version number of package */
 #ifndef VERSION

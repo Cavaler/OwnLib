@@ -1,7 +1,11 @@
 #ifndef __CREGEXP_H
 #define __CREGEXP_H
 
+#ifndef PCRE_STATIC
+#define PCRE_STATIC
+#endif
 #include <pcre\pcre.h>
+
 #pragma warning(disable:4786)
 #include <vector>
 #include <string>
