@@ -343,8 +343,8 @@ CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,pStorage,pValidator,DI_COMB
 CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator):
 CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,TextStorage,pValidator,DI_COMBOBOX),m_pData(pData) {}
 
-CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage,CFarValidator *pValidator):
-CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,IntStorage,pValidator,DI_COMBOBOX),m_pData(pData) {}
+CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int nOffset):
+CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,IntStorage,pValidator,DI_COMBOBOX),m_pData(pData),m_nOffset(nOffset) {}
 
 void CFarComboBoxItem::CreateItem(FarDialogItem *Item) {
 	CFarEditItem::CreateItem(Item);
@@ -355,7 +355,7 @@ void CFarComboBoxItem::CreateItem(FarDialogItem *Item) {
 
 	CFarIntegerStorage *pInt = dynamic_cast<CFarIntegerStorage *>(m_pStorage);
 	if (pInt) {
-		int nValue = pInt->Get();
+		int nValue = pInt->Get()-m_nOffset;
 		if ((nValue >= 0) && (nValue < Item->ListItems->ItemsNumber)) {
 			Item->ListItems->Items[nValue].Flags |= LIF_SELECTED;
 			strncpy(Item->Data, Item->ListItems->Items[nValue].Text, sizeof(Item->Data));
@@ -392,7 +392,7 @@ void CFarComboBoxItem::StoreData(FarDialogItem *Item) {
 		FarList *pList = *m_pData;
 		for (int nPos = 0; nPos < pList->ItemsNumber; nPos++) {
 			if (!strcmp(pList->Items[nPos].Text, Item->Data)) {
-				pInt->Put(nPos);
+				pInt->Put(nPos+m_nOffset);
 				break;
 			}
 		}

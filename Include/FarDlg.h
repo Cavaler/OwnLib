@@ -372,13 +372,14 @@ class CFarComboBoxItem:public CFarEditItem {
 public:
 	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarStorage *pStorage,CFarValidator *pValidator=NULL);
 	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL);
-	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL);
+	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int nOffset=0);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual ~CFarComboBoxItem();
 protected:
 	CFarListData *m_pData;
+	int m_nOffset;		// 0th element in list has this number
 };
 
 // ********************* VALIDATORS ********************
