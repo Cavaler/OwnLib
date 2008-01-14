@@ -89,10 +89,10 @@
 // This #define is necessary to compile plugins with Borland C++ 5.5.
 //#define _FAR_USE_FARFINDDATA
 
-#ifndef _WINCON_
-typedef struct _INPUT_RECORD INPUT_RECORD;
-typedef struct _CHAR_INFO    CHAR_INFO;
-#endif
+//#ifndef _WINCON_
+//typedef struct _INPUT_RECORD INPUT_RECORD;
+//typedef struct _CHAR_INFO    CHAR_INFO;
+//#endif
 
 enum FARMESSAGEFLAGS{
   FMSG_WARNING             = 0x00000001,
