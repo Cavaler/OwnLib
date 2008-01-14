@@ -4,9 +4,7 @@
 	Version="8.00"
 	Name="pcre"
 	ProjectGUID="{27A32067-1043-454E-9770-209B4C2E4A43}"
-	SccProjectName="&quot;$/CPP&quot;, ELAAAAAA"
-	SccLocalPath="..\.."
-	SccProvider="MSSCCI:Microsoft Visual SourceSafe"
+	RootNamespace="pcre"
 	>
 	<Platforms>
 		<Platform

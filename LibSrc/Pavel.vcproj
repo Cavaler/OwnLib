@@ -4,9 +4,7 @@
 	Version="8.00"
 	Name="Pavel"
 	ProjectGUID="{22A97E73-BCA6-4F61-B5CD-0FB88E54711A}"
-	SccProjectName="&quot;$/CPP&quot;, ELAAAAAA"
-	SccLocalPath=".."
-	SccProvider="MSSCCI:Microsoft Visual SourceSafe"
+	RootNamespace="Pavel"
 	>
 	<Platforms>
 		<Platform
