@@ -119,3 +119,23 @@ string GetFullFileName(const string &strPath, const string &strBase) {
 	SetCurrentDirectory(szCurDir);
 	return strFull;
 }
+
+string CleanFileName(const string &strPath) {
+	string strResult = strPath;
+
+	for (size_t nPos = 0; nPos < strResult.length(); nPos++) {
+		switch (strResult[nPos]) {
+		case '<':	strResult[nPos] = '(';break;
+		case '>':	strResult[nPos] = ')';break;
+		case '"':	strResult[nPos] = '\'';break;
+
+		case '?': 	case '|':
+		case '\\':	case '/':
+		case '$':	case '&':
+		case '%':	case ':':
+		case '*':	strResult[nPos] = '_';break;
+		}
+	}
+
+	return strResult;
+}

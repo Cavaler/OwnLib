@@ -14,6 +14,8 @@ std::string CatFile(const std::string &strPath, const std::string &strFile);
 std::string GetFileName(const std::string &strPath);
 std::string GetFullFileName(const std::string &strPath);
 std::string GetFullFileName(const std::string &strPath, const std::string &strBase);
+
+std::string CleanFileName(const std::string &strPath);
 #endif
 
 #endif
