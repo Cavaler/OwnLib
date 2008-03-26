@@ -6,7 +6,7 @@
 and semantics are as close as possible to those of the Perl 5 language.
 
                        Written by Philip Hazel
-           Copyright (c) 1997-2007 University of Cambridge
+           Copyright (c) 1997-2008 University of Cambridge
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,7 @@ the LC_xxx environment variables. */
 
 if (argc > 1 && strcmp(argv[1], "-L") == 0)
   {
-  setlocale(LC_ALL, ".OCP");        /* Set from environment variables */
+  setlocale(LC_ALL, "");        /* Set from environment variables */
   i++;
   }
 
