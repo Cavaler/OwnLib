@@ -9,7 +9,9 @@ class CFileMapping {
 public:
 	CFileMapping();
 	void *Open(const char *szFileName);
-	operator const char *();
+	operator void *();
+	operator BYTE *();
+	operator char *();
 	HANDLE GetFileHandle();
 	HANDLE GetMappingHandle();
 	DWORD Size();

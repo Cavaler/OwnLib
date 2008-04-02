@@ -26,8 +26,16 @@ void *CFileMapping::Open(const char *szFileName) {
 	return m_pData;
 }
 
-CFileMapping::operator const char *() {
-	return (const char *)m_pData;
+CFileMapping::operator void *() {
+	return m_pData;
+}
+
+CFileMapping::operator BYTE *() {
+	return (BYTE *)m_pData;
+}
+
+CFileMapping::operator char *() {
+	return (char *)m_pData;
 }
 
 HANDLE CFileMapping::GetFileHandle() {
