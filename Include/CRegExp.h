@@ -57,4 +57,14 @@ protected:
 	ECaseConvert OneCaseConvert;
 };
 
+#ifdef _DEBUG
+#pragma comment(lib, "pcreMDd8.lib")
+#else
+#ifdef _DLL 
+#pragma comment(lib, "pcreMD8.lib")
+#else
+#pragma comment(lib, "pcreMT8.lib")
+#endif
+#endif
+
 #endif
