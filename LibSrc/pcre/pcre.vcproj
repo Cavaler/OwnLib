@@ -93,7 +93,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release Dynamic|Win32"
 			OutputDirectory=".\..\..\Lib"
 			IntermediateDirectory=".\..\ReleaseMD8"
 			ConfigurationType="4"

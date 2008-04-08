@@ -166,7 +166,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release Dynamic|Win32"
 			OutputDirectory=".\..\Lib"
 			IntermediateDirectory=".\ReleaseMD8"
 			ConfigurationType="4"
@@ -352,7 +352,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -394,7 +394,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -434,7 +434,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -476,7 +476,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -520,7 +520,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -562,7 +562,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -602,7 +602,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -642,7 +642,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -682,7 +682,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -722,7 +722,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -762,7 +762,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -802,7 +802,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -842,7 +842,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -882,7 +882,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -922,7 +922,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -962,7 +962,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1002,7 +1002,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1043,7 +1043,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1087,7 +1087,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1123,7 +1123,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Release Dynamic|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
