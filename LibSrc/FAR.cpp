@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #undef _FAR_NO_NAMELESS_UNIONS
 #include <FAR.h>
-#include <EasyReg.h>
+#include <Pavel.h>
 
 #pragma warning(disable:4786)
 #include <vector>

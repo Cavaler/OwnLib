@@ -1,9 +1,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
+#include <vector>
 #include <string>
 using namespace std;
-#include <ptr.h>
 #include <UTF8.h>
 
 string EncodeUTF8(const wchar_t *pwszValue, int nLength)
@@ -39,9 +39,9 @@ string EncodeUTF8(const wstring &wstrValue)
 string EncodeUTF8(const char *pszValue, int nLength, unsigned int uiCP)
 {
 	if (nLength < 0) nLength = strlen(pszValue);
-	ptr<wchar_t> pwszValue(nLength);
-	MultiByteToWideChar(uiCP, 0, pszValue, nLength, pwszValue, nLength);
-	return EncodeUTF8(pwszValue, nLength);
+	vector<wchar_t> pwszValue(nLength);
+	MultiByteToWideChar(uiCP, 0, pszValue, nLength, &pwszValue[0], nLength);
+	return EncodeUTF8(&pwszValue[0], nLength);
 }
 
 string EncodeUTF8(const string &strValue, unsigned int uiCP)
@@ -53,8 +53,7 @@ wstring DecodeUTF8(const char *pszValue, int nLength)
 {
 	if (nLength < 0) nLength = strlen(pszValue);
 
-	ptr<wchar_t> pwData;
-	pwData.SetLength(nLength);
+	vector<wchar_t> pwData(nLength);
 	unsigned int nOutLen = 0;
 	for (int nPos = 0; nPos < nLength; nPos++)
 	{
@@ -80,7 +79,7 @@ wstring DecodeUTF8(const char *pszValue, int nLength)
 		pwData[nOutLen++] = wch;
 	}
 
-	return wstring(pwData, nOutLen);
+	return wstring(&pwData[0], nOutLen);
 }
 
 wstring DecodeUTF8(const string &strValue)
@@ -91,9 +90,9 @@ wstring DecodeUTF8(const string &strValue)
 string DecodeUTF8A(const char *pszValue, int nLength, unsigned int uiCP)
 {
 	wstring wstrResult = DecodeUTF8(pszValue, nLength);
-	ptr<char> pszResult(wstrResult.length());
-	WideCharToMultiByte(uiCP, 0, wstrResult.data(), wstrResult.length(), pszResult, wstrResult.length(), NULL, NULL);
-	return string(pszResult,wstrResult.length());
+	vector<char> pszResult(wstrResult.length());
+	WideCharToMultiByte(uiCP, 0, wstrResult.data(), wstrResult.length(), &pszResult[0], wstrResult.length(), NULL, NULL);
+	return string(&pszResult[0],wstrResult.length());
 }
 
 string DecodeUTF8A(const string &strValue, unsigned int uiCP)

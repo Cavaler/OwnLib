@@ -8,7 +8,7 @@
 #include <windows.h>
 #endif
 #include <plugin.hpp>
-#include <pcre\pcre.h>
+#include <CRegExp.h>
 
 #define PSI140SIZE	312
 #define PSI150SIZE	324
