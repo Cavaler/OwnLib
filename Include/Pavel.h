@@ -15,10 +15,14 @@
 #ifdef _DEBUG
 #pragma comment(lib, "PavelMDd8.lib")
 #else
+#ifdef __INTEL_COMPILER
+#pragma comment(lib, "PavelMTI.lib")
+#else
 #ifdef _DLL 
 #pragma comment(lib, "PavelMD8.lib")
 #else
 #pragma comment(lib, "PavelMT8.lib")
+#endif
 #endif
 #endif
 

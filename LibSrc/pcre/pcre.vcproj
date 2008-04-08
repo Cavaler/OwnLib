@@ -49,7 +49,7 @@
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;_USE_INTEL_COMPILER;NDEBUG;WIN32;_WINDOWS"
 				IgnoreStandardIncludePath="true"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				StructMemberAlignment="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderThrough="StdAfx.h"
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMDI.lib"
+				OutputFile="..\..\Lib\pcreMTI.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

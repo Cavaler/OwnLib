@@ -49,7 +49,7 @@
 				PreprocessorDefinitions="FAR_USE_NAMESPACE;PCRE_STATIC;_USE_INTEL_COMPILER;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				IgnoreStandardIncludePath="true"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				StructMemberAlignment="2"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDI.lib"
+				OutputFile="..\Lib\PavelMTI.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -892,120 +892,12 @@
 			Filter="h;hpp;hxx;hm;inl;fi;fd"
 			>
 			<File
-				RelativePath="..\Include\Ansi.h"
-				>
-				<FileConfiguration
-					Name="Release Intel|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Dynamic|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Static|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\Include\BASE64.h"
 				>
 			</File>
 			<File
 				RelativePath="..\Include\CMapping.h"
 				>
-			</File>
-			<File
-				RelativePath="..\Include\Collect.h"
-				>
-				<FileConfiguration
-					Name="Release Intel|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Dynamic|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Static|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\Include\CString.h"
-				>
-				<FileConfiguration
-					Name="Release Intel|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Dynamic|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Static|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\Include\Directory.h"
@@ -1036,11 +928,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Include\plugin.hpp"
+				RelativePath="..\Include\Pavel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\Include\ptr.h"
+				RelativePath="..\Include\plugin.hpp"
 				>
 			</File>
 			<File
