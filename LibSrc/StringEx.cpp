@@ -1,5 +1,4 @@
 #include "StringEx.h"
-#include "Collect.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -113,18 +112,6 @@ char *FormatSz(const char *szFormat, ...) {
 }
 
 void ParseWordsTo(string Line,vector<string> &Coll);
-
-void ParseWordsTo(char *Line,CStringCollection &Coll) {
-	char Word[256];
-	int I=0,J;
-	while (Line[I]) {
-		while (((Line[I]==' ')||(Line[I]=='\t'))&&(Line[I])) I++;
-		J=0;
-		while ((Line[I]!=' ')&&(Line[I]!='\t')&&(Line[I])) Word[J++]=Line[I++];
-		Word[J]=0;
-		if (Word[0]) Coll.Insert(_strdup(Word));
-	}
-}
 
 int  IsWildcard(char *WildCard,char *Name) {
 	if (*WildCard==0) return *Name==0;

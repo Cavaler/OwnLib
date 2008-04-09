@@ -19,7 +19,6 @@
 			OutputDirectory=".\..\..\Lib"
 			IntermediateDirectory=".\..\ReleaseMD_Intel"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -45,9 +44,9 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="\CPP\STLport-4.5.3\stlport,D:\MSDEV\VC98\Include,\CPP\Include"
-				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;_USE_INTEL_COMPILER;NDEBUG;WIN32;_WINDOWS"
-				IgnoreStandardIncludePath="true"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS"
+				IgnoreStandardIncludePath="false"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				StructMemberAlignment="2"
@@ -97,7 +96,6 @@
 			OutputDirectory=".\..\..\Lib"
 			IntermediateDirectory=".\..\ReleaseMD8"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -173,7 +171,6 @@
 			OutputDirectory=".\..\..\Lib"
 			IntermediateDirectory=".\..\DebugMD8"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -246,7 +243,6 @@
 			OutputDirectory=".\..\..\Lib"
 			IntermediateDirectory=".\..\ReleaseMT8"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
