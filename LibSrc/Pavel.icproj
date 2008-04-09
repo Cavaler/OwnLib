@@ -5,7 +5,7 @@
 	Name="Pavel"
 	ProjectGUID="{CCA7BE83-E107-4266-A628-2B77EBF9E5E4}"
 	VCNestedProjectGUID="{22A97E73-BCA6-4F61-B5CD-0FB88E54711A}"
-	VCNestedProjectCRC32="3400278779"
+	VCNestedProjectCRC32="665222914"
 	VCNestedProjectFileName="Pavel.vcproj">
 	<Platforms>
 		<Platform 
@@ -21,10 +21,12 @@
 				ConfigurationType="4"
 				UseOfMFC="0"
 				ATLMinimizesCRunTimeLibraryUsage="0"
-				InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+				WholeProgramOptimization="1"
+				InheritedPropertySheets=""
 				CompilerName="0"/>
 			<Tool 
 				Name="CppCmplrTool"
+				WholeProgramOptimization="1"
 				Optimization="0"
 				GlobalOptimizations="1"
 				InlineFunctionExpansion="2"
@@ -77,9 +79,7 @@
 				OutputDirectory=".\..\Lib"
 				IntermediateDirectory=".\DebugMD8"
 				ConfigurationType="4"
-				UseOfMFC="0"
-				ATLMinimizesCRunTimeLibraryUsage="0"
-				InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+				InheritedPropertySheets=""
 				CompilerName="1"/>
 			<Tool 
 				Name="CppCmplrTool"
@@ -132,10 +132,12 @@
 				ConfigurationType="4"
 				UseOfMFC="0"
 				ATLMinimizesCRunTimeLibraryUsage="0"
-				InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"/>
+				WholeProgramOptimization="1"
+				InheritedPropertySheets=""
+				CompilerName="1"/>
 			<Tool 
 				Name="CppCmplrTool"
-				WholeProgramOptimization="0"
+				WholeProgramOptimization="1"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="1"
@@ -187,10 +189,12 @@
 				ConfigurationType="4"
 				UseOfMFC="0"
 				ATLMinimizesCRunTimeLibraryUsage="0"
-				InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"/>
+				WholeProgramOptimization="1"
+				InheritedPropertySheets=""
+				CompilerName="1"/>
 			<Tool 
 				Name="CppCmplrTool"
-				WholeProgramOptimization="0"
+				WholeProgramOptimization="1"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="1"
@@ -213,7 +217,8 @@
 			<Tool 
 				Name="LibrarianTool"
 				OutputFile="..\Lib\PavelMT8.lib"
-				SuppressStartupBanner="1"/>
+				SuppressStartupBanner="1"
+				AdditionalOptions="/LTCG"/>
 			<Tool 
 				Name="ResCmplrTool"
 				Culture="1033"/>

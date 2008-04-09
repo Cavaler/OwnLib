@@ -21,6 +21,7 @@
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -44,6 +45,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS"
 				IgnoreStandardIncludePath="false"
@@ -98,6 +100,7 @@
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -121,7 +124,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="false"
+				WholeProgramOptimization="true"
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -245,6 +248,7 @@
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -268,7 +272,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="false"
+				WholeProgramOptimization="true"
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -294,6 +298,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalOptions="/LTCG"
 				OutputFile="..\..\Lib\pcreMT8.lib"
 				SuppressStartupBanner="true"
 			/>

@@ -5,7 +5,7 @@
 	Name="pcre"
 	ProjectGUID="{8AF682F3-3A41-4BE0-9C32-1D13AE937DB9}"
 	VCNestedProjectGUID="{27A32067-1043-454E-9770-209B4C2E4A43}"
-	VCNestedProjectCRC32="4197190397"
+	VCNestedProjectCRC32="915566421"
 	VCNestedProjectFileName="pcre.vcproj">
 	<Platforms>
 		<Platform 
@@ -19,12 +19,12 @@
 				OutputDirectory=".\..\..\Lib"
 				IntermediateDirectory=".\..\ReleaseMD_Intel"
 				ConfigurationType="4"
-				UseOfMFC="0"
-				ATLMinimizesCRunTimeLibraryUsage="0"
+				WholeProgramOptimization="1"
 				InheritedPropertySheets=""
 				CompilerName="0"/>
 			<Tool 
 				Name="CppCmplrTool"
+				WholeProgramOptimization="1"
 				Optimization="4"
 				GlobalOptimizations="1"
 				InlineFunctionExpansion="2"
@@ -78,13 +78,12 @@
 				OutputDirectory=".\..\..\Lib"
 				IntermediateDirectory=".\..\ReleaseMD8"
 				ConfigurationType="4"
-				UseOfMFC="0"
-				ATLMinimizesCRunTimeLibraryUsage="0"
+				WholeProgramOptimization="1"
 				InheritedPropertySheets=""
 				CompilerName="1"/>
 			<Tool 
 				Name="CppCmplrTool"
-				WholeProgramOptimization="0"
+				WholeProgramOptimization="1"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="1"
@@ -133,8 +132,6 @@
 				OutputDirectory=".\..\..\Lib"
 				IntermediateDirectory=".\..\DebugMD8"
 				ConfigurationType="4"
-				UseOfMFC="0"
-				ATLMinimizesCRunTimeLibraryUsage="0"
 				InheritedPropertySheets=""
 				CompilerName="1"/>
 			<Tool 
@@ -185,13 +182,12 @@
 				OutputDirectory=".\..\..\Lib"
 				IntermediateDirectory=".\..\ReleaseMT8"
 				ConfigurationType="4"
-				UseOfMFC="0"
-				ATLMinimizesCRunTimeLibraryUsage="0"
+				WholeProgramOptimization="1"
 				InheritedPropertySheets=""
 				CompilerName="1"/>
 			<Tool 
 				Name="CppCmplrTool"
-				WholeProgramOptimization="0"
+				WholeProgramOptimization="1"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="1"
@@ -214,7 +210,8 @@
 			<Tool 
 				Name="LibrarianTool"
 				OutputFile="..\..\Lib\pcreMT8.lib"
-				SuppressStartupBanner="1"/>
+				SuppressStartupBanner="1"
+				AdditionalOptions="/LTCG"/>
 			<Tool 
 				Name="ResCmplrTool"
 				Culture="1049"/>
