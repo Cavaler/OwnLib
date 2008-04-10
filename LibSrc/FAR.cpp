@@ -364,6 +364,33 @@ void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &m_iSortOrder);
 }
 
+CFarSplitString::CFarSplitString(int nMax) : m_arrLines(nMax) {}
+string &CFarSplitString::operator[](int nIndex) { return m_arrLines[nIndex]; }
+
+void CFarSplitString::Split(const string &strText) {
+	string strRemain = strText;
+
+	for (size_t nIndex = 0; nIndex < m_arrLines.size(); nIndex++) {
+		int nPos = strRemain.find('\n');
+		if (nPos == string::npos) {
+			m_arrLines[nIndex] = strRemain;
+			strRemain = "";
+		} else {
+			m_arrLines[nIndex] = strRemain.substr(0, nPos);
+			strRemain = strRemain.substr(nPos+1);
+		}
+	}
+}
+
+string CFarSplitString::Combine() {
+	string strResult;
+	for (int nIndex = m_arrLines.size()-1; nIndex >= 0; nIndex--) {
+		if (!strResult.empty()) strResult = m_arrLines[nIndex] + "\n" + strResult; else
+		if (!m_arrLines[nIndex].empty()) strResult = m_arrLines[nIndex];
+	}
+	return strResult;
+}
+
 #ifndef FAR_NO_NAMESPACE
 };
 #endif
