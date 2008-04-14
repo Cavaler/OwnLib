@@ -370,7 +370,7 @@ string &CFarSplitString::operator[](int nIndex) { return m_arrLines[nIndex]; }
 void CFarSplitString::Split(const string &strText) {
 	string strRemain = strText;
 
-	for (size_t nIndex = 0; nIndex < m_arrLines.size(); nIndex++) {
+	for (size_t nIndex = 0; nIndex < m_arrLines.size()-1; nIndex++) {
 		int nPos = strRemain.find('\n');
 		if (nPos == string::npos) {
 			m_arrLines[nIndex] = strRemain;
@@ -380,6 +380,7 @@ void CFarSplitString::Split(const string &strText) {
 			strRemain = strRemain.substr(nPos+1);
 		}
 	}
+	m_arrLines[m_arrLines.size()-1] = strRemain;
 }
 
 string CFarSplitString::Combine() {
