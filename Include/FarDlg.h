@@ -82,8 +82,24 @@ protected:
 class CFarIntegerConverter {
 public:
 	static CFarIntegerConverter Instance;
+	
 	virtual void ToString(int iValue, char *pszBuffer, int nSize);
 	virtual bool FromString(const char *pszBuffer, int &iValue);
+};
+
+class CFarDoubleConverter {
+public:
+	CFarDoubleConverter() : m_nDigits(-1) {}
+	CFarDoubleConverter(int nDigits) : m_nDigits(nDigits) {}
+	static CFarDoubleConverter Instance;
+	static CFarDoubleConverter Instance0;
+	static CFarDoubleConverter Instance1;
+	static CFarDoubleConverter Instance2;
+
+	virtual void ToString(double iValue, char *pszBuffer, int nSize);
+	virtual bool FromString(const char *pszBuffer, double &iValue);
+protected:
+	int m_nDigits;
 };
 
 class CFarHexConverter : public CFarIntegerConverter {
@@ -185,13 +201,20 @@ public:
 	CFarIntegerStorage(signed long &pValue, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
 		m_nMethod(5), m_pSLong(&pValue), m_pConverter(pConverter) {}
 
+	CFarIntegerStorage(double *pValue, CFarDoubleConverter *pConverter = &CFarDoubleConverter::Instance):
+		m_nMethod(6), m_pDouble(pValue), m_pDConverter(pConverter) {}
+	CFarIntegerStorage(double &pValue, CFarDoubleConverter *pConverter = &CFarDoubleConverter::Instance):
+		m_nMethod(6), m_pDouble(&pValue), m_pDConverter(pConverter) {}
+
 	virtual void Get(char *pszBuffer, int nSize) const;
 	virtual void Put(const char *pszBuffer);
 	virtual bool Verify(const char *pszBuffer);
 	virtual operator string() const;
 
-	virtual int Get() const;
+	virtual int GetI() const;
+	virtual double GetD() const;
 	virtual void Put(int nValue);
+	virtual void Put(double dValue);
 protected:
 	int m_nMethod;
 	union {
@@ -201,8 +224,10 @@ protected:
 		signed short *m_pSShort;
 		unsigned long *m_pULong;
 		signed long *m_pSLong;
+		double *m_pDouble;
 	};
 	CFarIntegerConverter *m_pConverter;
+	CFarDoubleConverter *m_pDConverter;
 };
 
 // *********************** HANDLERS ***********************

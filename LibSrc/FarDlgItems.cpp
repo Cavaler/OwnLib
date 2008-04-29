@@ -103,7 +103,7 @@ void CFarCheckBoxItem::CreateItem(FarDialogItem *Item) {
 		Item->Selected = *m_pBVariable;
 		break;
 	case 2:
-		Item->Selected = (m_piStorage->Get() & m_iValue)!=0;
+		Item->Selected = (m_piStorage->GetI() & m_iValue)!=0;
 		break;
 	}
 }
@@ -118,9 +118,9 @@ void CFarCheckBoxItem::StoreData(FarDialogItem *Item) {
 		break;
 	case 2:
 		if (Item->Selected)
-			m_piStorage->Put(m_piStorage->Get() | m_iValue);
+			m_piStorage->Put(m_piStorage->GetI() | m_iValue);
 		else
-			m_piStorage->Put(m_piStorage->Get() & ~m_iValue);
+			m_piStorage->Put(m_piStorage->GetI() & ~m_iValue);
 		break;
 	}
 }
@@ -145,7 +145,7 @@ void CFarCheckBox3Item::CreateItem(FarDialogItem *Item) {
 	CFarDialogItem::CreateItem(Item);
 	switch (m_nMethod) {
 	case 0:
-		Item->Selected = m_piStorage->Get();
+		Item->Selected = m_piStorage->GetI();
 		break;
 	case 1:
 		if (*m_pdwSet & m_dwMaskValue)
@@ -215,7 +215,7 @@ void CFarRadioButtonItem::CreateItem(FarDialogItem *Item) {
 		Item->Selected = *m_pBVariable;
 		break;
 	case 2:
-		Item->Selected = m_piStorage->Get()==m_iValue;
+		Item->Selected = m_piStorage->GetI()==m_iValue;
 		break;
 	}
 }
@@ -355,7 +355,7 @@ void CFarComboBoxItem::CreateItem(FarDialogItem *Item) {
 
 	CFarIntegerStorage *pInt = dynamic_cast<CFarIntegerStorage *>(m_pStorage);
 	if (pInt) {
-		int nValue = pInt->Get()-m_nOffset;
+		int nValue = pInt->GetI()-m_nOffset;
 		if ((nValue >= 0) && (nValue < Item->ListItems->ItemsNumber)) {
 			Item->ListItems->Items[nValue].Flags |= LIF_SELECTED;
 			strncpy(Item->Data, Item->ListItems->Items[nValue].Text, sizeof(Item->Data));

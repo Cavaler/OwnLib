@@ -230,6 +230,23 @@ bool CFarIntegerConverter::FromString(const char *pszBuffer, int &iValue) {
 	return sscanf(pszBuffer, "%d", &iValue) > 0;
 }
 
+CFarDoubleConverter CFarDoubleConverter::Instance;
+CFarDoubleConverter CFarDoubleConverter::Instance0(0);
+CFarDoubleConverter CFarDoubleConverter::Instance1(1);
+CFarDoubleConverter CFarDoubleConverter::Instance2(2);
+
+void CFarDoubleConverter::ToString(double dValue, char *pszBuffer, int nSize) {
+	if (m_nDigits >= 0) {
+		_snprintf(pszBuffer, nSize, "%.*f", m_nDigits, dValue);
+	} else {
+		_snprintf(pszBuffer, nSize, "%f", dValue);
+	}
+}
+
+bool CFarDoubleConverter::FromString(const char *pszBuffer, double &dValue) {
+	return sscanf(pszBuffer, "%df", &dValue) > 0;
+}
+
 CFarHexConverter CFarHexConverter::Instance;
 
 void CFarHexConverter::ToString(int iValue, char *pszBuffer, int nSize) {
@@ -321,7 +338,7 @@ CFarTextStorage::operator string() const {
 	}
 }
 
-int  CFarIntegerStorage::Get() const {
+int  CFarIntegerStorage::GetI() const {
 	switch (m_nMethod) {
 	case 0:
 		return *m_pUChar;
@@ -340,8 +357,21 @@ int  CFarIntegerStorage::Get() const {
 	}
 }
 
+double CFarIntegerStorage::GetD() const {
+	switch (m_nMethod) {
+	case 6:
+		return *m_pDouble;
+	default:
+		return 0;
+	}
+}
+
 void CFarIntegerStorage::Get(char *pszBuffer, int nSize) const {
-	m_pConverter->ToString(Get(), pszBuffer, nSize);
+	if (m_nMethod <= 5) {
+		m_pConverter->ToString(GetI(), pszBuffer, nSize);
+	} else {
+		m_pDConverter->ToString(GetD(), pszBuffer, nSize);
+	}
 }
 
 void CFarIntegerStorage::Put(int nValue) {
@@ -361,15 +391,33 @@ void CFarIntegerStorage::Put(int nValue) {
 	}
 }
 
+void CFarIntegerStorage::Put(double dValue) {
+	switch (m_nMethod) {
+	case 6:
+		*m_pDouble = dValue;break;
+	}
+}
+
 void CFarIntegerStorage::Put(const char *pszBuffer) {
-	int nValue;
-	m_pConverter->FromString(pszBuffer, nValue);
-	Put(nValue);
+	if (m_nMethod <= 5) {
+		int nValue;
+		m_pConverter->FromString(pszBuffer, nValue);
+		Put(nValue);
+	} else {
+		double dValue;
+		m_pDConverter->FromString(pszBuffer, dValue);
+		Put(dValue);
+	}
 }
 
 bool CFarIntegerStorage::Verify(const char *pszBuffer) {
-	int nValue;
-	return m_pConverter->FromString(pszBuffer, nValue);
+	if (m_nMethod <= 5) {
+		int nValue;
+		return m_pConverter->FromString(pszBuffer, nValue);
+	} else {
+		double dValue;
+		return m_pDConverter->FromString(pszBuffer, dValue);
+	}
 }
 
 CFarIntegerStorage::operator string() const {
