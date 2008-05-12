@@ -81,6 +81,7 @@ public:
 class CFarSplitString {
 public:
 	CFarSplitString(int nMax);
+	CFarSplitString(int nMax, const string &strText);
 	string &operator[](int nIndex);
 	void Split(const string &strText);
 	string Combine();

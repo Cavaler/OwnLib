@@ -372,8 +372,16 @@ void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &m_iSortOrder);
 }
 
-CFarSplitString::CFarSplitString(int nMax) : m_arrLines(nMax) {}
-string &CFarSplitString::operator[](int nIndex) { return m_arrLines[nIndex]; }
+CFarSplitString::CFarSplitString(int nMax) : m_arrLines(nMax) {
+}
+
+CFarSplitString::CFarSplitString(int nMax, const string &strText) : m_arrLines(nMax) {
+	Split(strText);
+}
+
+string &CFarSplitString::operator[](int nIndex) {
+	return m_arrLines[nIndex];
+}
 
 void CFarSplitString::Split(const string &strText) {
 	string strRemain = strText;
