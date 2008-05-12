@@ -109,6 +109,9 @@ void ShowWaitMessage(const char *pszTitle, const char *pszMessage1, const char *
 void HideWaitMessage();
 bool Interrupted();
 
+bool SetFileName(PluginPanelItem &Item, const char *szName);
+bool SetFileName(PluginPanelItem &Item, const std::string& strName);
+
 // FarGetMsgEx.cpp
 void InitLanguageFiles();
 void FreeLanguageFiles();

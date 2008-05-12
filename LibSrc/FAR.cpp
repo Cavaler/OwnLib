@@ -167,6 +167,14 @@ bool Interrupted() {
 	return false;
 }
 
+bool SetFileName(PluginPanelItem &Item, const char *szName) {
+	return strncpy_s(Item.FindData.cFileName, CleanFileName(szName).c_str(), _TRUNCATE) == 0;
+}
+
+bool SetFileName(PluginPanelItem &Item, const std::string& strName) {
+	return strncpy_s(Item.FindData.cFileName, CleanFileName(strName).c_str(), _TRUNCATE) == 0;
+}
+
 string FarMaskToRE(const char *szMask) {
 	string strRE = "^";
 	const char *szCur = szMask;
