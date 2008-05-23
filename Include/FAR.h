@@ -113,6 +113,8 @@ bool Interrupted();
 bool SetFileName(PluginPanelItem &Item, const char *szName);
 bool SetFileName(PluginPanelItem &Item, const std::string& strName);
 
+void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int OpMode=0);
+
 // FarGetMsgEx.cpp
 void InitLanguageFiles();
 void FreeLanguageFiles();

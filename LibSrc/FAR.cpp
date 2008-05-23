@@ -175,6 +175,14 @@ bool SetFileName(PluginPanelItem &Item, const std::string& strName) {
 	return strncpy_s(Item.FindData.cFileName, CleanFileName(strName).c_str(), _TRUNCATE) == 0;
 }
 
+void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int OpMode) {
+	if (OpMode & (OPM_SILENT | OPM_FIND)) return;
+
+	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, &iViewMode);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &iSortMode);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &iSortOrder);
+}
+
 string FarMaskToRE(const char *szMask) {
 	string strRE = "^";
 	const char *szCur = szMask;
