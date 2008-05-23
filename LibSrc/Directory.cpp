@@ -124,7 +124,7 @@ string CleanFileName(const string &strPath) {
 	string strResult = strPath;
 
 	for (size_t nPos = 0; nPos < strResult.length(); nPos++) {
-		if (strResult[nPos] < 0x20) { strResult[nPos] = '_';continue; }
+		if ((BYTE)(strResult[nPos]) < 0x20) { strResult[nPos] = '_';continue; }
 		switch (strResult[nPos]) {
 		case '<':	strResult[nPos] = '(';break;
 		case '>':	strResult[nPos] = ')';break;
