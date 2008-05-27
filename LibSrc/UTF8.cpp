@@ -81,7 +81,7 @@ wstring DecodeUTF8(const char *pszValue, int nLength)
 		pwData[nOutLen++] = wch;
 	}
 
-	return wstring(&pwData[0], nOutLen);
+	return (nOutLen) ? wstring(&pwData[0], nOutLen) : L"";
 }
 
 wstring DecodeUTF8(const string &strValue)
