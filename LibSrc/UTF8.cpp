@@ -39,6 +39,8 @@ string EncodeUTF8(const wstring &wstrValue)
 string EncodeUTF8(const char *pszValue, int nLength, unsigned int uiCP)
 {
 	if (nLength < 0) nLength = strlen(pszValue);
+	if (nLength == 0) return "";
+
 	vector<wchar_t> pwszValue(nLength);
 	MultiByteToWideChar(uiCP, 0, pszValue, nLength, &pwszValue[0], nLength);
 	return EncodeUTF8(&pwszValue[0], nLength);
