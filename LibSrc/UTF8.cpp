@@ -92,6 +92,7 @@ wstring DecodeUTF8(const string &strValue)
 string DecodeUTF8A(const char *pszValue, int nLength, unsigned int uiCP)
 {
 	wstring wstrResult = DecodeUTF8(pszValue, nLength);
+	if (wstrResult.empty()) return "";
 	vector<char> pszResult(wstrResult.length());
 	WideCharToMultiByte(uiCP, 0, wstrResult.data(), wstrResult.length(), &pszResult[0], wstrResult.length(), NULL, NULL);
 	return string(&pszResult[0],wstrResult.length());
