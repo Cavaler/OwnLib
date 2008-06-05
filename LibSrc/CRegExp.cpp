@@ -213,13 +213,14 @@ bool CRegExp::Split(string strAnalyze, string strPattern,  vector<string> *arrSp
 	arrSplit->clear();
 	int iStart = 0;
 	do {
-		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), iStart, iExecFlags, RegExp.m_piRefs, RegExp.m_iRefCount*3);
+		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), iStart,
+			iExecFlags & ~PCRE_SPLIT_FLAGS, RegExp.m_piRefs, RegExp.m_iRefCount*3);
 		if (iResult < 0) break;
-		if ((RegExp.m_piRefs[0] != 0) || (strPattern == " "))
+		if (((iExecFlags&PCRE_SPLIT_STRIPLEADING) == 0) || (RegExp.m_piRefs[0] != 0) || (strPattern == " "))
 			if (arrSplit) arrSplit->push_back(strAnalyze.substr(iStart, RegExp.m_piRefs[0] - iStart));
 		iStart = RegExp.m_piRefs[1];
 	} while (true);
-	if ((iStart != strAnalyze.size()) || (strPattern == " "))
+	if (((iExecFlags&PCRE_SPLIT_NOSTRIPTRAILING) != 0) || (iStart != strAnalyze.size()) || (strPattern == " "))
 		if (arrSplit) arrSplit->push_back(strAnalyze.substr(iStart));
 	return true;
 }

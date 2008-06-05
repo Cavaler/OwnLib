@@ -11,6 +11,10 @@
 #include <string>
 using namespace std;
 
+#define PCRE_SPLIT_FLAGS				0xF0000000
+#define PCRE_SPLIT_STRIPLEADING			0x80000000
+#define PCRE_SPLIT_NOSTRIPTRAILING		0x40000000
+
 class CRegExp
 {
 public:
