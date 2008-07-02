@@ -18,8 +18,8 @@
 
 #define PCRE_STATIC 1
 
-/* #undef SUPPORT_UTF8 1 */
-/* #undef SUPPORT_UCP 1 */
+#define SUPPORT_UTF8 1
+#define SUPPORT_UCP 1
 /* #undef EBCDIC 1 */
 /* #undef BSR_ANYCRLF 1 */
 /* #undef NO_RECURSE 1 */
