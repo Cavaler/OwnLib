@@ -89,6 +89,14 @@ protected:
 	vector<string> m_arrLines;
 };
 
+class CFarMenuItem : public FarMenuItem {
+public:
+	CFarMenuItem(const char *szTitle);
+	CFarMenuItem(const string &strTitle);
+	CFarMenuItem(int nMsgID);
+	CFarMenuItem(bool bSeparator);
+};
+
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,

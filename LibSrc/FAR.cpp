@@ -28,6 +28,27 @@ int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	return -1;
 }
 
+CFarMenuItem::CFarMenuItem(const char *szTitle) {
+	Selected = Checked = Separator = 0;
+	strcpy(Text, szTitle);
+}
+
+CFarMenuItem::CFarMenuItem(const string &strTitle) {
+	Selected = Checked = Separator = 0;
+	strcpy(Text, strTitle.c_str());
+}
+
+CFarMenuItem::CFarMenuItem(int nMsgID) {
+	Selected = Checked = Separator = 0;
+	strcpy(Text, GetMsg(nMsgID));
+}
+
+CFarMenuItem::CFarMenuItem(bool bSeparator) {
+	Selected = Checked = 0;
+	Separator = bSeparator ? 1 : 0;
+	Text[0] = 0;
+}
+
 int ChooseMenu(int ItemCount, const char **ppszItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
 	FarMenuItem *Items=new FarMenuItem[ItemCount];
