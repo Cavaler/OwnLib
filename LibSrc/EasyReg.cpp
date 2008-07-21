@@ -3,11 +3,14 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>
-#include <EasyReg.h>
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 
 #include <vector>
 #include <string>
 using namespace std;
+
+#include <EasyReg.h>
 
 void QueryRegStringValue(HKEY hKey, const char *pszKeyName,char *pszBuffer,DWORD dwBufSize,const char *pszDefault) {
 	DWORD Type;
@@ -183,4 +186,39 @@ void SetRegStringValue(HKEY hKey, const char *pszKeyName, const string &strValue
 
 void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wstring &wstrValue) {
 	SetRegStringValue(hKey, pszKeyName, wstrValue.c_str());
+}
+
+HKEY RegOpenSubkey(HKEY hKey, const char *pszKeyName) {
+	HKEY hSubKey;
+	if (RegOpenKeyEx(hKey, pszKeyName, 0, KEY_ALL_ACCESS, &hSubKey) != ERROR_SUCCESS) return (HKEY)NULL;
+	return hSubKey;
+}
+
+HKEY RegCreateSubkey(HKEY hKey, const char *pszKeyName) {
+	HKEY hSubKey;
+	if (RegCreateKeyEx(hKey, pszKeyName, 0, NULL, 0, KEY_ALL_ACCESS, NULL, &hSubKey, NULL) != ERROR_SUCCESS) return (HKEY)NULL;
+	return hSubKey;
+}
+
+void RegDeleteAllSubkeys(HKEY hKey) {
+	char szCurrentKey[256];
+
+	DWORD dwIndex = 0;
+	do {
+//		FILETIME ftTime;
+		DWORD dwcbCurrentKey = sizeof(szCurrentKey);
+		if (RegEnumKeyEx(hKey, dwIndex, szCurrentKey, &dwcbCurrentKey, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) break;
+		if (SHDeleteKey(hKey, szCurrentKey) != ERROR_SUCCESS) dwIndex++;
+	} while (TRUE);
+}
+
+void RegDeleteAllValues(HKEY hKey) {
+	char szCurrentKey[256];
+
+	DWORD dwIndex = 0;
+	do {
+		DWORD dwcbCurrentKey = sizeof(szCurrentKey);
+		if (RegEnumValue(hKey, dwIndex, szCurrentKey, &dwcbCurrentKey, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) break;
+		if (RegDeleteValue(hKey, szCurrentKey) != ERROR_SUCCESS) dwIndex++;
+	} while (TRUE);
 }

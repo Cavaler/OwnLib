@@ -48,4 +48,9 @@ void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer,
 void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wstring &wstrValue);
 #endif
 
+HKEY RegOpenSubkey(HKEY hKey, const char *pszKeyName);
+HKEY RegCreateSubkey(HKEY hKey, const char *pszKeyName);
+void RegDeleteAllSubkeys(HKEY hKey);
+void RegDeleteAllValues(HKEY hKey);
+
 #endif
