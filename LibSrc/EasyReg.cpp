@@ -20,11 +20,27 @@ void QueryRegStringValue(HKEY hKey, const char *pszKeyName,char *pszBuffer,DWORD
 	}
 }
 
-void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName,char **ppszBuffer,DWORD *BufSize,const char *pszDefault) {
+DWORD QueryRegSizeType(HKEY hKey, const char *pszKeyName, DWORD *pdwType = NULL) {
 	DWORD Type;
 	DWORD Size;
-	LONG Res=RegQueryValueEx(hKey,pszKeyName,NULL,&Type,NULL,&Size);
-	if ((Res!=ERROR_SUCCESS)||(Type!=REG_SZ)) {
+	LONG Res = RegQueryValueEx(hKey,pszKeyName,NULL,&Type,NULL,&Size);
+	if (Res != ERROR_SUCCESS) {
+		if (pdwType) *pdwType = REG_NONE;
+		return 0;
+	}
+	
+	if (pdwType) *pdwType = Type;
+	return Size;
+}
+
+bool IsStringType(DWORD dwType) {
+	return (dwType == REG_SZ) || (dwType == REG_MULTI_SZ) || (dwType == REG_EXPAND_SZ) || (dwType == REG_BINARY);
+}
+
+void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName,char **ppszBuffer,DWORD *BufSize,const char *pszDefault) {
+	DWORD Type;
+	DWORD Size = QueryRegSizeType(hKey, pszKeyName, &Type);
+	if (!IsStringType(Type)) {
 		if (pszDefault) {
 			*ppszBuffer=_strdup(pszDefault);
 			if (BufSize) *BufSize=strlen(pszDefault);
@@ -34,9 +50,17 @@ void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName,char **ppszBu
 		}
 		return;
 	}
-	(*ppszBuffer)=(char *)malloc(Size);
-	RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppszBuffer,&Size);
-	if (BufSize) *BufSize=Size;
+
+	if (Type == REG_BINARY) {
+		(*ppszBuffer)=(char *)malloc(Size+1);
+		RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppszBuffer,&Size);
+		(*ppszBuffer)[Size] = 0;
+		if (BufSize) *BufSize=Size+1;
+	} else {
+		(*ppszBuffer)=(char *)malloc(Size);
+		RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppszBuffer,&Size);
+		if (BufSize) *BufSize=Size;
+	}
 }
 
 typedef LONG ( APIENTRY* QueryValueExW)(HKEY hKey, LPCWSTR lpValueName, LPDWORD lpReserved, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);
@@ -67,7 +91,7 @@ void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t *pwszBuffer,
 		LoadProcs();
 		DWORD Type;
 		LONG Res=g_QueryValueExW(hKey, wstrfromsz(pszKeyName).c_str(), NULL, &Type, (LPBYTE)pwszBuffer, &dwBufSize);
-		if ((Res!=ERROR_SUCCESS) || (Type!=REG_SZ)) {
+		if ((Res!=ERROR_SUCCESS) || !IsStringType(Type)) {
 			if (pwszDefault) wcsncpy(pwszBuffer, pwszDefault, dwBufSize); else *pwszBuffer=0;
 		}
 	} else {							// Windows 95/98/ME
@@ -85,7 +109,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t **pp
 		DWORD Type;
 		DWORD Size;
 		LONG Res=g_QueryValueExW(hKey, wstrfromsz(pszKeyName).c_str(), NULL, &Type, NULL, &Size);
-		if ((Res!=ERROR_SUCCESS) || (Type!=REG_SZ)) {
+		if ((Res!=ERROR_SUCCESS) || !IsStringType(Type)) {
 			if (pwszDefault) {
 				*ppwszBuffer=_wcsdup(pwszDefault);
 				if (pdwBufSize) *pdwBufSize=wcslen(pwszDefault);
@@ -96,9 +120,16 @@ void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t **pp
 			return;
 		}
 
-		*ppwszBuffer = (wchar_t *)malloc(Size*2);
-		Res=g_QueryValueExW(hKey, wstrfromsz(pszKeyName).c_str(), NULL, &Type, (LPBYTE)*ppwszBuffer, &Size);
-		if (pdwBufSize) *pdwBufSize=Size;
+		if (Type == REG_BINARY) {
+			*ppwszBuffer = (wchar_t *)malloc(Size*2+2);
+			Res=g_QueryValueExW(hKey, wstrfromsz(pszKeyName).c_str(), NULL, &Type, (LPBYTE)*ppwszBuffer, &Size);
+			(*ppwszBuffer)[Size] = 0;
+			if (pdwBufSize) *pdwBufSize=Size+1;
+		} else {
+			*ppwszBuffer = (wchar_t *)malloc(Size*2);
+			Res=g_QueryValueExW(hKey, wstrfromsz(pszKeyName).c_str(), NULL, &Type, (LPBYTE)*ppwszBuffer, &Size);
+			if (pdwBufSize) *pdwBufSize=Size;
+		}
 	} else {							// Windows 95/98/ME
 		DWORD Type;
 		DWORD Size;
@@ -113,9 +144,17 @@ void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t **pp
 			}
 			return;
 		}
-		(*ppwszBuffer)=(wchar_t *)malloc(Size*2);
-		RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppwszBuffer,&Size);
-		if (pdwBufSize) *pdwBufSize=Size;
+
+		if (Type == REG_BINARY) {
+			*ppwszBuffer = (wchar_t *)malloc(Size*2+2);
+			RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppwszBuffer,&Size);
+			(*ppwszBuffer)[Size] = 0;
+			if (pdwBufSize) *pdwBufSize=Size+1;
+		} else {
+			*ppwszBuffer = (wchar_t *)malloc(Size*2);
+			RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppwszBuffer,&Size);
+			if (pdwBufSize) *pdwBufSize=Size;
+		}
 	}
 }
 
@@ -160,8 +199,9 @@ void SetRegIntValue(HKEY hKey,const char *pszKeyName,int iValue) {
 
 void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const char *pszDefault) {
 	char *szValue = NULL;
-	AllocAndQueryRegStringValue(hKey, pszKeyName, &szValue, NULL, pszDefault);
-	strBuffer = szValue ? szValue : "";
+	DWORD dwSize;
+	AllocAndQueryRegStringValue(hKey, pszKeyName, &szValue, &dwSize, pszDefault);
+	strBuffer = (szValue && (dwSize > 0)) ? string(szValue, dwSize-1) : "";
 	free(szValue);
 }
 
@@ -171,8 +211,9 @@ void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, c
 
 void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer, const wchar_t *pwszDefault) {
 	wchar_t *wszValue = NULL;
-	AllocAndQueryRegStringValue(hKey, pszKeyName, &wszValue, NULL, pwszDefault);
-	wstrBuffer = wszValue ? wszValue : L"";
+	DWORD dwSize;
+	AllocAndQueryRegStringValue(hKey, pszKeyName, &wszValue, &dwSize, pwszDefault);
+	wstrBuffer = (wszValue && (dwSize > 0)) ? wstring(wszValue, dwSize-1) : L"";
 	free(wszValue);
 }
 
@@ -186,6 +227,10 @@ void SetRegStringValue(HKEY hKey, const char *pszKeyName, const string &strValue
 
 void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wstring &wstrValue) {
 	SetRegStringValue(hKey, pszKeyName, wstrValue.c_str());
+}
+
+void SetRegBinaryValue(HKEY hKey, const char *pszKeyName, const void *pData,  int nLength) {
+	RegSetValueEx(hKey, pszKeyName, 0, REG_BINARY, (LPBYTE)pData, nLength);
 }
 
 HKEY RegOpenSubkey(HKEY hKey, const char *pszKeyName) {
