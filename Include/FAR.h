@@ -45,6 +45,8 @@ protected:
 	pcre_extra *m_pIncludeExtra;
 	pcre *m_pExclude;
 	pcre_extra *m_pExcludeExtra;
+
+	const unsigned char *m_pOEMTable;
 };
 
 class CFarSaveScreen {

@@ -259,6 +259,9 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 	bool bExclude = false;
 	string strCurMask = "";
 
+	setlocale(LC_ALL, ".OCP");
+	m_pOEMTable = pcre_maketables();
+
 	while (*szMasks) {
 		switch (*szMasks) {
 		case ' ':
@@ -271,7 +274,7 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 				bExclude = true;
 				const char *szErr;
 				int nErr;
-				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
+				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 				if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
 				strCurMask = "";
 			}
@@ -302,12 +305,12 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 	if (bExclude) {
 		const char *szErr;
 		int nErr;
-		m_pExclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
+		m_pExclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 		if (m_pExclude) m_pExcludeExtra = pcre_study(m_pInclude, 0, &szErr);
 	} else {
 		const char *szErr;
 		int nErr;
-		m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, NULL);
+		m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 		if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
 
 		m_pExclude = NULL;
@@ -333,6 +336,7 @@ CFarMaskSet::~CFarMaskSet() {
 	if (m_pIncludeExtra) pcre_free(m_pIncludeExtra);
 	if (m_pExclude) pcre_free(m_pExclude);
 	if (m_pExcludeExtra) pcre_free(m_pExcludeExtra);
+	if (m_pOEMTable) pcre_free((void *)m_pOEMTable);
 }
 
 CFarSaveScreen::CFarSaveScreen(const char *szMessage) {
