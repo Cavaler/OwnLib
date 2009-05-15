@@ -3,12 +3,45 @@
 /*
   farkeys.hpp
 
-  Inside KeyName for FAR Manager 1.75 build 2573
-
-  Copyright (c) 1996-2000 Eugene Roshal
-  Copyrigth (c) 2000-2009 FAR group
+  Inside KeyName for FAR Manager 2.0 build 909
 */
 
+/*
+Copyright (c) 1996 Eugene Roshal
+Copyright (c) 2000 Far Group
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. The name of the authors may not be used to endorse or promote products
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR `AS IS' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+EXCEPTION:
+Far Manager plugins that use this header file can be distributed under any
+other possible license with no implications from the above license on them.
+*/
+
+
+#define EXTENDED_KEY_BASE   0x00010000
+#define INTERNAL_KEY_BASE   0x00020000
+#define INTERNAL_KEY_BASE_2 0x00030000
 
 enum BaseDefKeyboard
 {
@@ -35,124 +68,129 @@ enum BaseDefKeyboard
   KEY_ESC                  =0x0000001B,
   KEY_SPACE                =0x00000020,
 
-  KEY_MASKF                =0x00000FFF,
+  KEY_MASKF                =0x0001FFFF,
 
-  KEY_FKEY_BEGIN           =0x00000100,
+  KEY_FKEY_BEGIN           =EXTENDED_KEY_BASE,
 
-  KEY_BREAK                =0x00000103,
+  KEY_BREAK                =EXTENDED_KEY_BASE+VK_CANCEL,
 
-  KEY_PAUSE                =0x00000113,
-  KEY_CAPSLOCK             =0x00000114,
+  KEY_PAUSE                =EXTENDED_KEY_BASE+VK_PAUSE,
+  KEY_CAPSLOCK             =EXTENDED_KEY_BASE+VK_CAPITAL,
 
-  KEY_PGUP                 =0x00000121,
-  KEY_PGDN                 =0x00000122,
-  KEY_END                  =0x00000123,
-  KEY_HOME                 =0x00000124,
-  KEY_LEFT                 =0x00000125,
-  KEY_UP                   =0x00000126,
-  KEY_RIGHT                =0x00000127,
-  KEY_DOWN                 =0x00000128,
-  KEY_PRNTSCRN             =0x0000012C,
-  KEY_INS                  =0x0000012D,
-  KEY_DEL                  =0x0000012E,
+  KEY_PGUP                 =EXTENDED_KEY_BASE+VK_PRIOR,
+  KEY_PGDN                 =EXTENDED_KEY_BASE+VK_NEXT,
+  KEY_END                  =EXTENDED_KEY_BASE+VK_END,
+  KEY_HOME                 =EXTENDED_KEY_BASE+VK_HOME,
+  KEY_LEFT                 =EXTENDED_KEY_BASE+VK_LEFT,
+  KEY_UP                   =EXTENDED_KEY_BASE+VK_UP,
+  KEY_RIGHT                =EXTENDED_KEY_BASE+VK_RIGHT,
+  KEY_DOWN                 =EXTENDED_KEY_BASE+VK_DOWN,
+  KEY_PRNTSCRN             =EXTENDED_KEY_BASE+VK_SNAPSHOT,
+  KEY_INS                  =EXTENDED_KEY_BASE+VK_INSERT,
+  KEY_DEL                  =EXTENDED_KEY_BASE+VK_DELETE,
 
-  KEY_LWIN                 =0x0000015B,
-  KEY_RWIN                 =0x0000015C,
-  KEY_APPS                 =0x0000015D,
-  KEY_STANDBY              =0x0000015F,
+  KEY_LWIN                 =EXTENDED_KEY_BASE+VK_LWIN,
+  KEY_RWIN                 =EXTENDED_KEY_BASE+VK_RWIN,
+  KEY_APPS                 =EXTENDED_KEY_BASE+VK_APPS,
+  KEY_STANDBY              =EXTENDED_KEY_BASE+VK_SLEEP,
 
-  KEY_NUMPAD0              =0x00000160,
-  KEY_NUMPAD1              =0x00000161,
-  KEY_NUMPAD2              =0x00000162,
-  KEY_NUMPAD3              =0x00000163,
-  KEY_NUMPAD4              =0x00000164,
-  KEY_NUMPAD5              =0x00000165,
+  KEY_NUMPAD0              =EXTENDED_KEY_BASE+VK_NUMPAD0,
+  KEY_NUMPAD1              =EXTENDED_KEY_BASE+VK_NUMPAD1,
+  KEY_NUMPAD2              =EXTENDED_KEY_BASE+VK_NUMPAD2,
+  KEY_NUMPAD3              =EXTENDED_KEY_BASE+VK_NUMPAD3,
+  KEY_NUMPAD4              =EXTENDED_KEY_BASE+VK_NUMPAD4,
+  KEY_NUMPAD5              =EXTENDED_KEY_BASE+VK_NUMPAD5,
   KEY_CLEAR                =KEY_NUMPAD5,
-  KEY_NUMPAD6              =0x00000166,
-  KEY_NUMPAD7              =0x00000167,
-  KEY_NUMPAD8              =0x00000168,
-  KEY_NUMPAD9              =0x00000169,
+  KEY_NUMPAD6              =EXTENDED_KEY_BASE+VK_NUMPAD6,
+  KEY_NUMPAD7              =EXTENDED_KEY_BASE+VK_NUMPAD7,
+  KEY_NUMPAD8              =EXTENDED_KEY_BASE+VK_NUMPAD8,
+  KEY_NUMPAD9              =EXTENDED_KEY_BASE+VK_NUMPAD9,
 
-  KEY_MULTIPLY             =0x0000016A,
-  KEY_ADD                  =0x0000016B,
-  KEY_SUBTRACT             =0x0000016D,
-  KEY_DECIMAL              =0x0000016E,
-  KEY_DIVIDE               =0x0000016F,
+  KEY_MULTIPLY             =EXTENDED_KEY_BASE+VK_MULTIPLY,
+  KEY_ADD                  =EXTENDED_KEY_BASE+VK_ADD,
+  KEY_SUBTRACT             =EXTENDED_KEY_BASE+VK_SUBTRACT,
+  KEY_DECIMAL              =EXTENDED_KEY_BASE+VK_DECIMAL,
+  KEY_DIVIDE               =EXTENDED_KEY_BASE+VK_DIVIDE,
 
-  KEY_F1                   =0x00000170,
-  KEY_F2                   =0x00000171,
-  KEY_F3                   =0x00000172,
-  KEY_F4                   =0x00000173,
-  KEY_F5                   =0x00000174,
-  KEY_F6                   =0x00000175,
-  KEY_F7                   =0x00000176,
-  KEY_F8                   =0x00000177,
-  KEY_F9                   =0x00000178,
-  KEY_F10                  =0x00000179,
-  KEY_F11                  =0x0000017A,
-  KEY_F12                  =0x0000017B,
+  KEY_F1                   =EXTENDED_KEY_BASE+VK_F1,
+  KEY_F2                   =EXTENDED_KEY_BASE+VK_F2,
+  KEY_F3                   =EXTENDED_KEY_BASE+VK_F3,
+  KEY_F4                   =EXTENDED_KEY_BASE+VK_F4,
+  KEY_F5                   =EXTENDED_KEY_BASE+VK_F5,
+  KEY_F6                   =EXTENDED_KEY_BASE+VK_F6,
+  KEY_F7                   =EXTENDED_KEY_BASE+VK_F7,
+  KEY_F8                   =EXTENDED_KEY_BASE+VK_F8,
+  KEY_F9                   =EXTENDED_KEY_BASE+VK_F9,
+  KEY_F10                  =EXTENDED_KEY_BASE+VK_F10,
+  KEY_F11                  =EXTENDED_KEY_BASE+VK_F11,
+  KEY_F12                  =EXTENDED_KEY_BASE+VK_F12,
 
-  KEY_F13                  =0x0000017C,
-  KEY_F14                  =0x0000017D,
-  KEY_F15                  =0x0000017E,
-  KEY_F16                  =0x0000017F,
-  KEY_F17                  =0x00000180,
-  KEY_F18                  =0x00000181,
-  KEY_F19                  =0x00000182,
-  KEY_F20                  =0x00000183,
-  KEY_F21                  =0x00000184,
-  KEY_F22                  =0x00000185,
-  KEY_F23                  =0x00000186,
-  KEY_F24                  =0x00000187,
+  KEY_F13                  =EXTENDED_KEY_BASE+VK_F13,
+  KEY_F14                  =EXTENDED_KEY_BASE+VK_F14,
+  KEY_F15                  =EXTENDED_KEY_BASE+VK_F15,
+  KEY_F16                  =EXTENDED_KEY_BASE+VK_F16,
+  KEY_F17                  =EXTENDED_KEY_BASE+VK_F17,
+  KEY_F18                  =EXTENDED_KEY_BASE+VK_F18,
+  KEY_F19                  =EXTENDED_KEY_BASE+VK_F19,
+  KEY_F20                  =EXTENDED_KEY_BASE+VK_F20,
+  KEY_F21                  =EXTENDED_KEY_BASE+VK_F21,
+  KEY_F22                  =EXTENDED_KEY_BASE+VK_F22,
+  KEY_F23                  =EXTENDED_KEY_BASE+VK_F23,
+  KEY_F24                  =EXTENDED_KEY_BASE+VK_F24,
 
-  KEY_NUMLOCK              =0x00000190,
-  KEY_SCROLLLOCK           =0x00000191,
+  KEY_NUMLOCK              =EXTENDED_KEY_BASE+VK_NUMLOCK,
+  KEY_SCROLLLOCK           =EXTENDED_KEY_BASE+VK_SCROLL,
 
-  KEY_BROWSER_BACK         =0x000001A6,
-  KEY_BROWSER_FORWARD      =0x000001A7,
-  KEY_BROWSER_REFRESH      =0x000001A8,
-  KEY_BROWSER_STOP         =0x000001A9,
-  KEY_BROWSER_SEARCH       =0x000001AA,
-  KEY_BROWSER_FAVORITES    =0x000001AB,
-  KEY_BROWSER_HOME         =0x000001AC,
-  KEY_VOLUME_MUTE          =0x000001AD,
-  KEY_VOLUME_DOWN          =0x000001AE,
-  KEY_VOLUME_UP            =0x000001AF,
-  KEY_MEDIA_NEXT_TRACK     =0x000001B0,
-  KEY_MEDIA_PREV_TRACK     =0x000001B1,
-  KEY_MEDIA_STOP           =0x000001B2,
-  KEY_MEDIA_PLAY_PAUSE     =0x000001B3,
-  KEY_LAUNCH_MAIL          =0x000001B4,
-  KEY_LAUNCH_MEDIA_SELECT  =0x000001B5,
-  KEY_LAUNCH_APP1          =0x000001B6,
-  KEY_LAUNCH_APP2          =0x000001B7,
+#if (_WIN32_WINNT >= 0x0500)
+  KEY_BROWSER_BACK         =EXTENDED_KEY_BASE+VK_BROWSER_BACK,
+  KEY_BROWSER_FORWARD      =EXTENDED_KEY_BASE+VK_BROWSER_FORWARD,
+  KEY_BROWSER_REFRESH      =EXTENDED_KEY_BASE+VK_BROWSER_REFRESH,
+  KEY_BROWSER_STOP         =EXTENDED_KEY_BASE+VK_BROWSER_STOP,
+  KEY_BROWSER_SEARCH       =EXTENDED_KEY_BASE+VK_BROWSER_SEARCH,
+  KEY_BROWSER_FAVORITES    =EXTENDED_KEY_BASE+VK_BROWSER_FAVORITES,
+  KEY_BROWSER_HOME         =EXTENDED_KEY_BASE+VK_BROWSER_HOME,
+  KEY_VOLUME_MUTE          =EXTENDED_KEY_BASE+VK_VOLUME_MUTE,
+  KEY_VOLUME_DOWN          =EXTENDED_KEY_BASE+VK_VOLUME_DOWN,
+  KEY_VOLUME_UP            =EXTENDED_KEY_BASE+VK_VOLUME_UP,
+  KEY_MEDIA_NEXT_TRACK     =EXTENDED_KEY_BASE+VK_MEDIA_NEXT_TRACK,
+  KEY_MEDIA_PREV_TRACK     =EXTENDED_KEY_BASE+VK_MEDIA_PREV_TRACK,
+  KEY_MEDIA_STOP           =EXTENDED_KEY_BASE+VK_MEDIA_STOP,
+  KEY_MEDIA_PLAY_PAUSE     =EXTENDED_KEY_BASE+VK_MEDIA_PLAY_PAUSE,
+  KEY_LAUNCH_MAIL          =EXTENDED_KEY_BASE+VK_LAUNCH_MAIL,
+  KEY_LAUNCH_MEDIA_SELECT  =EXTENDED_KEY_BASE+VK_LAUNCH_MEDIA_SELECT,
+  KEY_LAUNCH_APP1          =EXTENDED_KEY_BASE+VK_LAUNCH_APP1,
+  KEY_LAUNCH_APP2          =EXTENDED_KEY_BASE+VK_LAUNCH_APP2,
+#endif
 
-  KEY_CTRLALTSHIFTPRESS    =0x00000201,
-  KEY_CTRLALTSHIFTRELEASE  =0x00000202,
+  KEY_CTRLALTSHIFTPRESS    =INTERNAL_KEY_BASE+1,
+  KEY_CTRLALTSHIFTRELEASE  =INTERNAL_KEY_BASE+2,
 
-  KEY_MSWHEEL_UP           =0x00000203,
-  KEY_MSWHEEL_DOWN         =0x00000204,
+  KEY_MSWHEEL_UP           =INTERNAL_KEY_BASE+3,
+  KEY_MSWHEEL_DOWN         =INTERNAL_KEY_BASE+4,
+  KEY_NUMDEL               =INTERNAL_KEY_BASE+9,
+  KEY_NUMENTER             =INTERNAL_KEY_BASE+0xB,
 
-  KEY_NUMDEL               =0x00000209,
-  KEY_NUMENTER             =0x0000020B,
+  KEY_MSWHEEL_LEFT         =INTERNAL_KEY_BASE+0xC,
+  KEY_MSWHEEL_RIGHT        =INTERNAL_KEY_BASE+0xD,
 
-  KEY_MSWHEEL_LEFT         =0x0000020C,
-  KEY_MSWHEEL_RIGHT        =0x0000020D,
+  KEY_MSLCLICK             =INTERNAL_KEY_BASE+0xF,
+  KEY_MSRCLICK             =INTERNAL_KEY_BASE+0x10,
 
-  KEY_MSLCLICK             =0x0000020F,
-  KEY_MSRCLICK             =0x00000210,
+  KEY_MSM1CLICK            =INTERNAL_KEY_BASE+0x11,
+  KEY_MSM2CLICK            =INTERNAL_KEY_BASE+0x12,
+  KEY_MSM3CLICK            =INTERNAL_KEY_BASE+0x13,
 
-  KEY_MSM1CLICK            =0x00000211,
-  KEY_MSM2CLICK            =0x00000212,
-  KEY_MSM3CLICK            =0x00000213,
-  KEY_VK_0xFF_BEGIN        =0x00000300,
-  KEY_VK_0xFF_END          =0x000003FF,
 
-  KEY_END_FKEY             =0x00000FFF,
 
-  KEY_NONE                 =0x00001001,
-  KEY_IDLE                 =0x00001002,
-  KEY_END_SKEY             =0x0000FFFF,
+  KEY_VK_0xFF_BEGIN        =EXTENDED_KEY_BASE+0x00000100,
+  KEY_VK_0xFF_END          =EXTENDED_KEY_BASE+0x000001FF,
+
+  KEY_END_FKEY             =0x0001FFFF,
+
+  KEY_NONE                 =INTERNAL_KEY_BASE_2+1,
+  KEY_IDLE                 =INTERNAL_KEY_BASE_2+2,
+
+  KEY_END_SKEY             =0x0003FFFF,
   KEY_LAST_BASE            =KEY_END_SKEY,
 
 };
@@ -277,16 +315,16 @@ enum AddDefKeyboard
   KEY_CTRLSHIFT8           =(KEY_CTRL|KEY_SHIFT)+'8',
   KEY_CTRLSHIFT9           =(KEY_CTRL|KEY_SHIFT)+'9',
 
-  KEY_RCTRLSHIFT0          =(KEY_RCTRL+KEY_SHIFT)+'0',
-  KEY_RCTRLSHIFT1          =(KEY_RCTRL+KEY_SHIFT)+'1',
-  KEY_RCTRLSHIFT2          =(KEY_RCTRL+KEY_SHIFT)+'2',
-  KEY_RCTRLSHIFT3          =(KEY_RCTRL+KEY_SHIFT)+'3',
-  KEY_RCTRLSHIFT4          =(KEY_RCTRL+KEY_SHIFT)+'4',
-  KEY_RCTRLSHIFT5          =(KEY_RCTRL+KEY_SHIFT)+'5',
-  KEY_RCTRLSHIFT6          =(KEY_RCTRL+KEY_SHIFT)+'6',
-  KEY_RCTRLSHIFT7          =(KEY_RCTRL+KEY_SHIFT)+'7',
-  KEY_RCTRLSHIFT8          =(KEY_RCTRL+KEY_SHIFT)+'8',
-  KEY_RCTRLSHIFT9          =(KEY_RCTRL+KEY_SHIFT)+'9',
+  KEY_RCTRLSHIFT0          =KEY_RCTRL+KEY_SHIFT+'0',
+  KEY_RCTRLSHIFT1          =KEY_RCTRL+KEY_SHIFT+'1',
+  KEY_RCTRLSHIFT2          =KEY_RCTRL+KEY_SHIFT+'2',
+  KEY_RCTRLSHIFT3          =KEY_RCTRL+KEY_SHIFT+'3',
+  KEY_RCTRLSHIFT4          =KEY_RCTRL+KEY_SHIFT+'4',
+  KEY_RCTRLSHIFT5          =KEY_RCTRL+KEY_SHIFT+'5',
+  KEY_RCTRLSHIFT6          =KEY_RCTRL+KEY_SHIFT+'6',
+  KEY_RCTRLSHIFT7          =KEY_RCTRL+KEY_SHIFT+'7',
+  KEY_RCTRLSHIFT8          =KEY_RCTRL+KEY_SHIFT+'8',
+  KEY_RCTRLSHIFT9          =KEY_RCTRL+KEY_SHIFT+'9',
 
   KEY_CTRLSHIFTA           =(KEY_CTRL|KEY_SHIFT)+'A',
   KEY_CTRLSHIFTB           =(KEY_CTRL|KEY_SHIFT)+'B',

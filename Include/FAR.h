@@ -1,13 +1,19 @@
 #ifndef __FAR_H
 #define __FAR_H
 
-#pragma pack(1)
+#pragma pack(2)
 #ifndef _WINDOWS_
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
 #endif
+
+#define _FAR_USE_WIN32_FIND_DATA
+#ifdef _FAR_UNICODE
+#include <plugin2.hpp>
+#else
 #include <plugin.hpp>
+#endif
 #include <CRegExp.h>
 
 #define PSI140SIZE	312
