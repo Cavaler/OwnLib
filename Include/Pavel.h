@@ -21,7 +21,11 @@
 #ifdef _DLL 
 #pragma comment(lib, "PavelMD8.lib")
 #else
+#ifdef _WIN64
+#pragma comment(lib, "PavelMT8x64.lib")
+#else
 #pragma comment(lib, "PavelMT8.lib")
+#endif
 #endif
 #endif
 #endif

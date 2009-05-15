@@ -8,11 +8,14 @@
 #include <windows.h>
 #endif
 
+#include "tchar.h"
 #define _FAR_USE_WIN32_FIND_DATA
-#ifdef _FAR_UNICODE
+#ifdef _UNICODE
 #include <plugin2.hpp>
+#define tstring wstring
 #else
 #include <plugin.hpp>
+#define tstring string
 #endif
 #include <CRegExp.h>
 
@@ -99,10 +102,16 @@ protected:
 
 class CFarMenuItem : public FarMenuItem {
 public:
-	CFarMenuItem(const char *szTitle);
-	CFarMenuItem(const string &strTitle);
+	CFarMenuItem(const TCHAR *szTitle);
+	CFarMenuItem(const tstring &strTitle);
 	CFarMenuItem(int nMsgID);
 	CFarMenuItem(bool bSeparator);
+	CFarMenuItem(const CFarMenuItem &Item);
+	void operator=(const CFarMenuItem &Item);
+#ifdef _UNICODE
+protected:
+	tstring m_strText;
+#endif
 };
 
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
@@ -112,7 +121,7 @@ int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const cha
 int  Message(UINT uiFlags, const char *szHelpTopic, int iButtonsNumber, std::vector<std::string> &arrItems);
 #endif
 
-const char *GetMsg(int MsgId);
+const TCHAR *GetMsg(int MsgId);
 int  WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber);
 int  ChooseMenu(int ItemCount, const char **ppszItems, const char *Title, const char *Bottom, const char *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
