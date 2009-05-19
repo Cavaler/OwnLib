@@ -302,7 +302,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDd8x64.lib"
+				OutputFile="..\Lib\PavelMTd8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -2538,6 +2538,10 @@
 			</File>
 			<File
 				RelativePath="..\Include\FarDlg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Include\GenLibName.h"
 				>
 			</File>
 			<File

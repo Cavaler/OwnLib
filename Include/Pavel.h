@@ -12,22 +12,7 @@
 #include <UTF8.h>
 #include <XLat.h>
 
-#ifdef _DEBUG
-#pragma comment(lib, "PavelMDd8.lib")
-#else
-#ifdef __INTEL_COMPILER
-#pragma comment(lib, "PavelMTI.lib")
-#else
-#ifdef _DLL 
-#pragma comment(lib, "PavelMD8.lib")
-#else
-#ifdef _WIN64
-#pragma comment(lib, "PavelMT8x64.lib")
-#else
-#pragma comment(lib, "PavelMT8.lib")
-#endif
-#endif
-#endif
-#endif
+#define LIB_NAME "Pavel"
+#include "GenLibName.h"
 
 #endif

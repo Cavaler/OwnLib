@@ -157,7 +157,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMTI.lib"
+				OutputFile="..\..\Lib\pcreMTIx64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -310,7 +310,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMD8.lib"
+				OutputFile="..\..\Lib\pcreMD8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -455,7 +455,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMDd8.lib"
+				OutputFile="..\..\Lib\pcreMTd8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -610,7 +610,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/LTCG"
-				OutputFile="..\..\Lib\pcreMT8.lib"
+				OutputFile="..\..\Lib\pcreMT8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
