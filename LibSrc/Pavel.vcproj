@@ -133,7 +133,7 @@
 				IgnoreStandardIncludePath="false"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
 				AssemblerListingLocation="$(IntDir)\"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMTI.lib"
+				OutputFile="..\Lib\PavelMTIx64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -276,8 +276,8 @@
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
-				RuntimeLibrary="3"
-				StructMemberAlignment="2"
+				RuntimeLibrary="1"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderThrough="StdAfx.h"
@@ -302,7 +302,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDd8.lib"
+				OutputFile="..\Lib\PavelMDd8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -434,7 +434,7 @@
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="2"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderThrough="StdAfx.h"
@@ -457,7 +457,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMD8.lib"
+				OutputFile="..\Lib\PavelMD8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -589,7 +589,7 @@
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -686,7 +686,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDd8.lib"
+				OutputFile="..\Lib\PavelMDd8U.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -735,7 +735,7 @@
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="3"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderThrough="StdAfx.h"
@@ -760,7 +760,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDd8.lib"
+				OutputFile="..\Lib\PavelMDd8Ux64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -838,7 +838,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/LTCG"
-				OutputFile="..\Lib\PavelMT8.lib"
+				OutputFile="..\Lib\PavelMT8U.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -893,7 +893,7 @@
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -916,7 +916,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/LTCG"
-				OutputFile="..\Lib\PavelMT8x64.lib"
+				OutputFile="..\Lib\PavelMT8Ux64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
