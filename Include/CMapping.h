@@ -8,11 +8,11 @@
 class CFileMapping {
 public:
 	CFileMapping();
-	CFileMapping(const char *szFileName);
+	CFileMapping(const TCHAR *szFileName);
 	operator bool();
 	bool operator !();
 
-	void *Open(const char *szFileName);
+	void *Open(const TCHAR *szFileName);
 	operator void *();
 	operator BYTE *();
 	operator char *();

@@ -3,7 +3,7 @@
 CFileMapping::CFileMapping() : m_hFile(INVALID_HANDLE_VALUE), m_hMapping(NULL), m_pData(NULL), m_dwPos(0) {
 }
 
-CFileMapping::CFileMapping(const char *szFileName) : m_hMapping(NULL), m_pData(NULL), m_dwPos(0) {
+CFileMapping::CFileMapping(const TCHAR *szFileName) : m_hMapping(NULL), m_pData(NULL), m_dwPos(0) {
 	Open(szFileName);
 }
 
@@ -15,7 +15,7 @@ bool CFileMapping::operator !() {
 	return m_pData == NULL;
 }
 
-void *CFileMapping::Open(const char *szFileName) {
+void *CFileMapping::Open(const TCHAR *szFileName) {
 	m_hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (m_hFile == INVALID_HANDLE_VALUE) return NULL;
 

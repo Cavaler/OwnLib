@@ -1,13 +1,15 @@
 #ifndef __EASYREG_H
 #define __EASYREG_H
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, char *pszBuffer, DWORD dwBufSize, const char *pszDefault = NULL);
-void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, char **ppszBuffer, DWORD *pwdBufSize = NULL, const char *pszDefault = NULL);
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t *pwszBuffer, DWORD dwBufSize, const wchar_t *pwszDefault = NULL);
-void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize = NULL, const wchar_t *pwszDefault = NULL);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, TCHAR *pszBuffer, DWORD dwBufSize, const TCHAR *pszDefault = NULL);
+void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, TCHAR **ppszBuffer, DWORD *pwdBufSize = NULL, const TCHAR *pszDefault = NULL);
+#ifndef _UNICODE
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t *pwszBuffer, DWORD dwBufSize, const wchar_t *pwszDefault = NULL);
+void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize = NULL, const wchar_t *pwszDefault = NULL);
+#endif
 
 template<class IntType>
-void QueryRegIntValue(HKEY hKey, const char *pszKeyName, IntType *piBuffer, int iDefault = 0) {
+void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, IntType *piBuffer, int iDefault = 0) {
 	DWORD dwBufSize=sizeof(int),dwType,dwResult;
 	LONG lRes=RegQueryValueEx(hKey,pszKeyName,NULL,&dwType,(LPBYTE)&dwResult,&dwBufSize);
 	if ((lRes!=ERROR_SUCCESS) || (dwType!=REG_DWORD))
@@ -17,7 +19,7 @@ void QueryRegIntValue(HKEY hKey, const char *pszKeyName, IntType *piBuffer, int 
 }
 
 template<class IntType>
-void QueryRegIntValue(HKEY hKey, const char *pszKeyName, IntType *piBuffer, int iDefault, int iMin, int iMax=0x7FFFFFFF) {
+void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, IntType *piBuffer, int iDefault, int iMin, int iMax=0x7FFFFFFF) {
 	DWORD dwBufSize=sizeof(int),dwType,dwResult;
 	LONG lRes=RegQueryValueEx(hKey,pszKeyName,NULL,&dwType,(LPBYTE)&dwResult,&dwBufSize);
 	if ((lRes!=ERROR_SUCCESS) || (dwType!=REG_DWORD) || (dwResult<(DWORD)iMin) || (dwResult>(DWORD)iMax))
@@ -26,30 +28,35 @@ void QueryRegIntValue(HKEY hKey, const char *pszKeyName, IntType *piBuffer, int 
 		*piBuffer=(IntType)dwResult;
 }
 
-void QueryRegIntValue(HKEY hKey, const char *pszKeyName, __int64 *piBuffer, __int64 iDefault);
-void QueryRegIntValue(HKEY hKey, const char *pszKeyName, __int64 *piBuffer, __int64 iDefault, __int64 iMin, __int64 iMax);
+void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, __int64 *piBuffer, __int64 iDefault);
+void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, __int64 *piBuffer, __int64 iDefault, __int64 iMin, __int64 iMax);
 
-void QueryRegBoolValue(HKEY hKey, const char *pszKeyName, BOOL *pbBuffer, BOOL bDefault);
-void QueryRegBoolValue(HKEY hKey, const char *pszKeyName, bool *pbBuffer, bool bDefault);
+void QueryRegBoolValue(HKEY hKey, const TCHAR *pszKeyName, BOOL *pbBuffer, BOOL bDefault);
+void QueryRegBoolValue(HKEY hKey, const TCHAR *pszKeyName, bool *pbBuffer, bool bDefault);
 
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const char *pwszValue);
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wchar_t *pwszValue);
-void SetRegIntValue(HKEY hKey, const char *pszKeyName, int iValue);
-#define SetRegBoolValue(hKey, pszKeyName, bValue) SetRegIntValue(hKey, pszKeyName, (bValue)?1:0)
-void SetRegBinaryValue(HKEY hKey, const char *pszKeyName, const void *pData,  int nLength);
-
-#if (defined _STRING_) || (defined _STLP_STRING)
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const char *pszDefault);
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const string &strDefault);
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const string &strValue);
-
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer, const wchar_t *pwszDefault);
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer, const wstring &wstrDefault);
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wstring &wstrValue);
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const TCHAR *pwszValue);
+#ifndef _UNICODE
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wchar_t *pwszValue);
 #endif
+void SetRegIntValue(HKEY hKey, const TCHAR *pszKeyName, int iValue);
+#define SetRegBoolValue(hKey, pszKeyName, bValue) SetRegIntValue(hKey, pszKeyName, (bValue)?1:0)
+void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const void *pData,  int nLength);
 
-HKEY RegOpenSubkey(HKEY hKey, const char *pszKeyName);
-HKEY RegCreateSubkey(HKEY hKey, const char *pszKeyName);
+__if_exists (std::string) {
+#include "tstring.h"
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer, const TCHAR *pszDefault);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer, const tstring &strDefault);
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const tstring &strValue);
+
+#ifndef _UNICODE
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wstring &wstrBuffer, const wchar_t *pwszDefault);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wstring &wstrBuffer, const wstring &wstrDefault);
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wstring &wstrValue);
+#endif
+}
+
+HKEY RegOpenSubkey(HKEY hKey, const TCHAR *pszKeyName);
+HKEY RegCreateSubkey(HKEY hKey, const TCHAR *pszKeyName);
 void RegDeleteAllSubkeys(HKEY hKey);
 void RegDeleteAllValues(HKEY hKey);
 

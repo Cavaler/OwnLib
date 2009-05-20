@@ -2569,6 +2569,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Include\tstring.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Include\UTF8.h"
 				>
 			</File>

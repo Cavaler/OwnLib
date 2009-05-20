@@ -41,11 +41,17 @@ unsigned char KOI82OEM[256]=
 
 
 void XLat_OEM2ANSI(char *From,char *To,int Length) {
-	if (Length) OemToCharBuff(From,To,Length); else	OemToChar(From,To);
+	if (Length)
+		OemToCharBuffA(From,To,Length);
+	else
+		OemToCharA(From,To);
 }
 
 void XLat_ANSI2OEM(char *From,char *To,int Length) {
-	if (Length) CharToOemBuff(From,To,Length); else	CharToOem(From,To);
+	if (Length)
+		CharToOemBuffA(From,To,Length);
+	else
+		CharToOemA(From,To);
 }
 
 void XLat_OEM2KOI8(char *From,char *To,int Length) {

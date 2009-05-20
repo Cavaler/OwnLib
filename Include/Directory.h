@@ -1,21 +1,22 @@
 #ifndef __DIRECTORY_H
 #define __DIRECTORY_H
 
-BOOL DirectoryExists(const char *DirName);
-char *AddSlash(char *Path);				// Returns same pointer
-char *DelSlash(char *Path);				// Returns same pointer or NULL in case 'D:\' or '\'
-BOOL CreateDirectories(const char *DirName);
-BOOL CreateDirectoriesForFile(const char *FileName);
+BOOL DirectoryExists(const TCHAR *DirName);
+TCHAR *AddSlash(TCHAR *Path);				// Returns same pointer
+TCHAR *DelSlash(TCHAR *Path);				// Returns same pointer or NULL in case 'D:\' or '\'
+BOOL CreateDirectories(const TCHAR *DirName);
+BOOL CreateDirectoriesForFile(const TCHAR *FileName);
 
-#ifdef _STRING_
-std::string DelSlash(const std::string &strPath);
-std::string AddSlash(const std::string &strPath);
-std::string CatFile(const std::string &strPath, const std::string &strFile);
-std::string GetFileName(const std::string &strPath);
-std::string GetFullFileName(const std::string &strPath);
-std::string GetFullFileName(const std::string &strPath, const std::string &strBase);
+__if_exists(std::string) {
+#include "tstring.h"
+std::tstring DelSlash(const std::tstring &strPath);
+std::tstring AddSlash(const std::tstring &strPath);
+std::tstring CatFile(const std::tstring &strPath, const std::tstring &strFile);
+std::tstring GetFileName(const std::tstring &strPath);
+std::tstring GetFullFileName(const std::tstring &strPath);
+std::tstring GetFullFileName(const std::tstring &strPath, const std::tstring &strBase);
 
-std::string CleanFileName(const std::string &strPath);
-#endif
+std::tstring CleanFileName(const std::tstring &strPath);
+}
 
 #endif

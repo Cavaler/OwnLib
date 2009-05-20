@@ -2,30 +2,31 @@
 #define STRICT
 #include <windows.h>
 #include <stdlib.h>
-#include <Directory.h>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
-BOOL DirectoryExists(const char *DirName) {
-	int Length=strlen(DirName);
+#include <Directory.h>
+
+BOOL DirectoryExists(const TCHAR *DirName) {
+	int Length=_tcslen(DirName);
 	if (Length==0) return TRUE;
 	if ((Length==1)&&(DirName[0]=='\\')) return TRUE;
 	if (((Length==3)&&(DirName[1]==':')&&(DirName[2]=='\\'))||
 		((Length==2)&&(DirName[1]==':'))) {
 		DWORD Drives=GetLogicalDrives();
-		char Drive=toupper(DirName[0]);
+		TCHAR Drive=toupper(DirName[0]);
 		return ((Drive>='A')&&(Drive<='Z'))?(Drives&(1<<(Drive-'A'))):FALSE;
 	}
 
-	string strPath = DirName;
+	tstring strPath = DirName;
 	if (DirName[Length-1]=='\\') strPath.erase(strPath.end()-1);
 	DWORD Attr=GetFileAttributes(strPath.c_str());
 	return ((Attr!=0xFFFFFFFF)&&(Attr&FILE_ATTRIBUTE_DIRECTORY));
 }
 
-char *AddSlash(char *Path) {
-	int Length=strlen(Path);
+TCHAR *AddSlash(TCHAR *Path) {
+	int Length=_tcslen(Path);
 	if (!Length) return Path;
 ///	if (!Length) {strcpy(Path,".\\");return Path;}
 	if ((Length==2)&&(Path[1]==':')) return Path;
@@ -33,8 +34,8 @@ char *AddSlash(char *Path) {
 	return Path;
 }
 
-char *DelSlash(char *Path) {
-	int Length=strlen(Path);
+TCHAR *DelSlash(TCHAR *Path) {
+	int Length=_tcslen(Path);
 	if ((Length==1)&&(Path[2]=='\\')) return NULL;
 	if ((Length==3)&&(Path[1]==':')&&(Path[2]=='\\')) return NULL;
 
@@ -42,14 +43,14 @@ char *DelSlash(char *Path) {
 	return Path;
 }
 
-BOOL CreateDirectories(const char *DirName) {
-	char FullName[MAX_PATH];
+BOOL CreateDirectories(const TCHAR *DirName) {
+	TCHAR FullName[MAX_PATH];
 	if (DirName[0]==0) return TRUE;
 	if (!GetFullPathName(DirName,MAX_PATH,FullName,NULL)) return FALSE;
-	char *Rest=FullName;
+	TCHAR *Rest=FullName;
 	do {
 		if (*Rest==0) return TRUE;
-		Rest=strchr(Rest,'\\');
+		Rest=_tcschr(Rest,'\\');
 		if (!Rest) {
 			if (DirectoryExists(FullName)) return TRUE;
 			if (!CreateDirectory(FullName,NULL)) return FALSE;
@@ -65,8 +66,8 @@ BOOL CreateDirectories(const char *DirName) {
 	return TRUE;
 }
 
-BOOL CreateDirectoriesForFile(const char *FileName) {
-	char *FName=(char *)strrchr(FileName,'\\');
+BOOL CreateDirectoriesForFile(const TCHAR *FileName) {
+	TCHAR *FName=(TCHAR *)_tcsrchr(FileName,'\\');
 	if (!FName) return TRUE;
 	*FName=0;
 	BOOL Result=CreateDirectories(FileName);
@@ -74,54 +75,54 @@ BOOL CreateDirectoriesForFile(const char *FileName) {
 	return Result;
 }
 
-string DelSlash(const string &strPath) {
+tstring DelSlash(const tstring &strPath) {
 	if (strPath.length() == 0) return strPath;
 	if ((strPath.length() == 3) && (strPath[1] == ':')) return strPath;
 	if (strPath[strPath.length() - 1] == '\\') return strPath.substr(0, strPath.length()-1);
 	return strPath;
 }
 
-string AddSlash(const string &strPath) {
+tstring AddSlash(const tstring &strPath) {
 	if (strPath.length() == 0) return strPath;
 	if ((strPath.length() == 2) && (strPath[1] == ':')) return strPath;
-	if (strPath[strPath.length() - 1] != '\\') return strPath + '\\';
+	if (strPath[strPath.length() - 1] != '\\') return strPath + _T('\\');
 	return strPath;
 }
 
-string CatFile(const string &strPath, const string &strFile) {
+tstring CatFile(const tstring &strPath, const tstring &strFile) {
 	return AddSlash(strPath) + strFile;
 }
 
-string GetFileName(const string &strPath) {
+tstring GetFileName(const tstring &strPath) {
 	int nPosS = strPath.rfind('\\');
 	int nPosC = strPath.rfind(':');
-	int nPos = (nPosS == string::npos) ? nPosC :
-		(nPosC == string::npos) ? nPosS :
+	int nPos = (nPosS == tstring::npos) ? nPosC :
+		(nPosC == tstring::npos) ? nPosS :
 		(nPosS > nPosC) ? nPosS : nPosC;
 
-	return (nPos == string::npos) ? strPath : strPath.substr(nPos + 1);
+	return (nPos == tstring::npos) ? strPath : strPath.substr(nPos + 1);
 }
 
-string GetFullFileName(const string &strPath) {
+tstring GetFullFileName(const tstring &strPath) {
 	DWORD dwSize = GetFullPathName(strPath.c_str(), 0, NULL, NULL);
-	if (!dwSize) return "";
+	if (!dwSize) return _T("");
 
-	vector<char> arrFull(dwSize);
+	vector<TCHAR> arrFull(dwSize);
 	GetFullPathName(strPath.c_str(), dwSize, &arrFull[0], NULL);
 	return &arrFull[0];
 }
 
-string GetFullFileName(const string &strPath, const string &strBase) {
-	char szCurDir[MAX_PATH];
+tstring GetFullFileName(const tstring &strPath, const tstring &strBase) {
+	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, szCurDir);
 	SetCurrentDirectory(strBase.c_str());
-	string strFull = GetFullFileName(strPath);
+	tstring strFull = GetFullFileName(strPath);
 	SetCurrentDirectory(szCurDir);
 	return strFull;
 }
 
-string CleanFileName(const string &strPath) {
-	string strResult = strPath;
+tstring CleanFileName(const tstring &strPath) {
+	tstring strResult = strPath;
 
 	for (size_t nPos = 0; nPos < strResult.length(); nPos++) {
 		if ((BYTE)(strResult[nPos]) < 0x20) { strResult[nPos] = '_';continue; }

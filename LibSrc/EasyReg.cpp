@@ -9,18 +9,19 @@
 #include <vector>
 #include <string>
 using namespace std;
+#include <tchar.h>
 
 #include <EasyReg.h>
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName,char *pszBuffer,DWORD dwBufSize,const char *pszDefault) {
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR *pszBuffer,DWORD dwBufSize,const TCHAR *pszDefault) {
 	DWORD Type;
 	LONG Res=RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(LPBYTE)pszBuffer,&dwBufSize);
 	if ((Res!=ERROR_SUCCESS)||(Type!=REG_SZ)) {
-		if (pszDefault) strncpy(pszBuffer, pszDefault, dwBufSize); else *pszBuffer=0;
+		if (pszDefault) _tcsncpy(pszBuffer, pszDefault, dwBufSize/sizeof(TCHAR)); else *pszBuffer=0;
 	}
 }
 
-DWORD QueryRegSizeType(HKEY hKey, const char *pszKeyName, DWORD *pdwType = NULL) {
+DWORD QueryRegSizeType(HKEY hKey, const TCHAR *pszKeyName, DWORD *pdwType = NULL) {
 	DWORD Type;
 	DWORD Size;
 	LONG Res = RegQueryValueEx(hKey,pszKeyName,NULL,&Type,NULL,&Size);
@@ -37,13 +38,13 @@ bool IsStringType(DWORD dwType) {
 	return (dwType == REG_SZ) || (dwType == REG_MULTI_SZ) || (dwType == REG_EXPAND_SZ) || (dwType == REG_BINARY);
 }
 
-void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName,char **ppszBuffer,DWORD *BufSize,const char *pszDefault) {
+void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR **ppszBuffer,DWORD *BufSize,const TCHAR *pszDefault) {
 	DWORD Type;
 	DWORD Size = QueryRegSizeType(hKey, pszKeyName, &Type);
 	if (!IsStringType(Type)) {
 		if (pszDefault) {
-			*ppszBuffer=_strdup(pszDefault);
-			if (BufSize) *BufSize=strlen(pszDefault);
+			*ppszBuffer=_tcsdup(pszDefault);
+			if (BufSize) *BufSize=_tcslen(pszDefault)*sizeof(TCHAR);
 		} else {
 			*ppszBuffer=NULL;
 			if (BufSize) *BufSize=0;
@@ -52,16 +53,18 @@ void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName,char **ppszBu
 	}
 
 	if (Type == REG_BINARY) {
-		(*ppszBuffer)=(char *)malloc(Size+1);
+		(*ppszBuffer)=(TCHAR *)malloc(Size+sizeof(TCHAR));
 		RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppszBuffer,&Size);
-		(*ppszBuffer)[Size] = 0;
+		(*ppszBuffer)[Size/sizeof(TCHAR)] = 0;
 		if (BufSize) *BufSize=Size+1;
 	} else {
-		(*ppszBuffer)=(char *)malloc(Size);
+		(*ppszBuffer)=(TCHAR *)malloc(Size);
 		RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppszBuffer,&Size);
 		if (BufSize) *BufSize=Size;
 	}
 }
+
+#ifndef _UNICODE
 
 typedef LONG ( APIENTRY* QueryValueExW)(HKEY hKey, LPCWSTR lpValueName, LPDWORD lpReserved, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);
 typedef LONG ( APIENTRY* SetValueExW)(HKEY hKey, LPCWSTR lpValueName, DWORD Reserved, DWORD dwType, CONST BYTE* lpData, DWORD cbData);
@@ -72,7 +75,7 @@ HMODULE g_hAdvAPI32DLL = NULL;
 
 void LoadProcs() {
 	if (!g_hAdvAPI32DLL)
-		g_hAdvAPI32DLL = LoadLibrary("advapi32.dll");
+		g_hAdvAPI32DLL = LoadLibraryA("advapi32.dll");
 	if (!g_QueryValueExW)
 		g_QueryValueExW = (QueryValueExW)GetProcAddress(g_hAdvAPI32DLL, "RegQueryValueExW");
 	if (!g_SetValueExW)
@@ -85,7 +88,7 @@ wstring wstrfromsz(const char *szKeyName) {
 	return wstr;
 }
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t *pwszBuffer, DWORD dwBufSize, const wchar_t *pwszDefault) {
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t *pwszBuffer, DWORD dwBufSize, const wchar_t *pwszDefault) {
 	dwBufSize *= 2;
 	if (GetVersion() < 0x80000000) {	// Windows NT/2K/XP
 		LoadProcs();
@@ -103,7 +106,7 @@ void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t *pwszBuffer,
 	}
 }
 
-void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize, const wchar_t *pwszDefault) {
+void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize, const wchar_t *pwszDefault) {
 	if (GetVersion() < 0x80000000) {	// Windows NT/2K/XP
 		LoadProcs();
 		DWORD Type;
@@ -158,33 +161,36 @@ void AllocAndQueryRegStringValue(HKEY hKey, const char *pszKeyName, wchar_t **pp
 	}
 }
 
-void QueryRegBoolValue(HKEY hKey, const char *pszKeyName, BOOL *pbBuffer, BOOL bDefault) {
+#endif
+
+void QueryRegBoolValue(HKEY hKey, const TCHAR *pszKeyName, BOOL *pbBuffer, BOOL bDefault) {
 	QueryRegIntValue(hKey, pszKeyName, pbBuffer, bDefault, 0, 1);
 }
 
-void QueryRegIntValue(HKEY hKey, const char *pszKeyName, __int64 *piBuffer, __int64 iDefault) {
+void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, __int64 *piBuffer, __int64 iDefault) {
 	DWORD dwBufSize=sizeof(__int64),dwType;
 	LONG lRes=RegQueryValueEx(hKey,pszKeyName,NULL,&dwType,(LPBYTE)piBuffer,&dwBufSize);
 	if ((lRes!=ERROR_SUCCESS) || (dwType!=REG_BINARY)) *piBuffer=iDefault;
 }
 
-void QueryRegIntValue(HKEY hKey, const char *pszKeyName, __int64 *piBuffer, __int64 iDefault, __int64 iMin, __int64 iMax) {
+void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, __int64 *piBuffer, __int64 iDefault, __int64 iMin, __int64 iMax) {
 	DWORD dwBufSize=sizeof(__int64),dwType;
 	LONG lRes=RegQueryValueEx(hKey,pszKeyName,NULL,&dwType,(LPBYTE)piBuffer,&dwBufSize);
 	if ((lRes!=ERROR_SUCCESS) || (dwType!=REG_BINARY) || (*piBuffer<(DWORD)iMin) || (*piBuffer>(DWORD)iMax)) *piBuffer=iDefault;
 }
 
-void QueryRegBoolValue(HKEY hKey, const char *pszKeyName, bool *pbBuffer, bool bDefault) {
+void QueryRegBoolValue(HKEY hKey, const TCHAR *pszKeyName, bool *pbBuffer, bool bDefault) {
 	int iValue;
 	QueryRegIntValue(hKey, pszKeyName, &iValue, bDefault?1:0, 0, 1);
 	*pbBuffer = iValue!=0;
 }
 
-void SetRegStringValue(HKEY hKey,const char *pszKeyName,const char *szValue) {
-	RegSetValueEx(hKey,pszKeyName,0,REG_SZ,(LPBYTE)szValue,strlen(szValue)+1);
+void SetRegStringValue(HKEY hKey,const TCHAR *pszKeyName,const TCHAR *szValue) {
+	RegSetValueEx(hKey,pszKeyName,0,REG_SZ,(LPBYTE)szValue,(_tcslen(szValue)+1)*sizeof(TCHAR));
 }
 
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wchar_t *pwszValue) {
+#ifndef _UNICODE
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wchar_t *pwszValue) {
 	if (GetVersion() < 0x80000000) {	// Windows NT/2K/XP
 		LoadProcs();
 		g_SetValueExW(hKey,wstrfromsz(pszKeyName).c_str(),0,REG_SZ,(LPBYTE)pwszValue,wcslen(pwszValue)*2+2);
@@ -192,24 +198,31 @@ void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wchar_t *pwszVal
 		RegSetValueEx(hKey,pszKeyName,0,REG_BINARY,(LPBYTE)pwszValue,wcslen(pwszValue)*2+2);
 	}
 }
+#endif
 
-void SetRegIntValue(HKEY hKey,const char *pszKeyName,int iValue) {
+void SetRegIntValue(HKEY hKey,const TCHAR *pszKeyName,int iValue) {
 	RegSetValueEx(hKey,pszKeyName,0,REG_DWORD,(LPBYTE)&iValue,sizeof(int));
 }
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const char *pszDefault) {
-	char *szValue = NULL;
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer, const TCHAR *pszDefault) {
+	TCHAR *szValue = NULL;
 	DWORD dwSize;
 	AllocAndQueryRegStringValue(hKey, pszKeyName, &szValue, &dwSize, pszDefault);
-	strBuffer = (szValue && (dwSize > 0)) ? string(szValue, dwSize-1) : "";
+	strBuffer = (szValue && (dwSize > 0)) ? tstring(szValue, dwSize-1) : _T("");
 	free(szValue);
 }
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, string &strBuffer, const string &strDefault) {
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer, const tstring &strDefault) {
 	QueryRegStringValue(hKey, pszKeyName, strBuffer, strDefault.c_str());
 }
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer, const wchar_t *pwszDefault) {
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const tstring &strValue) {
+	SetRegStringValue(hKey, pszKeyName, strValue.c_str());
+}
+
+#ifndef _UNICODE
+
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wstring &wstrBuffer, const wchar_t *pwszDefault) {
 	wchar_t *wszValue = NULL;
 	DWORD dwSize;
 	AllocAndQueryRegStringValue(hKey, pszKeyName, &wszValue, &dwSize, pwszDefault);
@@ -217,36 +230,34 @@ void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer,
 	free(wszValue);
 }
 
-void QueryRegStringValue(HKEY hKey, const char *pszKeyName, wstring &wstrBuffer, const wstring &wstrDefault) {
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wstring &wstrBuffer, const wstring &wstrDefault) {
 	QueryRegStringValue(hKey, pszKeyName, wstrBuffer, wstrDefault.c_str());
 }
 
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const string &strValue) {
-	SetRegStringValue(hKey, pszKeyName, strValue.c_str());
-}
-
-void SetRegStringValue(HKEY hKey, const char *pszKeyName, const wstring &wstrValue) {
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wstring &wstrValue) {
 	SetRegStringValue(hKey, pszKeyName, wstrValue.c_str());
 }
 
-void SetRegBinaryValue(HKEY hKey, const char *pszKeyName, const void *pData,  int nLength) {
+#endif
+
+void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const void *pData,  int nLength) {
 	RegSetValueEx(hKey, pszKeyName, 0, REG_BINARY, (LPBYTE)pData, nLength);
 }
 
-HKEY RegOpenSubkey(HKEY hKey, const char *pszKeyName) {
+HKEY RegOpenSubkey(HKEY hKey, const TCHAR *pszKeyName) {
 	HKEY hSubKey;
 	if (RegOpenKeyEx(hKey, pszKeyName, 0, KEY_ALL_ACCESS, &hSubKey) != ERROR_SUCCESS) return (HKEY)NULL;
 	return hSubKey;
 }
 
-HKEY RegCreateSubkey(HKEY hKey, const char *pszKeyName) {
+HKEY RegCreateSubkey(HKEY hKey, const TCHAR *pszKeyName) {
 	HKEY hSubKey;
 	if (RegCreateKeyEx(hKey, pszKeyName, 0, NULL, 0, KEY_ALL_ACCESS, NULL, &hSubKey, NULL) != ERROR_SUCCESS) return (HKEY)NULL;
 	return hSubKey;
 }
 
 void RegDeleteAllSubkeys(HKEY hKey) {
-	char szCurrentKey[256];
+	TCHAR szCurrentKey[256];
 
 	DWORD dwIndex = 0;
 	do {
@@ -258,7 +269,7 @@ void RegDeleteAllSubkeys(HKEY hKey) {
 }
 
 void RegDeleteAllValues(HKEY hKey) {
-	char szCurrentKey[256];
+	TCHAR szCurrentKey[256];
 
 	DWORD dwIndex = 0;
 	do {
