@@ -73,7 +73,7 @@ void CFarDialog::SetFocus(int Focus) {
 	if (Focus>=0) Focused=Focus; else Focused=ItemsNumber+Focus;
 }
 
-long WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, long Param2) {
+LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
 	static CFarDialog *pDlg = NULL;
 	if (Msg == DN_INITDIALOG) {
 		pDlg = (CFarDialog *)Param2;
@@ -82,7 +82,7 @@ long WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, long Para
 	return pDlg->WindowProc(hDlg, Msg, Param1, Param2);
 }
 
-int  CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, long Param2) {
+LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
 	long lResult = 0;
 
 	if (m_pHandler && m_pHandler->ProcessChain(hDlg, Msg, Param1, Param2, lResult))

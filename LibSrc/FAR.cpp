@@ -13,72 +13,129 @@ namespace FarLib {
 #endif
 
 PluginStartupInfo StartupInfo;
-const char *g_pszErrorTitle;
-const char *g_pszErrorTopic;
-const char *g_pszLastErrorTopic;
-const char *g_pszOKButton;
+const TCHAR *g_pszErrorTitle;
+const TCHAR *g_pszErrorTopic;
+const TCHAR *g_pszLastErrorTopic;
+const TCHAR *g_pszOKButton;
 HANDLE g_hSaveScreen;
 bool g_bInterrupted;
 
-const char *GetMsg(int MsgId) {return const_cast<char *>(StartupInfo.GetMsg(StartupInfo.ModuleNumber,MsgId));}
-#define strccpy(to,from) strncpy(to,from,sizeof(to))
+const TCHAR *GetMsg(int MsgId) {
+	return const_cast<TCHAR *>(StartupInfo.GetMsg(StartupInfo.ModuleNumber,MsgId));
+}
+#define strccpy(to, from) strncpy(to, from, sizeof(to))
+#define _tcsccpy(to, from) _tcsncpy(to, from, sizeof(to)/sizeof(to[0]))
 
 int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	for (int I=0;I<ItemsNumber;I++) if (Item[I].Selected) return I;
 	return -1;
 }
 
-CFarMenuItem::CFarMenuItem(const char *szTitle) {
+CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
 	Selected = Checked = Separator = 0;
-	strcpy(Text, szTitle);
+#ifdef _UNICODE
+	m_strText = szTitle;
+	Text = m_strText.c_str();
+#else
+	_tcscpy(Text, szTitle);
+#endif
 }
 
-CFarMenuItem::CFarMenuItem(const string &strTitle) {
+CFarMenuItem::CFarMenuItem(const tstring &strTitle) {
 	Selected = Checked = Separator = 0;
-	strcpy(Text, strTitle.c_str());
+#ifdef _UNICODE
+	m_strText = strTitle;
+	Text = m_strText.c_str();
+#else
+	_tcscpy(Text, strTitle.c_str());
+#endif
 }
 
 CFarMenuItem::CFarMenuItem(int nMsgID) {
 	Selected = Checked = Separator = 0;
-	strcpy(Text, GetMsg(nMsgID));
+#ifdef _UNICODE
+	m_strText = GetMsg(nMsgID);
+	Text = m_strText.c_str();
+#else
+	_tcscpy(Text, GetMsg(nMsgID));
+#endif
 }
 
 CFarMenuItem::CFarMenuItem(bool bSeparator) {
 	Selected = Checked = 0;
 	Separator = bSeparator ? 1 : 0;
+#ifdef _UNICODE
+	m_strText = _T("");
+	Text = m_strText.c_str();
+#else
 	Text[0] = 0;
+#endif
 }
 
-int ChooseMenu(int ItemCount, const char **ppszItems, const char *Title, const char *Bottom, const char *HelpTopic,
+CFarMenuItem::CFarMenuItem(const CFarMenuItem &Item)
+{
+	*this = Item;
+}
+
+void CFarMenuItem::operator=(const CFarMenuItem &Item)
+{
+	Selected = Item.Selected;
+	Checked = Item.Checked;
+	Separator = Item.Separator;
+#ifdef _UNICODE
+	m_strText = Item.m_strText;
+	Text = m_strText.c_str();
+#else
+	_tcscpy(Text, Item.Text);
+#endif
+}
+
+int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
-	FarMenuItem *Items=new FarMenuItem[ItemCount];
+	FarMenuItem *Items = new FarMenuItem[ItemCount];
 	for (int I=0;I<ItemCount;I++) {
 		Items[I].Checked=Items[I].Selected=FALSE;
 		if (I == iDefault)
 			Items[I].Selected = TRUE;
+#ifdef _UNICODE
+		Items[I].Text = _tcsdup(ppszItems[I]);
+#else
 		strccpy(Items[I].Text,ppszItems[I]);
+#endif
 		Items[I].Separator=FALSE;
 	}
 
 	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,uiFlags,Title,Bottom,
 		HelpTopic,piBreakKeys,nBreakCode,Items,ItemCount);
-
+	
+#ifdef _UNICODE
+	for (int I=0;I<ItemCount;I++) if (Items[I].Text) free((void *)Items[I].Text);
+#endif
 	delete[] Items;
+
 	return Result;
 }
 
-int  ChooseMenu(const char *Title, const char *Bottom, const char *HelpTopic, int ItemCount, ...) {
+int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...) {
 	FarMenuItem *Items=new FarMenuItem[ItemCount];
 	va_list List;
 	va_start(List,ItemCount);
 	for (int I=0;I<ItemCount;I++) {
-		const char *Item=va_arg(List,const char *);
+		const TCHAR *Item=va_arg(List,const TCHAR *);
 		Items[I].Checked=Items[I].Selected=FALSE;
 		if (Item) {
+#ifdef _UNICODE
+			Items[I].Text = _tcsdup(Item);
+#else
 			strccpy(Items[I].Text,Item);
+#endif
 			Items[I].Separator=FALSE;
 		} else {
+#ifdef _UNICODE
+			Items[I].Text=NULL;
+#else
 			Items[I].Text[0]=0;
+#endif
 			Items[I].Separator=TRUE;
 		}
 	}
@@ -87,34 +144,45 @@ int  ChooseMenu(const char *Title, const char *Bottom, const char *HelpTopic, in
 	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,Title,Bottom,
 		HelpTopic,NULL,NULL,Items,ItemCount);
 
+#ifdef _UNICODE
+	for (int I=0;I<ItemCount;I++) if (Items[I].Text) free((void *)Items[I].Text);
+#endif
 	delete[] Items;
+
 	return Result;
 }
 
-int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
+int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			 int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
 	FarMenuItem *Items=new FarMenuItem[arrItems.size()];
-	for (int I = 0; I < (int)arrItems.size(); I++) {
+	for (size_t I = 0; I < arrItems.size(); I++) {
 		Items[I].Checked=Items[I].Selected=FALSE;
 		if (I == iDefault)
 			Items[I].Selected = TRUE;
-		strccpy(Items[I].Text,arrItems[I].c_str());
+#ifdef _UNICODE
+		Items[I].Text = _tcsdup(arrItems[I].c_str());
+#else
+		_tcsccpy(Items[I].Text,arrItems[I].c_str());
+#endif
 		Items[I].Separator=FALSE;
 	}
 
 	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,uiFlags,Title,Bottom,
 		HelpTopic,piBreakKeys,nBreakCode,Items,arrItems.size());
 
+#ifdef _UNICODE
+	for (size_t I=0; I<arrItems.size(); I++) if (Items[I].Text) free((void *)Items[I].Text);
+#endif
 	delete[] Items;
 	return Result;
 }
 
-int  Message(UINT uiFlags, const char *szHelpTopic, int iItemsNumber, int iButtonsNumber, ...) {
-	const char **ppszItems = new const char *[iItemsNumber];
+int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iItemsNumber, int iButtonsNumber, ...) {
+	const TCHAR **ppszItems = new const TCHAR *[iItemsNumber];
 	va_list List;
 	va_start(List,iButtonsNumber);
 	for (int I=0; I<iItemsNumber; I++)
-		ppszItems[I]=va_arg(List, const char *);
+		ppszItems[I]=va_arg(List, const TCHAR *);
 	va_end(List);
 
 	int Result = StartupInfo.Message(StartupInfo.ModuleNumber, uiFlags, szHelpTopic, ppszItems, iItemsNumber, iButtonsNumber);
@@ -122,8 +190,8 @@ int  Message(UINT uiFlags, const char *szHelpTopic, int iItemsNumber, int iButto
 	return Result;
 }
 
-int  Message(UINT uiFlags, const char *szHelpTopic, int iButtonsNumber, std::vector<std::string> &arrItems) {
-	const char **ppszItems = new const char *[arrItems.size()];
+int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iButtonsNumber, std::vector<std::tstring> &arrItems) {
+	const TCHAR **ppszItems = new const TCHAR *[arrItems.size()];
 	for (int I=0; I < (int)arrItems.size(); I++)
 		ppszItems[I]=arrItems[I].c_str();
 
@@ -132,18 +200,18 @@ int  Message(UINT uiFlags, const char *szHelpTopic, int iButtonsNumber, std::vec
 	return Result;
 }
 
-void ShowMessage(const char *pszTitle, const char *pszMessage1, const char *pszMessage2) {
-	const char *ppszItems[] = {pszTitle, pszMessage1, pszMessage2, GetMsg(0)};
+void ShowMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
+	const TCHAR *ppszItems[] = {pszTitle, pszMessage1, pszMessage2, GetMsg(0)};
 	if (pszMessage2) {
-		StartupInfo.Message(StartupInfo.ModuleNumber, 0, "", ppszItems, 4, 1);
+		StartupInfo.Message(StartupInfo.ModuleNumber, 0, _T(""), ppszItems, 4, 1);
 	} else {
 		ppszItems[2] = ppszItems[3];
-		StartupInfo.Message(StartupInfo.ModuleNumber, 0, "", ppszItems, 3, 1);
+		StartupInfo.Message(StartupInfo.ModuleNumber, 0, _T(""), ppszItems, 3, 1);
 	}
 }
 
-void ShowError(const char *pszMessage1, const char *pszMessage2) {
-	const char *ppszItems[] = {g_pszErrorTitle, pszMessage1, pszMessage2, GetMsg(0)};
+void ShowError(const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
+	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage1, pszMessage2, GetMsg(0)};
 	if (pszMessage2) {
 		StartupInfo.Message(StartupInfo.ModuleNumber, FMSG_WARNING, g_pszErrorTopic, ppszItems, 4, 1);
 	} else {
@@ -152,8 +220,8 @@ void ShowError(const char *pszMessage1, const char *pszMessage2) {
 	}
 }
 
-void ShowLastError(const char *pszMessage, const char *pszFileName) {
-	const char *ppszItems[] = {g_pszErrorTitle, pszMessage, pszFileName, GetMsg(0)};
+void ShowLastError(const TCHAR *pszMessage, const TCHAR *pszFileName) {
+	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage, pszFileName, GetMsg(0)};
 	if (pszFileName) {
 		StartupInfo.Message(StartupInfo.ModuleNumber, FMSG_WARNING|FMSG_ERRORTYPE, g_pszLastErrorTopic, ppszItems, 4, 1);
 	} else {
@@ -162,10 +230,10 @@ void ShowLastError(const char *pszMessage, const char *pszFileName) {
 	}
 }
 
-void ShowWaitMessage(const char *pszTitle, const char *pszMessage1, const char *pszMessage2) {
+void ShowWaitMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
 	g_hSaveScreen = StartupInfo.SaveScreen(0, 0, -1, -1);
-	const char *ppszItems[] = {pszTitle, pszMessage1, pszMessage2};
-	StartupInfo.Message(StartupInfo.ModuleNumber, 0, "", ppszItems, pszMessage2?3:2, 0);
+	const TCHAR *ppszItems[] = {pszTitle, pszMessage1, pszMessage2};
+	StartupInfo.Message(StartupInfo.ModuleNumber, 0, _T(""), ppszItems, pszMessage2?3:2, 0);
 }
 
 void HideWaitMessage() {
@@ -188,25 +256,33 @@ bool Interrupted() {
 	return false;
 }
 
-bool SetFileName(PluginPanelItem &Item, const char *szName) {
-	return strncpy_s(Item.FindData.cFileName, CleanFileName(szName).c_str(), _TRUNCATE) == 0;
+#ifndef _UNICODE
+bool SetFileName(PluginPanelItem &Item, const TCHAR *szName) {
+	return _tcsncpy_s(Item.FindData.cFileName, CleanFileName(szName).c_str(), _TRUNCATE) == 0;
 }
 
 bool SetFileName(PluginPanelItem &Item, const std::string& strName) {
-	return strncpy_s(Item.FindData.cFileName, CleanFileName(strName).c_str(), _TRUNCATE) == 0;
+	return _tcsncpy_s(Item.FindData.cFileName, CleanFileName(strName).c_str(), _TRUNCATE) == 0;
 }
+#endif
 
 void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int OpMode) {
 	if (OpMode & (OPM_SILENT | OPM_FIND)) return;
 
+#ifndef _UNICODE
 	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, &iViewMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &iSortMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &iSortOrder);
+#else
+	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, (int)iViewMode, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, (int)iSortMode, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, (int)iSortOrder, NULL);
+#endif
 }
 
-string FarMaskToRE(const char *szMask) {
+string FarMaskToRE(const TCHAR *szMask) {
 	string strRE = "^";
-	const char *szCur = szMask;
+	const TCHAR *szCur = szMask;
 
 	while (*szCur) {
 		switch (*szCur) {
@@ -251,11 +327,11 @@ string FarMaskToRE(const char *szMask) {
 		szCur++;
 	}
 
-	if (strcspn(szMask, ".?*[") != strlen(szMask)) strRE += "$";	// Masks without any of these are non-terminal
+	if (_tcscspn(szMask, ".?*[") != _tcslen(szMask)) strRE += "$";	// Masks without any of these are non-terminal
 	return strRE;
 }
 
-CFarMaskSet::CFarMaskSet(const char *szMasks) {
+CFarMaskSet::CFarMaskSet(const TCHAR *szMasks) {
 	bool bExclude = false;
 	string strCurMask = "";
 
@@ -272,7 +348,7 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 		case '|':
 			if (!bExclude) {
 				bExclude = true;
-				const char *szErr;
+				const TCHAR *szErr;
 				int nErr;
 				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 				if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
@@ -281,7 +357,7 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 			szMasks++;
 			break;
 		case '"':{
-			const char *szEnd = strchr(szMasks+1, '"');
+			const TCHAR *szEnd = strchr(szMasks+1, '"');
 			if (!strCurMask.empty()) strCurMask += '|';
 			if (szEnd) {
 				strCurMask += '(' + FarMaskToRE(string(szMasks+1, szEnd - szMasks - 1).c_str()) + ')';
@@ -303,12 +379,12 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 	}
 
 	if (bExclude) {
-		const char *szErr;
+		const TCHAR *szErr;
 		int nErr;
 		m_pExclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 		if (m_pExclude) m_pExcludeExtra = pcre_study(m_pInclude, 0, &szErr);
 	} else {
-		const char *szErr;
+		const TCHAR *szErr;
 		int nErr;
 		m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 		if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
@@ -318,8 +394,8 @@ CFarMaskSet::CFarMaskSet(const char *szMasks) {
 	}
 }
 
-bool CFarMaskSet::operator()(const char *szFileName) {
-	const char *szName = strrchr(szFileName, '\\');
+bool CFarMaskSet::operator()(const TCHAR *szFileName) {
+	const TCHAR *szName = strrchr(szFileName, '\\');
 	string strName = (szName) ? szName + 1 :szFileName;
 	if (strName.find('.') == string::npos) strName += '.';
 
@@ -339,17 +415,17 @@ CFarMaskSet::~CFarMaskSet() {
 	if (m_pOEMTable) pcre_free((void *)m_pOEMTable);
 }
 
-CFarSaveScreen::CFarSaveScreen(const char *szMessage) {
+CFarSaveScreen::CFarSaveScreen(const TCHAR *szMessage) {
 	m_hSave = StartupInfo.SaveScreen(0, 0, -1, -1);
 	ViewMessage(szMessage);
 }
 
-CFarSaveScreen::CFarSaveScreen(int X1, int Y1, int X2, int Y2, const char *szMessage) {
+CFarSaveScreen::CFarSaveScreen(int X1, int Y1, int X2, int Y2, const TCHAR *szMessage) {
 	m_hSave = StartupInfo.SaveScreen(X1, Y1, X2, Y2);
 	ViewMessage(szMessage);
 }
 
-void CFarSaveScreen::ViewMessage(const char *szMessage) {
+void CFarSaveScreen::ViewMessage(const TCHAR *szMessage) {
 	m_strTitle.resize(256);
 	while (GetConsoleTitle(&m_strTitle[0], m_strTitle.size()) == 0) m_strTitle.resize(m_strTitle.size()*2);
 

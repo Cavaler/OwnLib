@@ -3,9 +3,14 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+#include <string>
 #include <EasyReg.h>
+
 #undef _FAR_NO_NAMELESS_UNIONS
 #include <FAR.h>
+
+#ifndef _UNICODE
 
 #ifndef FAR_NO_NAMESPACE
 namespace FarLib {
@@ -22,25 +27,25 @@ struct SectionInformation {
 
 class CModuleInformation {
 public:
-	CModuleInformation(char *&Text,int TextLen,char *&Language);
-	BOOL HasModule(char *Module);
-	GetMsgResult GetMsg(int MsgId,char *&Message);
+	CModuleInformation(char *&Text,int TextLen,TCHAR *&Language);
+	BOOL HasModule(TCHAR *Module);
+	GetMsgResult GetMsg(int MsgId,TCHAR *&Message);
 	~CModuleInformation();
 private:
-	char *ModuleName;
+	TCHAR *ModuleName;
 	int SectionCount;
 	SectionInformation *Sections;
 };
 
 class CLanguagePack {
 public:
-	CLanguagePack(char *Lang);
+	CLanguagePack(TCHAR *Lang);
 	~CLanguagePack();
-	BOOL HasLanguage(char *Lang);
+	BOOL HasLanguage(TCHAR *Lang);
 	void AddModule(CModuleInformation *Module);
-	GetMsgResult GetMsg(int MsgId,char *Module,char *&Message);
+	GetMsgResult GetMsg(int MsgId, TCHAR *Module, char *&Message);
 private:
-	char *Language;
+	TCHAR *Language;
 	CModuleInformation **Modules;
 	int ModuleCount;
 };
@@ -51,14 +56,14 @@ int LanguageCount=0;
 char **LoadedFiles=NULL;
 int LoadedFileCount=0;
 
-char *CurrentLanguage=NULL;
+TCHAR *CurrentLanguage=NULL;
 
 void SectionInformation::AddLine(char *Line) {
 	Lines=(char **)realloc(Lines,(Length+1)*sizeof(char *));
 	Lines[Length++]=Line;
 }
 
-CModuleInformation::CModuleInformation(char *&Text,int TextLen,char *&Language):
+CModuleInformation::CModuleInformation(char *&Text,int TextLen,TCHAR *&Language):
 ModuleName(NULL),SectionCount(1),Sections((SectionInformation *)malloc(sizeof(SectionInformation))) {
 	char *CurLine=Text;
 	BOOL GotLanguage=FALSE;
@@ -111,7 +116,7 @@ ModuleName(NULL),SectionCount(1),Sections((SectionInformation *)malloc(sizeof(Se
 	Text=CurLine;
 }
 
-BOOL CModuleInformation::HasModule(char *Module) {
+BOOL CModuleInformation::HasModule(TCHAR *Module) {
 	if (ModuleName==NULL) {
 		return Module==NULL;
 	}
@@ -135,7 +140,7 @@ CModuleInformation::~CModuleInformation() {
 	free(Sections);
 }
 
-CLanguagePack::CLanguagePack(char *Lang):Language(_strdup(Lang)),Modules(NULL),ModuleCount(0) {
+CLanguagePack::CLanguagePack(TCHAR *Lang):Language(_tcsdup(Lang)),Modules(NULL),ModuleCount(0) {
 }
 
 CLanguagePack::~CLanguagePack() {
@@ -146,14 +151,14 @@ CLanguagePack::~CLanguagePack() {
 	}
 }
 
-BOOL CLanguagePack::HasLanguage(char *Lang) {return _stricmp(Language,Lang)==0;}
+BOOL CLanguagePack::HasLanguage(TCHAR *Lang) {return _tcsicmp(Language,Lang)==0;}
 
 void CLanguagePack::AddModule(CModuleInformation *Module) {
 	Modules=(CModuleInformation **)realloc(Modules,(ModuleCount+1)*sizeof(CModuleInformation *));
 	Modules[ModuleCount++]=Module;
 }
 
-GetMsgResult CLanguagePack::GetMsg(int MsgId,char *Module,char *&Message) {
+GetMsgResult CLanguagePack::GetMsg(int MsgId,TCHAR *Module,TCHAR *&Message) {
 	for (int I=0;I<ModuleCount;I++) {
 		if (Modules[I]->HasModule(Module)) return Modules[I]->GetMsg(MsgId,Message);
 	}
@@ -162,7 +167,7 @@ GetMsgResult CLanguagePack::GetMsg(int MsgId,char *Module,char *&Message) {
 
 // functions
 
-void LoadLanguageFile(char *FileName) {
+void LoadLanguageFile(TCHAR *FileName) {
 	HANDLE hFile=CreateFile(FileName,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,0,NULL);
 	if (hFile==INVALID_HANDLE_VALUE) return;
 	DWORD Size=GetFileSize(hFile,NULL);
@@ -192,22 +197,22 @@ void LoadLanguageFile(char *FileName) {
 }
 
 void InitLanguageFiles() {
-	char Current[MAX_PATH];
+	TCHAR Current[MAX_PATH];
 	HKEY Key;
 
 	if (Loaded) FreeLanguageFiles();
-	strcpy(Current,StartupInfo.RootKey);
-	strcpy(strrchr(Current,'\\')+1,"Language");
+	_tcscpy(Current, StartupInfo.RootKey);
+	_tcscpy(_tcsrchr(Current, '\\')+1, _T("Language"));
 	RegCreateKeyEx(HKEY_CURRENT_USER,Current,0,NULL,0,KEY_ALL_ACCESS,NULL,&Key,NULL);
-	AllocAndQueryRegStringValue(Key,"Main",&CurrentLanguage,NULL,"English");
+	AllocAndQueryRegStringValue(Key,_T("Main"),&CurrentLanguage,NULL,_T("English"));
 	RegCloseKey(Key);
-	strcpy(Current,StartupInfo.ModuleName);
-	strcpy(strrchr(Current,'\\')+1,"*.ln?");
+	_tcscpy(Current, StartupInfo.ModuleName);
+	_tcscpy(_tcsrchr(Current,'\\')+1, _T("*.ln?"));
 
 	WIN32_FIND_DATA FindData;
 	HANDLE Srch=FindFirstFile(Current,&FindData);
 	while (Srch!=INVALID_HANDLE_VALUE) {
-		strcpy(strrchr(Current,'\\')+1,FindData.cFileName);
+		_tcscpy(_tcsrchr(Current,'\\')+1, FindData.cFileName);
 		LoadLanguageFile(Current);
 		if (FindNextFile(Srch,&FindData)==FALSE) break;
 	}
@@ -259,3 +264,5 @@ const char *GetMsgEx(int MsgId,const char *Module) {
 #ifndef FAR_NO_NAMESPACE
 };
 #endif
+
+#endif	// no unicode for now

@@ -44,14 +44,14 @@ void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const void *pData,  i
 
 __if_exists (std::string) {
 #include "tstring.h"
-void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer, const TCHAR *pszDefault);
-void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer, const tstring &strDefault);
-void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const tstring &strValue);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, std::tstring &strBuffer, const TCHAR *pszDefault);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, std::tstring &strBuffer, const std::tstring &strDefault);
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const std::tstring &strValue);
 
 #ifndef _UNICODE
-void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wstring &wstrBuffer, const wchar_t *pwszDefault);
-void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wstring &wstrBuffer, const wstring &wstrDefault);
-void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wstring &wstrValue);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, std::wstring &wstrBuffer, const wchar_t *pwszDefault);
+void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, std::wstring &wstrBuffer, const std::wstring &wstrDefault);
+void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const std::wstring &wstrValue);
 #endif
 }
 

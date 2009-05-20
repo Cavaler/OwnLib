@@ -33,8 +33,8 @@ public:
 	void SetFocus(int Focus);
 	void SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam);
 	void SetHandler(CFarEventHandler *pHandler,long lParam);
-	static long WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, long Param2);
-	int  WindowProc(HANDLE hDlg, int Msg, int Param1, long Param2);
+	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	int  Display(int ValidExitCodes,...);
 	~CFarDialog();
 protected:

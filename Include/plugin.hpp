@@ -1721,14 +1721,14 @@ enum OPENPLUGININFO_SORTMODES {
 
 struct KeyBarTitles
 {
-  char *Titles[12];
-  char *CtrlTitles[12];
-  char *AltTitles[12];
-  char *ShiftTitles[12];
+  const char *Titles[12];
+  const char *CtrlTitles[12];
+  const char *AltTitles[12];
+  const char *ShiftTitles[12];
 
-  char *CtrlShiftTitles[12];
-  char *AltShiftTitles[12];
-  char *CtrlAltTitles[12];
+  const char *CtrlShiftTitles[12];
+  const char *AltShiftTitles[12];
+  const char *CtrlAltTitles[12];
 };
 
 

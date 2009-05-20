@@ -1,21 +1,24 @@
 #ifndef __FAR_H
 #define __FAR_H
 
+#ifndef _WIN64
 #pragma pack(2)
+#endif
 #ifndef _WINDOWS_
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
 #endif
 
-#include "tchar.h"
+#include <vector>
+#include <string>
+#include "tstring.h"
+
 #define _FAR_USE_WIN32_FIND_DATA
 #ifdef _UNICODE
 #include <plugin2.hpp>
-#define tstring wstring
 #else
 #include <plugin.hpp>
-#define tstring string
 #endif
 #include <CRegExp.h>
 
@@ -25,28 +28,25 @@
 #define PSI160SIZE	336
 #define PSI170SIZE	372
 
-#include <vector>
-
 #ifndef FAR_NO_NAMESPACE
 namespace FarLib {
 #endif
 
 extern PluginStartupInfo StartupInfo;
-extern const char *g_pszErrorTitle;
-extern const char *g_pszErrorTopic;
-extern const char *g_pszLastErrorTopic;
-extern const char *g_pszOKButton;
+extern const TCHAR *g_pszErrorTitle;
+extern const TCHAR *g_pszErrorTopic;
+extern const TCHAR *g_pszLastErrorTopic;
+extern const TCHAR *g_pszOKButton;
 extern HANDLE g_hSaveScreen;
 extern bool g_bInterrupted;
 
-#if defined(_STRING_) || defined (_STLP_STRING)
-string FarMaskToRE(const char *szMask);
-#endif
+//	No _T's - pcre is ANSI only
+string FarMaskToRE(const TCHAR *szMask);
 
 class CFarMaskSet {
 public:
-	CFarMaskSet(const char *szMasks);
-	bool operator()(const char *szFileName);
+	CFarMaskSet(const TCHAR *szMasks);
+	bool operator()(const TCHAR *szFileName);
 	bool Valid();
 	~CFarMaskSet();
 protected:
@@ -60,14 +60,14 @@ protected:
 
 class CFarSaveScreen {
 public:
-	CFarSaveScreen(const char *szMessage = NULL);
-	CFarSaveScreen(int X1, int Y1, int X2, int Y2, const char *szMessage = NULL);
+	CFarSaveScreen(const TCHAR *szMessage = NULL);
+	CFarSaveScreen(int X1, int Y1, int X2, int Y2, const TCHAR *szMessage = NULL);
 	~CFarSaveScreen();
 protected:
 	HANDLE m_hSave;
 
-	void ViewMessage(const char *szMessage);
-	std::vector<char> m_strTitle;
+	void ViewMessage(const TCHAR *szMessage);
+	std::vector<TCHAR> m_strTitle;
 };
 
 class CFarPanelMode {
@@ -92,12 +92,12 @@ public:
 class CFarSplitString {
 public:
 	CFarSplitString(int nMax);
-	CFarSplitString(int nMax, const string &strText);
-	string &operator[](int nIndex);
-	void Split(const string &strText);
-	string Combine();
+	CFarSplitString(int nMax, const tstring &strText);
+	tstring &operator[](int nIndex);
+	void Split(const tstring &strText);
+	tstring Combine();
 protected:
-	vector<string> m_arrLines;
+	vector<tstring> m_arrLines;
 };
 
 class CFarMenuItem : public FarMenuItem {
@@ -115,35 +115,35 @@ protected:
 };
 
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
-int  ChooseMenu(std::vector<std::string> &arrItems, const char *Title, const char *Bottom, const char *HelpTopic,
+int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
 			 const int *piBreakKeys = NULL, int *nBreakCode = NULL);
-int  Message(UINT uiFlags, const char *szHelpTopic, int iButtonsNumber, std::vector<std::string> &arrItems);
+int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iButtonsNumber, std::vector<std::tstring> &arrItems);
 #endif
 
 const TCHAR *GetMsg(int MsgId);
 int  WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber);
-int  ChooseMenu(int ItemCount, const char **ppszItems, const char *Title, const char *Bottom, const char *HelpTopic,
+int  ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
 			 const int *piBreakKeys = NULL, int *nBreakCode = NULL);
-int  ChooseMenu(const char *Title, const char *Bottom, const char *HelpTopic, int ItemCount, ...);
-int  Message(UINT uiFlags, const char *szHelpTopic, int iItemsNumber, int iButtonsNumber, ...);
-void ShowMessage(const char *pszTitle, const char *pszMessage1, const char *pszMessage2 = NULL);
-void ShowError(const char *pszMessage1, const char *pszMessage2 = NULL);
-void ShowLastError(const char *pszMessage, const char *pszFileName = NULL);
-void ShowWaitMessage(const char *pszTitle, const char *pszMessage1, const char *pszMessage2 = NULL);
+int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...);
+int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iItemsNumber, int iButtonsNumber, ...);
+void ShowMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2 = NULL);
+void ShowError(const TCHAR *pszMessage1, const TCHAR *pszMessage2 = NULL);
+void ShowLastError(const TCHAR *pszMessage, const TCHAR *pszFileName = NULL);
+void ShowWaitMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2 = NULL);
 void HideWaitMessage();
 bool Interrupted();
 
-bool SetFileName(PluginPanelItem &Item, const char *szName);
-bool SetFileName(PluginPanelItem &Item, const std::string& strName);
+bool SetFileName(PluginPanelItem &Item, const TCHAR *szName);
+bool SetFileName(PluginPanelItem &Item, const std::tstring& strName);
 
 void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int OpMode=0);
 
 // FarGetMsgEx.cpp
 void InitLanguageFiles();
 void FreeLanguageFiles();
-const char *GetMsgEx(int MsgId, const char *Module=NULL);
+const TCHAR *GetMsgEx(int MsgId, const TCHAR *Module=NULL);
 
 #ifndef FAR_NO_NAMESPACE
 };
