@@ -12,7 +12,8 @@ public:
 	operator bool();
 	bool operator !();
 
-	void *Open(const TCHAR *szFileName);
+	void *Open(const TCHAR *szFileName, bool bWriteable = false, DWORD dwResize = 0);
+
 	operator void *();
 	operator BYTE *();
 	operator char *();

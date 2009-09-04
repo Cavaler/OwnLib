@@ -15,21 +15,34 @@ bool CFileMapping::operator !() {
 	return m_pData == NULL;
 }
 
-void *CFileMapping::Open(const TCHAR *szFileName) {
-	m_hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+void *CFileMapping::Open(const TCHAR *szFileName, bool bWriteable, DWORD dwResize) {
+	if (dwResize > 0) bWriteable = true;
+
+	m_hFile = CreateFile(szFileName,
+		bWriteable ? GENERIC_READ|GENERIC_WRITE : GENERIC_READ,
+		bWriteable ? 0 : FILE_SHARE_READ, NULL,
+		bWriteable ? OPEN_ALWAYS : OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+
 	if (m_hFile == INVALID_HANDLE_VALUE) return NULL;
+
+	if (dwResize > 0) {
+		SetFilePointer(m_hFile, dwResize, NULL, FILE_BEGIN);
+		SetEndOfFile(m_hFile);
+		SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
+	}
 
 	if (GetFileSize(m_hFile, NULL) == 0) {		// Cannot map, emulating
 		m_pData = (void *)!NULL;
 		return m_pData;
 	}
 
-	m_hMapping = CreateFileMapping(m_hFile, NULL, PAGE_READONLY|SEC_COMMIT, 0, 0, NULL);
+	m_hMapping = CreateFileMapping(m_hFile, NULL, (bWriteable ? PAGE_READWRITE : PAGE_READONLY)|SEC_COMMIT, 0, 0, NULL);
 	if (m_hMapping == NULL) {
 		CloseHandle(m_hFile);m_hFile = INVALID_HANDLE_VALUE;
 		return NULL;
 	}
-	m_pData = MapViewOfFile(m_hMapping, FILE_MAP_READ, 0, 0, 0);
+	m_pData = MapViewOfFile(m_hMapping, bWriteable ? FILE_MAP_WRITE : FILE_MAP_READ, 0, 0, 0);
 	if (!m_pData) {
 		CloseHandle(m_hMapping);m_hMapping = NULL;
 		CloseHandle(m_hFile);m_hFile = INVALID_HANDLE_VALUE;
