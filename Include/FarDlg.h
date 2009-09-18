@@ -404,6 +404,7 @@ public:
 	virtual ~CFarComboBoxItem();
 protected:
 	CFarListData *m_pData;
+	string NoAmpText(string strText);
 	int m_nOffset;		// 0th element in list has this number
 };
 
