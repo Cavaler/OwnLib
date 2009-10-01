@@ -13,11 +13,11 @@ namespace FarLib {
 
 // ************************ DIALOG ************************
 
-CFarDialog::CFarDialog(int iX,int iY,const char *szHelpTopic,DWORD dwFlags):
+CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
 Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFlags(dwFlags) {}
 
-CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const char *szHelpTopic,DWORD dwFlags):
+CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
 Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFlags(dwFlags) {}
 
@@ -36,7 +36,7 @@ int CFarDialog::Add(CFarDialogItem *Item,CFarEventHandler *pHandler) {
 	return ItemsNumber++;
 }
 
-int CFarDialog::AddFrame(const char *Title) {
+int CFarDialog::AddFrame(const TCHAR *Title) {
 	int X,Y;
 	X=(X1==-1)?X2-4:X2-X1-1;
 	Y=(Y1==-1)?Y2-2:Y2-Y1-1;
@@ -45,9 +45,9 @@ int CFarDialog::AddFrame(const char *Title) {
 }
 
 int CFarDialog::AddFrame(int TitleId) {return AddFrame(GetMsg(TitleId));}
-int CFarDialog::AddFrame() {return AddFrame((char *)NULL);}
+int CFarDialog::AddFrame() {return AddFrame((TCHAR *)NULL);}
 
-int CFarDialog::AddButton(const char *szTitle) {
+int CFarDialog::AddButton(const TCHAR *szTitle) {
 	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,szTitle));
 }
@@ -57,7 +57,7 @@ int CFarDialog::AddButton(int nId) {
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,nId));
 }
 
-int CFarDialog::AddButtons(const char *OKTitle,const char *CancelTitle) {
+int CFarDialog::AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle) {
 	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
 	Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,TRUE,OKTitle));
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,CancelTitle));
@@ -118,11 +118,17 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	do {
 		int I,Code=-1;
 
+#ifdef UNICODE
+		HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
+		Result = StartupInfo.DialogRun(hDlg);
+		StartupInfo.DialogFree(hDlg);
+#else
 		if (m_bHandled || m_dwFlags) {
 			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
 		} else {
 			Result=StartupInfo.Dialog(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber);
 		}
+#endif
 		if (Result<0) break;
 
 		if (ValidExitCodes==0) {
@@ -168,6 +174,16 @@ CFarDialog::~CFarDialog() {
 
 // *********************** HELPERS ***********************
 
+void SetListItemText(FarListItem &Item, const TCHAR *szText) {
+	Item.Flags = 0;
+	memset(Item.Reserved, 0, sizeof(Item.Reserved));
+#ifdef UNICODE
+	Item.Text= _tcsdup(szText);
+#else
+	strncpy(Item.Text, szText, sizeof(Item.Text));
+#endif
+}
+
 CFarListData::CFarListData() : m_bFree(true), m_pList (new FarList) {
 	m_pList->Items = NULL;
 	m_pList->ItemsNumber = 0;
@@ -184,13 +200,11 @@ CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy) {
 	}
 }
 
-CFarListData::CFarListData(const char **ppszItems,int iItemCount) : m_bFree(true) {
+CFarListData::CFarListData(const TCHAR **ppszItems,int iItemCount) : m_bFree(true) {
 	m_pList = new FarList;
 	m_pList->Items = (FarListItem *)malloc((m_pList->ItemsNumber = iItemCount) * sizeof(FarListItem));
 	for (int nIndex = 0; nIndex < iItemCount; nIndex++) {
-		m_pList->Items[nIndex].Flags = 0;
-		memset(m_pList->Items[nIndex].Reserved, 0, sizeof(m_pList->Items[nIndex].Reserved));
-		strncpy(m_pList->Items[nIndex].Text, ppszItems[nIndex], sizeof(m_pList->Items[nIndex].Text));
+		SetListItemText(m_pList->Items[nIndex], ppszItems[nIndex]);
 	}
 }
 
@@ -198,23 +212,23 @@ CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true) {
 	m_pList = new FarList;
 	m_pList->Items = (FarListItem *)malloc((m_pList->ItemsNumber = arrItems.size()) * sizeof(FarListItem));
 	for (int nIndex = 0; nIndex < (int)arrItems.size(); nIndex++) {
-		m_pList->Items[nIndex].Flags = 0;
-		memset(m_pList->Items[nIndex].Reserved, 0, sizeof(m_pList->Items[nIndex].Reserved));
-		strncpy(m_pList->Items[nIndex].Text, arrItems[nIndex], sizeof(m_pList->Items[nIndex].Text));
+		SetListItemText(m_pList->Items[nIndex], arrItems[nIndex]);
 	}
 }
 
-int CFarListData::Append(const char *szItem) {
+int CFarListData::Append(const TCHAR *szItem) {
 	if (!m_bFree) return -1;
 	m_pList->Items = (FarListItem *)realloc(m_pList->Items, (m_pList->ItemsNumber + 1) * sizeof(FarListItem));
-	m_pList->Items[m_pList->ItemsNumber].Flags = 0;
-	memset(m_pList->Items[m_pList->ItemsNumber].Reserved, 0, sizeof(m_pList->Items[m_pList->ItemsNumber].Reserved));
-	strncpy(m_pList->Items[m_pList->ItemsNumber].Text, szItem, sizeof(m_pList->Items[m_pList->ItemsNumber].Text));
+	SetListItemText(m_pList->Items[m_pList->ItemsNumber], szItem);
 	return m_pList->ItemsNumber++;
 }
 
 CFarListData::~CFarListData() {
 	if (m_bFree) {
+#ifdef UNICODE
+		for (int nItem = 0; nItem < m_pList->ItemsNumber; nItem++)
+			free((TCHAR *)m_pList->Items[nItem].Text);
+#endif
 		free(m_pList->Items);
 		delete m_pList;
 	}
@@ -222,12 +236,12 @@ CFarListData::~CFarListData() {
 
 CFarIntegerConverter CFarIntegerConverter::Instance;
 
-void CFarIntegerConverter::ToString(int iValue, char *pszBuffer, int nSize) {
-	_snprintf(pszBuffer, nSize, "%d", iValue);
+void CFarIntegerConverter::ToString(int iValue, TCHAR *pszBuffer, int nSize) {
+	_sntprintf(pszBuffer, nSize, _T("%d"), iValue);
 }
 
-bool CFarIntegerConverter::FromString(const char *pszBuffer, int &iValue) {
-	return sscanf(pszBuffer, "%d", &iValue) > 0;
+bool CFarIntegerConverter::FromString(const TCHAR *pszBuffer, int &iValue) {
+	return _stscanf(pszBuffer, _T("%d"), &iValue) > 0;
 }
 
 CFarDoubleConverter CFarDoubleConverter::Instance;
@@ -235,54 +249,54 @@ CFarDoubleConverter CFarDoubleConverter::Instance0(0);
 CFarDoubleConverter CFarDoubleConverter::Instance1(1);
 CFarDoubleConverter CFarDoubleConverter::Instance2(2);
 
-void CFarDoubleConverter::ToString(double dValue, char *pszBuffer, int nSize) {
+void CFarDoubleConverter::ToString(double dValue, TCHAR *pszBuffer, int nSize) {
 	if (m_nDigits >= 0) {
-		_snprintf(pszBuffer, nSize, "%.*f", m_nDigits, dValue);
+		_sntprintf(pszBuffer, nSize, _T("%.*f"), m_nDigits, dValue);
 	} else {
-		_snprintf(pszBuffer, nSize, "%f", dValue);
+		_sntprintf(pszBuffer, nSize, _T("%f"), dValue);
 	}
 }
 
-bool CFarDoubleConverter::FromString(const char *pszBuffer, double &dValue) {
-	return sscanf(pszBuffer, "%df", &dValue) > 0;
+bool CFarDoubleConverter::FromString(const TCHAR *pszBuffer, double &dValue) {
+	return _stscanf(pszBuffer, _T("%df"), &dValue) > 0;
 }
 
 CFarHexConverter CFarHexConverter::Instance;
 
-void CFarHexConverter::ToString(int iValue, char *pszBuffer, int nSize) {
-	_snprintf(pszBuffer, nSize, "%X", iValue);
+void CFarHexConverter::ToString(int iValue, TCHAR *pszBuffer, int nSize) {
+	_sntprintf(pszBuffer, nSize, _T("%X"), iValue);
 }
 
-bool CFarHexConverter::FromString(const char *pszBuffer, int &iValue) {
-	return sscanf(pszBuffer, "%x", &iValue) > 0;
+bool CFarHexConverter::FromString(const TCHAR *pszBuffer, int &iValue) {
+	return _stscanf(pszBuffer, _T("%x"), &iValue) > 0;
 }
 
 CFarHexDnConverter CFarHexDnConverter::Instance;
 
-void CFarHexDnConverter::ToString(int iValue, char *pszBuffer, int nSize) {
-	_snprintf(pszBuffer, nSize, "%x", iValue);
+void CFarHexDnConverter::ToString(int iValue, TCHAR *pszBuffer, int nSize) {
+	_sntprintf(pszBuffer, nSize, _T("%x"), iValue);
 }
 
 CFarSizeConverter CFarSizeConverter::Instance;
 
-void CFarSizeConverter::ToString(int iValue, char *pszBuffer, int nSize) {
+void CFarSizeConverter::ToString(int iValue, TCHAR *pszBuffer, int nSize) {
 	if ((iValue >= 1024) && (iValue%256 == 0)) {
 		if ((iValue >= 1024*1024) && (iValue % (256*1024) == 0)) {
 			if ((iValue >= 1024*1024*1024) && (iValue % (256*1024*1024) == 0))
-				_snprintf(pszBuffer, nSize, "%.2f Gb", (float)iValue/(1024*1024*1024));
+				_sntprintf(pszBuffer, nSize, _T("%.2f Gb"), (float)iValue/(1024*1024*1024));
 			else
-				_snprintf(pszBuffer, nSize, "%.2f Mb", (float)iValue/(1024*1024));
+				_sntprintf(pszBuffer, nSize, _T("%.2f Mb"), (float)iValue/(1024*1024));
 		} else
-			_snprintf(pszBuffer, nSize, "%.2f Kb", (float)iValue/1024);
+			_sntprintf(pszBuffer, nSize, _T("%.2f Kb"), (float)iValue/1024);
 	} else
-		_snprintf(pszBuffer, nSize, "%d", iValue);
+		_sntprintf(pszBuffer, nSize, _T("%d"), iValue);
 }
 
-bool CFarSizeConverter::FromString(const char *pszBuffer, int &iValue) {
+bool CFarSizeConverter::FromString(const TCHAR *pszBuffer, int &iValue) {
 	float fValue;
-	char szUnit[4];
+	TCHAR szUnit[32];
 
-	if (sscanf(pszBuffer, "%f%2s", &fValue, szUnit) == 0) return false;
+	if (_stscanf(pszBuffer, _T("%f%2s"), &fValue, szUnit) == 0) return false;
 	if (toupper(szUnit[0] == 'K')) fValue *= 1024; else
 	if (toupper(szUnit[0] == 'M')) fValue *= 1024*1024; else
 	if (toupper(szUnit[0] == 'G')) fValue *= 1024*1024*1024;
@@ -294,53 +308,53 @@ bool CFarSizeConverter::FromString(const char *pszBuffer, int &iValue) {
 void CFarStorage::Get(const TCHAR *&ppszBuffer) const {
 	vector<TCHAR> arrBuf(65535);
 	Get(&arrBuf[0], arrBuf.size());
-	ppszBuffer = _tcscpy(&arrBuf[0]);
+	ppszBuffer = _tcsdup(&arrBuf[0]);
 }
 
-void CFarTextStorage::Get(char *pszBuffer, int nSize) const {
+void CFarTextStorage::Get(TCHAR *pszBuffer, int nSize) const {
 	switch (m_nMethod) {
 	case 0:
 		if (m_nSize < nSize) {
-			strncpy(pszBuffer, m_pszBuffer, m_nSize);
+			_tcsncpy(pszBuffer, m_pszBuffer, m_nSize);
 			pszBuffer[m_nSize] = 0;
 		} else
-			strncpy(pszBuffer, m_pszBuffer, nSize);
+			_tcsncpy(pszBuffer, m_pszBuffer, nSize);
 		break;
 	case 1:
 		if (*m_ppszBuffer)
-			strncpy(pszBuffer, *m_ppszBuffer, nSize);
+			_tcsncpy(pszBuffer, *m_ppszBuffer, nSize);
 		else
 			pszBuffer[0] = 0;
 		break;
 	case 2:
-		strncpy(pszBuffer, m_pstrBuffer->c_str(), nSize);break;
+		_tcsncpy(pszBuffer, m_pstrBuffer->c_str(), nSize);break;
 	}
 }
 
-void CFarTextStorage::Put(const char *pszBuffer) {
+void CFarTextStorage::Put(const TCHAR *pszBuffer) {
 	if (m_bReadOnly) return;
 	switch (m_nMethod) {
 	case 0:
-		strncpy(m_pszBuffer, pszBuffer, m_nSize);break;
+		_tcsncpy(m_pszBuffer, pszBuffer, m_nSize);break;
 	case 1:
-		*m_ppszBuffer = (char *)realloc(*m_ppszBuffer, strlen(pszBuffer)+1);
-		strcpy(*m_ppszBuffer, pszBuffer);
+		*m_ppszBuffer = (TCHAR *)realloc(*m_ppszBuffer, (_tcslen(pszBuffer)+1)*sizeof(TCHAR));
+		_tcscpy(*m_ppszBuffer, pszBuffer);
 		break;
 	case 2:
 		(*m_pstrBuffer) = pszBuffer;break;
 	}
 }
 
-CFarTextStorage::operator string() const {
+CFarTextStorage::operator tstring() const {
 	switch (m_nMethod) {
 	case 0:
-		return string(m_pszBuffer, m_nSize);
+		return tstring(m_pszBuffer, m_nSize);
 	case 1:
-		return string(*m_ppszBuffer);
+		return tstring(*m_ppszBuffer);
 	case 2:
 		return *m_pstrBuffer;
 	default:
-		return "";
+		return _T("");
 	}
 }
 
@@ -372,7 +386,7 @@ double CFarIntegerStorage::GetD() const {
 	}
 }
 
-void CFarIntegerStorage::Get(char *pszBuffer, int nSize) const {
+void CFarIntegerStorage::Get(TCHAR *pszBuffer, int nSize) const {
 	if (m_nMethod <= 5) {
 		m_pConverter->ToString(GetI(), pszBuffer, nSize);
 	} else {
@@ -404,7 +418,7 @@ void CFarIntegerStorage::Put(double dValue) {
 	}
 }
 
-void CFarIntegerStorage::Put(const char *pszBuffer) {
+void CFarIntegerStorage::Put(const TCHAR *pszBuffer) {
 	if (m_nMethod <= 5) {
 		int nValue;
 		m_pConverter->FromString(pszBuffer, nValue);
@@ -416,7 +430,7 @@ void CFarIntegerStorage::Put(const char *pszBuffer) {
 	}
 }
 
-bool CFarIntegerStorage::Verify(const char *pszBuffer) {
+bool CFarIntegerStorage::Verify(const TCHAR *pszBuffer) {
 	if (m_nMethod <= 5) {
 		int nValue;
 		return m_pConverter->FromString(pszBuffer, nValue);
@@ -426,8 +440,8 @@ bool CFarIntegerStorage::Verify(const char *pszBuffer) {
 	}
 }
 
-CFarIntegerStorage::operator string() const {
-	char szBuffer[64];
+CFarIntegerStorage::operator tstring() const {
+	TCHAR szBuffer[64];
 	Get(szBuffer, sizeof(szBuffer));
 	return szBuffer;
 }

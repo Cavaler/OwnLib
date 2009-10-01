@@ -16,7 +16,6 @@ namespace FarLib {
 void SetItemText(FarDialogItem *pItem, const TCHAR *szText) {
 #ifdef UNICODE
 	pItem->PtrData = _tcsdup(szText);
-	pItem->MaxLen = 0;
 #else
 	strncpy(pItem->Data, szText, sizeof(pItem->Data));
 #endif
@@ -36,6 +35,7 @@ void CFarDialogItem::CreateItem(FarDialogItem *Item) {
 	Item->Selected=FALSE;
 	Item->Flags=Flags;
 	Item->DefaultButton=FALSE;
+	Item->MaxLen = 0;
 	SetItemText(Item, Text.c_str());
 }
 

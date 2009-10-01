@@ -19,16 +19,16 @@ class CFarEventHandler;
 
 class CFarDialog {
 public:
-	CFarDialog(int iX,int iY,const char *szHelpTopic,DWORD dwFlags=0);
-	CFarDialog(int iX1,int iY1,int iX2,int iY2,const char *szHelpTopic,DWORD dwFlags=0);
-	int  AddFrame(const char *Title);
+	CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags=0);
+	CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags=0);
+	int  AddFrame(const TCHAR *Title);
 	int  AddFrame(int TitleId);
 	int  AddFrame();
 	int  Add(CFarDialogItem *Item);
 	int  Add(CFarDialogItem *Item,CFarEventHandler *pHandler);
-	int  AddButton(const char *szTitle);
+	int  AddButton(const TCHAR *szTitle);
 	int  AddButton(int nId);
-	int  AddButtons(const char *OKTitle,const char *CancelTitle);
+	int  AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle);
 	int  AddButtons(int OKId,int CancelId);
 	void SetFocus(int Focus);
 	void SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam);
@@ -39,7 +39,7 @@ public:
 	~CFarDialog();
 protected:
 	int X1,Y1,X2,Y2,Focused;
-	const char *HelpTopic;
+	const TCHAR *HelpTopic;
 	CFarDialogItem **Items;
 	int ItemsNumber;
 	CFarEventHandler *m_pHandler;
