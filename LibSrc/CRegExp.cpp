@@ -41,7 +41,7 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 
 	string szSubject = ANSIFromUnicode(wstring(subject, length));
 
-	return pcre_exec(argument_re, extra_data, szSubject.c_str(), -1, start_offset, options, offsets, offsetcount);
+	return pcre_exec(argument_re, extra_data, szSubject.c_str(), length, start_offset, options, offsets, offsetcount);
 }
 
 #endif
