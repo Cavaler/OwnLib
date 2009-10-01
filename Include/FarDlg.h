@@ -275,6 +275,14 @@ protected:
 	int X1,Y1,X2,Y2;
 	DWORD Flags;
 	tstring Text;
+#ifdef UNICODE
+public:
+	HANDLE	m_hDlg;
+	int     m_nItem;
+	int     IsSelected() const;
+	wstring GetText() const;
+	int     SelectedItem() const;
+#endif
 };
 
 class CFarCustomItem:public CFarDialogItem {

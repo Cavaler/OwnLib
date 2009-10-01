@@ -115,13 +115,20 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	for (int I=0;I<ItemsNumber;I++) Items[I]->CreateItem(&DialogItems[I]);
 	if (Focused<ItemsNumber) DialogItems[Focused].Focus=TRUE;
 
+#ifdef UNICODE
+	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,
+		m_bHandled ? s_WindowProc : NULL,(long)this);
+	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
+		Items[nItem]->m_hDlg = hDlg;
+		Items[nItem]->m_nItem = nItem;
+	}
+#endif
+
 	do {
-		int I,Code=-1;
+		int I, Code=-1;
 
 #ifdef UNICODE
-		HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
 		Result = StartupInfo.DialogRun(hDlg);
-		StartupInfo.DialogFree(hDlg);
 #else
 		if (m_bHandled || m_dwFlags) {
 			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
@@ -160,6 +167,14 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 		for (I=0;I<ItemsNumber;I++) Items[I]->StoreData(&DialogItems[I]);
 		break;
 	} while (TRUE);
+
+#ifdef UNICODE
+	StartupInfo.DialogFree(hDlg);
+
+	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
+		if (DialogItems[nItem].PtrData) free((TCHAR *)DialogItems[nItem].PtrData);
+	}
+#endif
 
 	delete[] DialogItems;
 	return Result;

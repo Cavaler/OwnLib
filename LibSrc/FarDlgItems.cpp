@@ -35,9 +35,29 @@ void CFarDialogItem::CreateItem(FarDialogItem *Item) {
 	Item->Selected=FALSE;
 	Item->Flags=Flags;
 	Item->DefaultButton=FALSE;
+#ifdef UNICODE
+	Item->PtrData = NULL;
 	Item->MaxLen = 0;
+#endif
 	SetItemText(Item, Text.c_str());
 }
+
+#ifdef UNICODE
+int CFarDialogItem::IsSelected() const
+{
+	return StartupInfo.SendDlgMessage(m_hDlg, DM_GETCHECK, m_nItem, 0);
+}
+
+wstring CFarDialogItem::GetText() const
+{
+	return (const wchar_t *)StartupInfo.SendDlgMessage(m_hDlg, DM_GETCONSTTEXTPTR, m_nItem, 0);
+}
+
+int CFarDialogItem::SelectedItem() const
+{
+	return StartupInfo.SendDlgMessage(m_hDlg, DM_LISTGETCURPOS, m_nItem, 0);
+}
+#endif
 
 CFarDialogItem::~CFarDialogItem() {
 }
@@ -118,15 +138,21 @@ void CFarCheckBoxItem::CreateItem(FarDialogItem *Item) {
 }
 
 void CFarCheckBoxItem::StoreData(FarDialogItem *Item) {
+#ifdef UNICODE
+	int nSelected = IsSelected();
+#else
+	int nSelected = Item->Selected;
+#endif
+
 	switch (m_nMethod) {
 	case 0:
-		*m_pbVariable = Item->Selected!=0;
+		*m_pbVariable = nSelected != 0;
 		break;
 	case 1:
-		*m_pBVariable = Item->Selected;
+		*m_pBVariable = nSelected;
 		break;
 	case 2:
-		if (Item->Selected)
+		if (nSelected)
 			m_piStorage->Put(m_piStorage->GetI() | m_iValue);
 		else
 			m_piStorage->Put(m_piStorage->GetI() & ~m_iValue);
@@ -167,12 +193,18 @@ void CFarCheckBox3Item::CreateItem(FarDialogItem *Item) {
 }
 
 void CFarCheckBox3Item::StoreData(FarDialogItem *Item) {
+#ifdef UNICODE
+	int nSelected = IsSelected();
+#else
+	int nSelected = Item->Selected;
+#endif
+
 	switch (m_nMethod) {
 	case 0:
-		m_piStorage->Put(Item->Selected);
+		m_piStorage->Put(nSelected);
 		break;
 	case 1:
-		switch (Item->Selected) {
+		switch (nSelected) {
 		case 0:
 			*m_pdwCleared |= m_dwMaskValue;
 			*m_pdwSet &= ~m_dwMaskValue;
@@ -230,15 +262,21 @@ void CFarRadioButtonItem::CreateItem(FarDialogItem *Item) {
 }
 
 void CFarRadioButtonItem::StoreData(FarDialogItem *Item) {
+#ifdef UNICODE
+	int nSelected = IsSelected();
+#else
+	int nSelected = Item->Selected;
+#endif
+
 	switch (m_nMethod) {
 	case 0:
-		*m_pbVariable = Item->Selected!=0;
+		*m_pbVariable = nSelected!=0;
 		break;
 	case 1:
-		*m_pBVariable = Item->Selected;
+		*m_pBVariable = nSelected;
 		break;
 	case 2:
-		if (Item->Selected) m_piStorage->Put(m_iValue);
+		if (nSelected) m_piStorage->Put(m_iValue);
 		break;
 	}
 }
@@ -277,11 +315,16 @@ void CFarListBoxItem::CreateItem(FarDialogItem *Item) {
 }
 
 void CFarListBoxItem::StoreData(FarDialogItem *Item) {
+#ifdef UNICODE
+	int nListPos = SelectedItem();
+#else
+	int nListPos = Item->ListPos;
+#endif
 	if (m_piVariable) {
-		*m_piVariable=Item->ListPos;
+		*m_piVariable = nListPos;
 	} else {
-		if ((Item->ListPos >= 0) && (Item->ListPos < Item->ListItems->ItemsNumber))
-			m_pStorage->Put(Item->ListItems->Items[Item->ListPos].Text);
+		if ((nListPos >= 0) && (nListPos < Item->ListItems->ItemsNumber))
+			m_pStorage->Put(Item->ListItems->Items[nListPos].Text);
 		else
 			m_pStorage->Put(_T(""));
 	}
@@ -322,10 +365,11 @@ void CFarEditItem::CreateItem(FarDialogItem *Item) {
 
 bool CFarEditItem::Validate(FarDialogItem *Item) {
 #ifdef UNICODE
+	wstring strText = GetText();
 	if (m_pValidator) {
-		if (!m_pValidator->Validate(Item->PtrData, _tcslen(Item->PtrData)+1)) return false;
+		if (!m_pValidator->Validate(strText.c_str(), strText.length()+1)) return false;
 	}
-	return m_pStorage->Verify(Item->PtrData);
+	return m_pStorage->Verify(strText.c_str());
 #else
 	if (m_pValidator) {
 		if (Item->Flags & DIF_VAREDIT) {
@@ -344,7 +388,7 @@ bool CFarEditItem::Validate(FarDialogItem *Item) {
 
 void CFarEditItem::StoreData(FarDialogItem *Item) {
 #ifdef UNICODE
-	m_pStorage->Put(Item->PtrData);
+	m_pStorage->Put(GetText().c_str());
 #else
 	if (Item->Flags & DIF_VAREDIT) {
 		m_pStorage->Put(Item->Ptr.PtrData);
@@ -408,7 +452,8 @@ void CFarComboBoxItem::CreateItem(FarDialogItem *Item) {
 bool CFarComboBoxItem::Validate(FarDialogItem *Item) {
 	if (m_pValidator) {
 #ifdef UNICODE
-		if (!m_pValidator->Validate(Item->PtrData, _tcslen(Item->PtrData))) return false;
+		wstring strText = GetText();
+		if (!m_pValidator->Validate(strText.c_str(), strText.length()+1)) return false;
 #else
 		if (Item->Flags & DIF_VAREDIT) {
 			if (!m_pValidator->Validate(Item->Ptr.PtrData, Item->Ptr.PtrLength)) return false;
@@ -423,26 +468,25 @@ bool CFarComboBoxItem::Validate(FarDialogItem *Item) {
 void CFarComboBoxItem::StoreData(FarDialogItem *Item) {
 	CFarIntegerStorage *pInt = dynamic_cast<CFarIntegerStorage *>(m_pStorage);
 	CFarTextStorage *pTxt = dynamic_cast<CFarTextStorage *>(m_pStorage);
-	if (pInt) {
-		pInt->Put(Item->ListPos);
-/*		pInt->Put(-1);
 
-		FarList *pList = *m_pData;
-		for (int nPos = 0; nPos < pList->ItemsNumber; nPos++) {
-			if (!strcmp(pList->Items[nPos].Text, Item->Data)) {
-				pInt->Put(nPos+m_nOffset);
-				break;
-			}
-		}*/
+#ifdef UNICODE
+	int nListPos = SelectedItem();
+#else
+	int nListPos = Item->ListPos;
+#endif
+
+	if (pInt) {
+		pInt->Put(nListPos);
 	} else if (pTxt) {
 #ifdef UNICODE
-		pTxt->Put(Item->PtrData);
+		wstring strText = GetText();
+		pTxt->Put(strText.c_str());
 #else
 		pTxt->Put(Item->Data);
 #endif
 	} else {
 		TCHAR szText[16];
-		_stprintf_s(szText, 16, _T("%d"), Item->ListPos);
+		_stprintf_s(szText, 16, _T("%d"), nListPos);
 		m_pStorage->Put(szText);
 	}
 }
