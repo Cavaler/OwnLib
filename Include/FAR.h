@@ -40,8 +40,7 @@ extern const TCHAR *g_pszOKButton;
 extern HANDLE g_hSaveScreen;
 extern bool g_bInterrupted;
 
-//	No _T's - pcre is ANSI only
-string FarMaskToRE(const TCHAR *szMask);
+tstring FarMaskToRE(const TCHAR *szMask);
 
 class CFarMaskSet {
 public:

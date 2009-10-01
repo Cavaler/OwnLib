@@ -15,6 +15,16 @@ using namespace std;
 #define PCRE_SPLIT_STRIPLEADING			0x80000000
 #define PCRE_SPLIT_NOSTRIPTRAILING		0x40000000
 
+#ifdef UNICODE
+
+pcre * pcre_compile(const wchar_t *pattern, int options, const wchar_t **errorptr, int *erroroffset, const unsigned char *tables);
+pcre_extra * pcre_study(const pcre *external_re, int options, const wchar_t **errorptr);
+int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
+		  const wchar_t *subject, int length, int start_offset, int options, int *offsets,
+		  int offsetcount);
+
+#endif
+
 class CRegExp
 {
 public:

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <windows.h>
 
 #include <vector>
 #include <string>
@@ -122,4 +123,28 @@ int  IsWildcard(char *WildCard,char *Name) {
 	case '?':return IsWildcard(WildCard+1,Name+1);
 	default:if (toupper(*WildCard)==toupper(*Name)) return IsWildcard(WildCard+1,Name+1); else return 0;
 	}
+}
+
+wstring ToUnicode(const string &strOEM) {
+	vector<wchar_t> wszBuffer(strOEM.length()+1);
+	MultiByteToWideChar(CP_OEMCP, 0, strOEM.c_str(), -1, &wszBuffer[0], wszBuffer.size());
+	return &wszBuffer[0];
+}
+
+wstring ANSIToUnicode(const string &strANSI) {
+	vector<wchar_t> wszBuffer(strANSI.length()+1);
+	MultiByteToWideChar(CP_ACP, 0, strANSI.c_str(), -1, &wszBuffer[0], wszBuffer.size());
+	return &wszBuffer[0];
+}
+
+string FromUnicode(const wstring &wstrUnicode) {
+	vector<char> szBuffer(wstrUnicode.length()+1);
+	WideCharToMultiByte(CP_OEMCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
+	return &szBuffer[0];
+}
+
+string ANSIFromUnicode(const wstring &wstrUnicode) {
+	vector<char> szBuffer(wstrUnicode.length()+1);
+	WideCharToMultiByte(CP_ACP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
+	return &szBuffer[0];
 }

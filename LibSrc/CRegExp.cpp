@@ -2,6 +2,49 @@
 #define STRICT
 #include <windows.h>
 #include <CRegExp.h>
+#include <StringEx.h>
+
+#ifdef UNICODE
+
+static wstring g_wstrError;
+
+const wchar_t *WError(const char *szErrorPtr) {
+	if (szErrorPtr) {
+		g_wstrError = ANSIToUnicode(szErrorPtr);
+		return g_wstrError.c_str();
+	} else {
+		return NULL;
+	}
+}
+
+pcre * pcre_compile(const wchar_t *pattern, int options, const wchar_t **errorptr, int *erroroffset, const unsigned char *tables) {
+	string szPattern = ANSIFromUnicode(pattern);
+
+	const char *szErrorPtr;
+	pcre *re = pcre_compile(szPattern.c_str(), options, &szErrorPtr, erroroffset, tables);
+	*errorptr = WError(szErrorPtr);
+
+	return re;
+}
+
+pcre_extra * pcre_study(const pcre *external_re, int options, const wchar_t **errorptr) {
+	const char *szErrorPtr;
+	pcre_extra *re = pcre_study(external_re, options, &szErrorPtr);
+	*errorptr = WError(szErrorPtr);
+
+	return re;
+}
+
+int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
+			  const wchar_t *subject, int length, int start_offset, int options, int *offsets,
+			  int offsetcount) {
+
+	string szSubject = ANSIFromUnicode(wstring(subject, length));
+
+	return pcre_exec(argument_re, extra_data, szSubject.c_str(), -1, start_offset, options, offsets, offsetcount);
+}
+
+#endif
 
 CRegExp::CRegExp() : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL), m_iRefCount(0) {
 }
@@ -61,23 +104,23 @@ char CRegExp::ConvertCase(char C) {
 	char Ansi,Oem;
 	if (OneCaseConvert==CCV_NONE) return C;
 
-	OemToCharBuff(&C,&Ansi,1);
-	CharToOemBuff(&Ansi,&Oem,1);
+	OemToCharBuffA(&C,&Ansi,1);
+	CharToOemBuffA(&Ansi,&Oem,1);
 	if (Oem!=C) return C;
 
 	switch (OneCaseConvert) {
 	case CCV_UPPER:
-		Ansi=(char)CharUpper((char *)(unsigned char)Ansi);break;
+		Ansi=(char)CharUpperA((char *)(unsigned char)Ansi);break;
 	case CCV_LOWER:
-		Ansi=(char)CharLower((char *)(unsigned char)Ansi);break;
+		Ansi=(char)CharLowerA((char *)(unsigned char)Ansi);break;
 	case CCV_FLIP:{
-		char Lower=(char)CharLower((char *)(unsigned char)Ansi);
-		Ansi=(Lower==Ansi)?(char)CharUpper((char *)(unsigned char)Ansi):Lower;
+		char Lower=(char)CharLowerA((char *)(unsigned char)Ansi);
+		Ansi=(Lower==Ansi)?(char)CharUpperA((char *)(unsigned char)Ansi):Lower;
 		break;
 				  }
 	}
 	OneCaseConvert=CaseConvert;
-	CharToOemBuff(&Ansi,&C,1);
+	CharToOemBuffA(&Ansi,&C,1);
 	return C;
 }
 

@@ -280,20 +280,20 @@ void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int O
 #endif
 }
 
-string FarMaskToRE(const TCHAR *szMask) {
-	string strRE = "^";
+tstring FarMaskToRE(const TCHAR *szMask) {
+	tstring strRE = _T("^");
 	const TCHAR *szCur = szMask;
 
 	while (*szCur) {
 		switch (*szCur) {
 		case '.':
-			strRE += "\\.";
+			strRE += _T("\\.");
 			break;
 		case '?':
-			strRE += ".";
+			strRE += _T(".");
 			break;
 		case '*':
-			strRE += ".*";
+			strRE += _T(".*");
 			break;
 		case '[':{
 			strRE += '[';
@@ -327,13 +327,13 @@ string FarMaskToRE(const TCHAR *szMask) {
 		szCur++;
 	}
 
-	if (_tcscspn(szMask, ".?*[") != _tcslen(szMask)) strRE += "$";	// Masks without any of these are non-terminal
+	if (_tcscspn(szMask, _T(".?*[")) != _tcslen(szMask)) strRE += '$';	// Masks without any of these are non-terminal
 	return strRE;
 }
 
 CFarMaskSet::CFarMaskSet(const TCHAR *szMasks) {
 	bool bExclude = false;
-	string strCurMask = "";
+	tstring strCurMask = _T("");
 
 	setlocale(LC_ALL, ".OCP");
 	m_pOEMTable = pcre_maketables();
@@ -352,26 +352,26 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks) {
 				int nErr;
 				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
 				if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
-				strCurMask = "";
+				strCurMask = _T("");
 			}
 			szMasks++;
 			break;
 		case '"':{
-			const TCHAR *szEnd = strchr(szMasks+1, '"');
+			const TCHAR *szEnd = _tcschr(szMasks+1, '"');
 			if (!strCurMask.empty()) strCurMask += '|';
 			if (szEnd) {
-				strCurMask += '(' + FarMaskToRE(string(szMasks+1, szEnd - szMasks - 1).c_str()) + ')';
+				strCurMask += _T('(') + FarMaskToRE(tstring(szMasks+1, szEnd - szMasks - 1).c_str()) + _T(')');
 				szMasks = szEnd+1;
 			} else {
-				strCurMask += '(' + FarMaskToRE(szMasks) + ')';
-				szMasks = strchr(szMasks, 0);
+				strCurMask += _T('(') + FarMaskToRE(szMasks) + _T(')');
+				szMasks = _tcschr(szMasks, 0);
 			}
 			    }
 			break;
 		default:{
-			int nLen = strcspn(szMasks, ",;|");
+			int nLen = _tcscspn(szMasks, _T(",;|"));
 			if (!strCurMask.empty()) strCurMask += '|';
-			strCurMask += '(' + FarMaskToRE(string(szMasks, nLen).c_str()) + ')';
+			strCurMask += _T('(') + FarMaskToRE(tstring(szMasks, nLen).c_str()) + _T(')');
 			szMasks += nLen;
 			   }
 			break;
@@ -395,8 +395,8 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks) {
 }
 
 bool CFarMaskSet::operator()(const TCHAR *szFileName) {
-	const TCHAR *szName = strrchr(szFileName, '\\');
-	string strName = (szName) ? szName + 1 :szFileName;
+	const TCHAR *szName = _tcsrchr(szFileName, '\\');
+	tstring strName = (szName) ? szName + 1 :szFileName;
 	if (strName.find('.') == string::npos) strName += '.';
 
 	if (m_pExclude && (pcre_exec(m_pExclude, m_pExcludeExtra, strName.c_str(), strName.length(), 0, 0, NULL, 0) >= 0)) return false;
@@ -451,20 +451,24 @@ CFarPanelMode::CFarPanelMode(int iViewMode, int iSortMode, int iSortOrder)
 }
 
 void CFarPanelMode::LoadReg(HKEY hKey) {
-	QueryRegIntValue(hKey, "ViewMode", &m_iViewMode, m_iViewMode, 0, 9);
-	QueryRegIntValue(hKey, "SortMode", &m_iSortMode, m_iSortMode, 0, 11);
-	QueryRegIntValue(hKey, "SortOrder", &m_iSortOrder, m_iSortOrder, 0, 1);
+	QueryRegIntValue(hKey, _T("ViewMode"), &m_iViewMode, m_iViewMode, 0, 9);
+	QueryRegIntValue(hKey, _T("SortMode"), &m_iSortMode, m_iSortMode, 0, 11);
+	QueryRegIntValue(hKey, _T("SortOrder"), &m_iSortOrder, m_iSortOrder, 0, 1);
 }
 
 void CFarPanelMode::SaveReg(HKEY hKey) {
-	SetRegIntValue(hKey, "ViewMode", m_iViewMode);
-	SetRegIntValue(hKey, "SortMode", m_iSortMode);
-	SetRegIntValue(hKey, "SortOrder", m_iSortOrder);
+	SetRegIntValue(hKey, _T("ViewMode"), m_iViewMode);
+	SetRegIntValue(hKey, _T("SortMode"), m_iSortMode);
+	SetRegIntValue(hKey, _T("SortOrder"), m_iSortOrder);
 }
 
 void CFarPanelMode::Assign(HANDLE hPlugin) {
 	PanelInfo PInfo;
+#ifdef UNICODE
+	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, 0, (LONG_PTR)&PInfo)) Assign(PInfo);
+#else
 	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, &PInfo)) Assign(PInfo);
+#endif
 }
 
 void CFarPanelMode::Assign(PanelInfo &PInfo) {
@@ -476,30 +480,36 @@ void CFarPanelMode::Assign(PanelInfo &PInfo) {
 void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 	if (nOpMode & (OPM_SILENT | OPM_FIND)) return;
 
+#ifdef UNICODE
+	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, m_iViewMode, 0);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, m_iSortMode, 0);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, m_iSortOrder, 0);
+#else
 	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, &m_iViewMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &m_iSortMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &m_iSortOrder);
+#endif
 }
 
 CFarSplitString::CFarSplitString(int nMax) : m_arrLines(nMax) {
 }
 
-CFarSplitString::CFarSplitString(int nMax, const string &strText) : m_arrLines(nMax) {
+CFarSplitString::CFarSplitString(int nMax, const tstring &strText) : m_arrLines(nMax) {
 	Split(strText);
 }
 
-string &CFarSplitString::operator[](int nIndex) {
+tstring &CFarSplitString::operator[](int nIndex) {
 	return m_arrLines[nIndex];
 }
 
-void CFarSplitString::Split(const string &strText) {
-	string strRemain = strText;
+void CFarSplitString::Split(const tstring &strText) {
+	tstring strRemain = strText;
 
 	for (size_t nIndex = 0; nIndex < m_arrLines.size()-1; nIndex++) {
 		int nPos = strRemain.find('\n');
 		if (nPos == string::npos) {
 			m_arrLines[nIndex] = strRemain;
-			strRemain = "";
+			strRemain = _T("");
 		} else {
 			m_arrLines[nIndex] = strRemain.substr(0, nPos);
 			strRemain = strRemain.substr(nPos+1);
@@ -508,10 +518,10 @@ void CFarSplitString::Split(const string &strText) {
 	m_arrLines[m_arrLines.size()-1] = strRemain;
 }
 
-string CFarSplitString::Combine() {
-	string strResult;
+tstring CFarSplitString::Combine() {
+	tstring strResult;
 	for (int nIndex = m_arrLines.size()-1; nIndex >= 0; nIndex--) {
-		if (!strResult.empty()) strResult = m_arrLines[nIndex] + "\n" + strResult; else
+		if (!strResult.empty()) strResult = m_arrLines[nIndex] + _T("\n") + strResult; else
 		if (!m_arrLines[nIndex].empty()) strResult = m_arrLines[nIndex];
 	}
 	return strResult;
