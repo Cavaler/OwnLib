@@ -11,55 +11,55 @@
 namespace FarLib {
 #endif
 
-void ErrorMessage(const char *Message,const char *HelpTopic) {
-	const char *Lines[]={g_pszErrorTitle,Message,g_pszOKButton};
+void ErrorMessage(const TCHAR *Message,const TCHAR *HelpTopic) {
+	const TCHAR *Lines[]={g_pszErrorTitle,Message,g_pszOKButton};
 	StartupInfo.Message(StartupInfo.ModuleNumber,FMSG_WARNING,HelpTopic,Lines,3,1);
 }
 
-void ErrorMessage(const char *Message1,const char *Message2,const char *HelpTopic) {
-	const char *Lines[]={g_pszErrorTitle,Message1,Message2,g_pszOKButton};
+void ErrorMessage(const TCHAR *Message1,const TCHAR *Message2,const TCHAR *HelpTopic) {
+	const TCHAR *Lines[]={g_pszErrorTitle,Message1,Message2,g_pszOKButton};
 	StartupInfo.Message(StartupInfo.ModuleNumber,FMSG_WARNING,HelpTopic,Lines,4,1);
 }
 
 // ***************** INTEGER RANGE VALIDATOR *****************
 
-const char *CFarIntegerRangeValidator::s_szErrorMsg=NULL;
-const char *CFarIntegerRangeValidator::s_szHelpTopic=NULL;
+const TCHAR *CFarIntegerRangeValidator::s_szErrorMsg=NULL;
+const TCHAR *CFarIntegerRangeValidator::s_szHelpTopic=NULL;
 
-bool CFarIntegerRangeValidator::Validate(char *pszData, int nSize) {
+bool CFarIntegerRangeValidator::Validate(const TCHAR *pszData, int nSize) {
 	int iValue;
 	if (!m_pConverter->FromString(pszData, iValue) || (iValue < m_iMin) || (iValue > m_iMax)) {
-		char Message[512];
-		sprintf(Message,m_szErrorMsg,m_iMin,m_iMax);
+		TCHAR Message[512];
+		_stprintf_s(Message, sizeof(Message), m_szErrorMsg, m_iMin, m_iMax);
 		ErrorMessage(Message,m_szHelpTopic);
 		return false;
 	}
 	else return true;
 }
 
-const char *CFarDetailedRangeValidator::s_szTooBigMsg=NULL;
-const char *CFarDetailedRangeValidator::s_szTooSmallMsg=NULL;
-const char *CFarDetailedRangeValidator::s_szNotANumberMsg=NULL;
-const char *CFarDetailedRangeValidator::s_szTooBigTopic=NULL;
-const char *CFarDetailedRangeValidator::s_szTooSmallTopic=NULL;
-const char *CFarDetailedRangeValidator::s_szNotANumberTopic=NULL;
+const TCHAR *CFarDetailedRangeValidator::s_szTooBigMsg=NULL;
+const TCHAR *CFarDetailedRangeValidator::s_szTooSmallMsg=NULL;
+const TCHAR *CFarDetailedRangeValidator::s_szNotANumberMsg=NULL;
+const TCHAR *CFarDetailedRangeValidator::s_szTooBigTopic=NULL;
+const TCHAR *CFarDetailedRangeValidator::s_szTooSmallTopic=NULL;
+const TCHAR *CFarDetailedRangeValidator::s_szNotANumberTopic=NULL;
 
-bool CFarDetailedRangeValidator::Validate(char *pszData, int nSize) {
+bool CFarDetailedRangeValidator::Validate(const TCHAR *pszData, int nSize) {
 	int iValue;
-	char Message[512];
+	TCHAR Message[512];
 
 	if (!m_pConverter->FromString(pszData, iValue)) {
-		sprintf(Message,m_szNotANumberMsg);
+		_stprintf_s(Message, sizeof(Message), m_szNotANumberMsg);
 		ErrorMessage(Message,m_szNotANumberTopic);
 		return false;
 	}
 	else if (iValue < m_iMin) {
-		sprintf(Message,m_szTooSmallMsg,m_iMin);
+		_stprintf_s(Message, sizeof(Message), m_szTooSmallMsg, m_iMin);
 		ErrorMessage(Message,m_szTooSmallTopic);
 		return false;
 	}
 	else if (iValue > m_iMax) {
-		sprintf(Message,m_szTooBigMsg,m_iMax);
+		_stprintf_s(Message, sizeof(Message), m_szTooBigMsg, m_iMax);
 		ErrorMessage(Message,m_szTooBigTopic);
 		return false;
 	}

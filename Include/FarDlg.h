@@ -57,21 +57,21 @@ public:
 	CFarText() : m_strHolder() {}
 	CFarText(const CFarText &Text) : m_strHolder(Text.m_strHolder.c_str()) {}
 	CFarText(int nMsgID) : m_strHolder(GetMsg(nMsgID)) {}
-	CFarText(int nMsgID, const char *pszModule) : m_strHolder(GetMsgEx(nMsgID, pszModule)) {}
-	CFarText(const char *pszText) : m_strHolder(pszText ? pszText : "") {}
-	CFarText(const string &strText) : m_strHolder(strText.c_str()) {}
-	operator const char *() const {return m_strHolder.c_str();}
+	CFarText(int nMsgID, const TCHAR *pszModule) : m_strHolder(GetMsgEx(nMsgID, pszModule)) {}
+	CFarText(const TCHAR *pszText) : m_strHolder(pszText ? pszText : _T("")) {}
+	CFarText(const tstring &strText) : m_strHolder(strText.c_str()) {}
+	operator const TCHAR *() const {return m_strHolder.c_str();}
 protected:
-	string m_strHolder;
+	tstring m_strHolder;
 };
 
 class CFarListData {
 public:
 	CFarListData();
 	CFarListData(FarList *pList, bool bCopy = false);
-	CFarListData(const char **ppszItems,int iItemCount);
+	CFarListData(const TCHAR **ppszItems,int iItemCount);
 	CFarListData(const vector<CFarText> arrItems);
-	int Append(const char *szItem);
+	int Append(const TCHAR *szItem);
 	operator FarList *() const {return m_pList;}
 	~CFarListData();
 protected:
@@ -83,8 +83,8 @@ class CFarIntegerConverter {
 public:
 	static CFarIntegerConverter Instance;
 	
-	virtual void ToString(int iValue, char *pszBuffer, int nSize);
-	virtual bool FromString(const char *pszBuffer, int &iValue);
+	virtual void ToString(int iValue, TCHAR *pszBuffer, int nSize);
+	virtual bool FromString(const TCHAR *pszBuffer, int &iValue);
 };
 
 class CFarDoubleConverter {
@@ -96,8 +96,8 @@ public:
 	static CFarDoubleConverter Instance1;
 	static CFarDoubleConverter Instance2;
 
-	virtual void ToString(double iValue, char *pszBuffer, int nSize);
-	virtual bool FromString(const char *pszBuffer, double &iValue);
+	virtual void ToString(double iValue, TCHAR *pszBuffer, int nSize);
+	virtual bool FromString(const TCHAR *pszBuffer, double &iValue);
 protected:
 	int m_nDigits;
 };
@@ -105,61 +105,62 @@ protected:
 class CFarHexConverter : public CFarIntegerConverter {
 public:
 	static CFarHexConverter Instance;
-	virtual void ToString(int iValue, char *pszBuffer, int nSize);
-	virtual bool FromString(const char *pszBuffer, int &iValue);
+	virtual void ToString(int iValue, TCHAR *pszBuffer, int nSize);
+	virtual bool FromString(const TCHAR *pszBuffer, int &iValue);
 };
 
 class CFarHexDnConverter : public CFarHexConverter {
 public:
 	static CFarHexDnConverter Instance;
-	virtual void ToString(int iValue, char *pszBuffer, int nSize);
+	virtual void ToString(int iValue, TCHAR *pszBuffer, int nSize);
 };
 
 class CFarSizeConverter : public CFarIntegerConverter {
 public:
 	static CFarSizeConverter Instance;
-	virtual void ToString(int iValue, char *pszBuffer, int nSize);
-	virtual bool FromString(const char *pszBuffer, int &iValue);
+	virtual void ToString(int iValue, TCHAR *pszBuffer, int nSize);
+	virtual bool FromString(const TCHAR *pszBuffer, int &iValue);
 };
 
 class CFarStorage {
 public:
-	virtual void Get(char *pszBuffer, int nSize) const = 0;
-	virtual void Put(const char *pszBuffer) = 0;
-	virtual bool Verify(const char *pszBuffer) {return true;}
-	virtual operator string() const = 0;
+	virtual void Get(TCHAR *pszBuffer, int nSize) const = 0;
+	virtual void Get(const TCHAR *&ppszBuffer) const;
+	virtual void Put(const TCHAR *pszBuffer) = 0;
+	virtual bool Verify(const TCHAR *pszBuffer) { return true; }
+	virtual operator tstring() const = 0;
 };
 
 class CFarTextStorage : public CFarStorage {
 public:
 	CFarTextStorage():
 		m_nMethod(-1) {}
-	CFarTextStorage(char &pchBuffer, bool bReadOnly = false):
+	CFarTextStorage(TCHAR &pchBuffer, bool bReadOnly = false):
 		m_nMethod(0), m_pszBuffer(&pchBuffer), m_nSize(1), m_bReadOnly(bReadOnly) {}
-	CFarTextStorage(char *pszBuffer, int nSize = -1, bool bReadOnly = false):
+	CFarTextStorage(TCHAR *pszBuffer, int nSize = -1, bool bReadOnly = false):
 		m_nMethod(0), m_pszBuffer(pszBuffer),
-		m_nSize(nSize >= 0 ? nSize : strlen(pszBuffer)+1), m_bReadOnly(bReadOnly) {}
-	CFarTextStorage(const char *pszBuffer, int nSize = -1):
-		m_nMethod(0), m_pszBuffer((char *)pszBuffer),
-		m_nSize(nSize >= 0 ? nSize : strlen(pszBuffer)+1), m_bReadOnly(true) {}
-	CFarTextStorage(char **ppszBuffer, bool bReadOnly = false):
+		m_nSize(nSize >= 0 ? nSize : _tcslen(pszBuffer)+1), m_bReadOnly(bReadOnly) {}
+	CFarTextStorage(const TCHAR *pszBuffer, int nSize = -1):
+		m_nMethod(0), m_pszBuffer((TCHAR *)pszBuffer),
+		m_nSize(nSize >= 0 ? nSize : _tcslen(pszBuffer)+1), m_bReadOnly(true) {}
+	CFarTextStorage(TCHAR **ppszBuffer, bool bReadOnly = false):
 		m_nMethod(1), m_ppszBuffer(ppszBuffer), m_bReadOnly(bReadOnly) {}
-	CFarTextStorage(string &pstrBuffer, bool bReadOnly = false):
+	CFarTextStorage(tstring &pstrBuffer, bool bReadOnly = false):
 		m_nMethod(2), m_pstrBuffer(&pstrBuffer), m_bReadOnly(bReadOnly) {}
 
-	virtual void Get(char *pszBuffer, int nSize) const;
-	virtual void Put(const char *pszBuffer);
-	virtual operator string() const;
+	virtual void Get(TCHAR *pszBuffer, int nSize) const;
+	virtual void Put(const TCHAR *pszBuffer);
+	virtual operator tstring() const;
 protected:
 	bool m_bReadOnly;
 	int m_nMethod;
 	union {
 		struct {
-			char *m_pszBuffer;
+			TCHAR *m_pszBuffer;
 			int m_nSize;
 		};
-		char **m_ppszBuffer;
-		string *m_pstrBuffer;
+		TCHAR **m_ppszBuffer;
+		tstring *m_pstrBuffer;
 	};
 };
 
@@ -206,10 +207,10 @@ public:
 	CFarIntegerStorage(double &pValue, CFarDoubleConverter *pConverter = &CFarDoubleConverter::Instance):
 		m_nMethod(6), m_pDouble(&pValue), m_pDConverter(pConverter) {}
 
-	virtual void Get(char *pszBuffer, int nSize) const;
-	virtual void Put(const char *pszBuffer);
-	virtual bool Verify(const char *pszBuffer);
-	virtual operator string() const;
+	virtual void Get(TCHAR *pszBuffer, int nSize) const;
+	virtual void Put(const TCHAR *pszBuffer);
+	virtual bool Verify(const TCHAR *pszBuffer);
+	virtual operator tstring() const;
 
 	virtual int GetI() const;
 	virtual double GetD() const;
@@ -273,7 +274,7 @@ public:
 protected:
 	int X1,Y1,X2,Y2;
 	DWORD Flags;
-	string Text;
+	tstring Text;
 };
 
 class CFarCustomItem:public CFarDialogItem {
@@ -379,16 +380,16 @@ class CFarValidator;
 
 class CFarEditItem:public CFarDialogItem {
 public:
-	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const char *szHistory,CFarStorage *pStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
-	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const char *szHistory,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
-	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const char *szHistory,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
+	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarStorage *pStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
+	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
+	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual ~CFarEditItem();
 protected:
 	int m_iType;
-	const char *m_pszHistory;
+	const TCHAR *m_pszHistory;
 	CFarStorage *m_pStorage;
 	CFarValidator *m_pValidator;
 };
@@ -404,16 +405,16 @@ public:
 	virtual ~CFarComboBoxItem();
 protected:
 	CFarListData *m_pData;
-	string NoAmpText(string strText);
+	tstring NoAmpText(tstring strText);
 	int m_nOffset;		// 0th element in list has this number
 };
 
 // ********************* VALIDATORS ********************
-typedef bool (*FarStringValidator)(char *pszData, int nSize, void *pData);
+typedef bool (*FarStringValidator)(const TCHAR *pszData, int nSize, void *pData);
 
 class CFarValidator {
 public:
-	virtual bool Validate(char *pszData, int nSize)=0;
+	virtual bool Validate(const TCHAR *pszData, int nSize)=0;
 	virtual ~CFarValidator() {}
 };
 
@@ -421,7 +422,7 @@ class CFarStringValidator : public CFarValidator {
 public:
 	CFarStringValidator(FarStringValidator pValidator, void *pData):
 		m_pValidator(pValidator), m_pData(pData) {}
-	virtual bool Validate(char *pszData, int nSize) {return (m_pValidator) ? m_pValidator(pszData, nSize, m_pData) : true;}
+	virtual bool Validate(const TCHAR *pszData, int nSize) {return (m_pValidator) ? m_pValidator(pszData, nSize, m_pData) : true;}
 protected:
 	FarStringValidator m_pValidator;
 	void *m_pData;
@@ -429,15 +430,15 @@ protected:
 
 class CFarIntegerRangeValidator : public CFarValidator {
 public:
-	static const char *s_szErrorMsg;
-	static const char *s_szHelpTopic;
-	const char *m_szErrorMsg;
-	const char *m_szHelpTopic;
+	static const TCHAR *s_szErrorMsg;
+	static const TCHAR *s_szHelpTopic;
+	const TCHAR *m_szErrorMsg;
+	const TCHAR *m_szHelpTopic;
 
 	CFarIntegerRangeValidator(int iMin, int iMax, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
 		m_iMin(iMin), m_iMax(iMax), m_pConverter(pConverter), 
 		m_szErrorMsg(s_szErrorMsg), m_szHelpTopic(s_szHelpTopic) {}
-	virtual bool Validate(char *pszData, int nSize);
+	virtual bool Validate(const TCHAR *pszData, int nSize);
 protected:
 	int m_iMin,m_iMax;
 	CFarIntegerConverter *m_pConverter;
@@ -445,29 +446,29 @@ protected:
 
 class CFarDetailedRangeValidator : public CFarValidator {
 public:
-	static const char *s_szTooBigMsg;
-	static const char *s_szTooSmallMsg;
-	static const char *s_szNotANumberMsg;
-	static const char *s_szTooBigTopic;
-	static const char *s_szTooSmallTopic;
-	static const char *s_szNotANumberTopic;
+	static const TCHAR *s_szTooBigMsg;
+	static const TCHAR *s_szTooSmallMsg;
+	static const TCHAR *s_szNotANumberMsg;
+	static const TCHAR *s_szTooBigTopic;
+	static const TCHAR *s_szTooSmallTopic;
+	static const TCHAR *s_szNotANumberTopic;
 
 	CFarDetailedRangeValidator(int iMin,int iMax, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
 		m_iMin(iMin), m_iMax(iMax), m_pConverter(pConverter), 
 		m_szTooBigMsg(s_szTooBigMsg), m_szTooSmallMsg(s_szTooSmallMsg),
 		m_szNotANumberMsg(s_szNotANumberMsg), m_szTooBigTopic(s_szTooBigTopic),
 		m_szTooSmallTopic(s_szTooSmallTopic), m_szNotANumberTopic(s_szNotANumberTopic) {}
-	virtual bool Validate(char *pszData, int nSize);
+	virtual bool Validate(const TCHAR *pszData, int nSize);
 protected:
 	int m_iMin,m_iMax;
 	CFarIntegerConverter *m_pConverter;
 public:
-	const char *m_szTooBigMsg;
-	const char *m_szTooSmallMsg;
-	const char *m_szNotANumberMsg;
-	const char *m_szTooBigTopic;
-	const char *m_szTooSmallTopic;
-	const char *m_szNotANumberTopic;
+	const TCHAR *m_szTooBigMsg;
+	const TCHAR *m_szTooSmallMsg;
+	const TCHAR *m_szNotANumberMsg;
+	const TCHAR *m_szTooBigTopic;
+	const TCHAR *m_szTooSmallTopic;
+	const TCHAR *m_szNotANumberTopic;
 };
 
 #ifndef FAR_NO_NAMESPACE

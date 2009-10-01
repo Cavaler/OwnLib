@@ -291,6 +291,12 @@ bool CFarSizeConverter::FromString(const char *pszBuffer, int &iValue) {
 	return true;
 }
 
+void CFarStorage::Get(const TCHAR *&ppszBuffer) const {
+	vector<TCHAR> arrBuf(65535);
+	Get(&arrBuf[0], arrBuf.size());
+	ppszBuffer = _tcscpy(&arrBuf[0]);
+}
+
 void CFarTextStorage::Get(char *pszBuffer, int nSize) const {
 	switch (m_nMethod) {
 	case 0:
