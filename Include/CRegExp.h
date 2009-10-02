@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 using namespace std;
+#include <tstring.h>
 
 #define PCRE_SPLIT_FLAGS				0xF0000000
 #define PCRE_SPLIT_STRIPLEADING			0x80000000
@@ -30,36 +31,36 @@ class CRegExp
 public:
 	// Preparing
 	CRegExp();
-	CRegExp(string strPattern, int iCompileFlags = 0);
-	bool Compile(string strPattern, int iCompileFlags = 0);
+	CRegExp(tstring strPattern, int iCompileFlags = 0);
+	bool Compile(tstring strPattern, int iCompileFlags = 0);
 	operator bool() {return m_pPattern != NULL;}
 	int RefCount() {return m_iRefCount;}
 	~CRegExp();
 
 	// Using
-	bool Match(string strAnalyze, int iExecFlags = 0, vector<string> *arrReferences = NULL);
-	bool CreateReplace(string strAnalyze, string strReplacePattern, string &strResult, int iExecFlags = 0);
-	bool Replace(string &strAnalyze, string strReplacePattern,
+	bool Match(tstring strAnalyze, int iExecFlags = 0, vector<tstring> *arrReferences = NULL);
+	bool CreateReplace(tstring strAnalyze, tstring strReplacePattern, tstring &strResult, int iExecFlags = 0);
+	bool Replace(tstring &strAnalyze, tstring strReplacePattern,
 		bool bGlobal = false, int iExecFlags = 0);
 
-	static bool Match(string strAnalyze, string strPattern, int iCompileFlags = 0, int iExecFlags = 0, vector<string> *arrReferences = NULL);
-	static bool CreateReplace(string strAnalyze, string strPattern, string strReplacePattern,
-		string &strResult, int iCompileFlags = 0, int iExecFlags = 0);
-	static bool Replace(string &strAnalyze, string strPattern, string strReplacePattern,
+	static bool Match(tstring strAnalyze, tstring strPattern, int iCompileFlags = 0, int iExecFlags = 0, vector<tstring> *arrReferences = NULL);
+	static bool CreateReplace(tstring strAnalyze, tstring strPattern, tstring strReplacePattern,
+		tstring &strResult, int iCompileFlags = 0, int iExecFlags = 0);
+	static bool Replace(tstring &strAnalyze, tstring strPattern, tstring strReplacePattern,
 		bool bGlobal = false, int iCompileFlags = 0, int iExecFlags = 0);
-	static bool Split(string strAnalyze, string strPattern,  vector<string> *arrSplit, int iCompileFlags = 0, int iExecFlags = 0);
-	static bool Grep(string strAnalyze, string strPattern, string strReplacePattern,
-		vector<string> *arrFound, int iCompileFlags = 0, int iExecFlags = 0);
+	static bool Split(tstring strAnalyze, tstring strPattern,  vector<tstring> *arrSplit, int iCompileFlags = 0, int iExecFlags = 0);
+	static bool Grep(tstring strAnalyze, tstring strPattern, tstring strReplacePattern,
+		vector<tstring> *arrFound, int iCompileFlags = 0, int iExecFlags = 0);
 
-	const char *m_pszErrPtr;
+	const TCHAR *m_pszErrPtr;
 	int m_iErrOffset;
 protected:
 	void Release();
 
-	char ConvertCase(char C);
-	void AddChar(string &strResult, char C);
-	void FillReferences(string &strAnalyze, int iCount, vector<string> *arrReferences);
-	string CreateReplaceString(string &strReplacePattern, vector<string> &arrReferences);
+	TCHAR ConvertCase(TCHAR C);
+	void AddChar(tstring &strResult, TCHAR C);
+	void FillReferences(tstring &strAnalyze, int iCount, vector<tstring> *arrReferences);
+	tstring CreateReplaceString(tstring &strReplacePattern, vector<tstring> &arrReferences);
 
 	enum ECaseConvert {CCV_NONE,CCV_UPPER,CCV_LOWER,CCV_FLIP};
 	pcre *m_pPattern;

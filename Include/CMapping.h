@@ -17,6 +17,7 @@ public:
 	operator void *();
 	operator BYTE *();
 	operator char *();
+	operator wchar_t *();
 	HANDLE GetFileHandle();
 	HANDLE GetMappingHandle();
 	DWORD Size();

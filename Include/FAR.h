@@ -101,16 +101,15 @@ protected:
 
 class CFarMenuItem : public FarMenuItem {
 public:
+	CFarMenuItem();
 	CFarMenuItem(const TCHAR *szTitle);
 	CFarMenuItem(const tstring &strTitle);
 	CFarMenuItem(int nMsgID);
 	CFarMenuItem(bool bSeparator);
 	CFarMenuItem(const CFarMenuItem &Item);
-	void operator=(const CFarMenuItem &Item);
-#ifdef _UNICODE
-protected:
-	tstring m_strText;
-#endif
+	CFarMenuItem(const FarMenuItem &Item);
+	void operator=(const FarMenuItem &Item);
+	~CFarMenuItem();
 };
 
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)

@@ -12,4 +12,10 @@ namespace std {
 #endif
 };
 
+#ifdef UNICODE
+typedef unsigned short UTCHAR;
+#else
+typedef unsigned char UTCHAR;
+#endif
+
 #endif

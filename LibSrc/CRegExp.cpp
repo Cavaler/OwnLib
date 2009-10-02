@@ -73,11 +73,11 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 CRegExp::CRegExp() : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL), m_iRefCount(0) {
 }
 
-CRegExp::CRegExp(string strPattern, int iCompileFlags) : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL) {
+CRegExp::CRegExp(tstring strPattern, int iCompileFlags) : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL) {
 	Compile(strPattern, iCompileFlags);
 }
 
-bool CRegExp::Compile(string strPattern, int iCompileFlags) {
+bool CRegExp::Compile(tstring strPattern, int iCompileFlags) {
 	Release();
 
 	m_pPattern = pcre_compile(strPattern.c_str(), iCompileFlags, &m_pszErrPtr, &m_iErrOffset,NULL);
@@ -101,17 +101,17 @@ CRegExp::~CRegExp() {
 	Release();
 }
 
-void CRegExp::FillReferences(string &strAnalyze, int iCount, vector<string> *arrReferences) {
+void CRegExp::FillReferences(tstring &strAnalyze, int iCount, vector<tstring> *arrReferences) {
 	arrReferences->clear();
 	for (int i = 0; i < iCount; i++) {
 		if (m_piRefs[i*2] >= 0)
-			arrReferences->push_back(string(strAnalyze, m_piRefs[i*2], m_piRefs[i*2+1] - m_piRefs[i*2]));
+			arrReferences->push_back(tstring(strAnalyze, m_piRefs[i*2], m_piRefs[i*2+1] - m_piRefs[i*2]));
 		else
-			arrReferences->push_back(string());
+			arrReferences->push_back(tstring());
 	}
 }
 
-bool CRegExp::Match(string strAnalyze, int iExecFlags, vector<string> *arrReferences) {
+bool CRegExp::Match(tstring strAnalyze, int iExecFlags, vector<tstring> *arrReferences) {
 	int iResult = pcre_exec(m_pPattern, m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), 0, iExecFlags, m_piRefs, m_iRefCount*3);
 	if (iResult < 0)
 	{
@@ -124,39 +124,47 @@ bool CRegExp::Match(string strAnalyze, int iExecFlags, vector<string> *arrRefere
 
 enum ECaseConvert {CCV_NONE,CCV_UPPER,CCV_LOWER,CCV_FLIP};
 
-char CRegExp::ConvertCase(char C) {
-	char Ansi,Oem;
+TCHAR CRegExp::ConvertCase(TCHAR C) {
 	if (OneCaseConvert==CCV_NONE) return C;
 
-	OemToCharBuffA(&C,&Ansi,1);
-	CharToOemBuffA(&Ansi,&Oem,1);
+#ifndef UNICODE
+	TCHAR Ansi,Oem;
+	OemToCharBuff(&C,&Ansi,1);
+	CharToOemBuff(&Ansi,&Oem,1);
 	if (Oem!=C) return C;
+#else
+	TCHAR Ansi = C;
+#endif
 
 	switch (OneCaseConvert) {
 	case CCV_UPPER:
-		Ansi=(char)CharUpperA((char *)(unsigned char)Ansi);break;
+		Ansi=(TCHAR)CharUpper((TCHAR *)(UTCHAR)Ansi);break;
 	case CCV_LOWER:
-		Ansi=(char)CharLowerA((char *)(unsigned char)Ansi);break;
+		Ansi=(TCHAR)CharLower((TCHAR *)(UTCHAR)Ansi);break;
 	case CCV_FLIP:{
-		char Lower=(char)CharLowerA((char *)(unsigned char)Ansi);
-		Ansi=(Lower==Ansi)?(char)CharUpperA((char *)(unsigned char)Ansi):Lower;
+		TCHAR Lower=(TCHAR)CharLower((TCHAR *)(UTCHAR)Ansi);
+		Ansi=(Lower==Ansi)?(TCHAR)CharUpper((TCHAR *)(UTCHAR)Ansi):Lower;
 		break;
 				  }
 	}
 	OneCaseConvert=CaseConvert;
+#ifdef UNICODE
+	return Ansi;
+#else
 	CharToOemBuffA(&Ansi,&C,1);
 	return C;
+#endif
 }
 
-void CRegExp::AddChar(string &strResult, char C) {
+void CRegExp::AddChar(tstring &strResult, TCHAR C) {
 	strResult += ConvertCase(C);
 }
 
-string CRegExp::CreateReplaceString(string &strReplacePattern, vector<string> &arrReferences)
+tstring CRegExp::CreateReplaceString(tstring &strReplacePattern, vector<tstring> &arrReferences)
 {
-	string strResult = "";
+	tstring strResult = _T("");
 
-	const char *pszReplace = strReplacePattern.c_str();
+	const TCHAR *pszReplace = strReplacePattern.c_str();
 	CaseConvert = CCV_NONE;
 	OneCaseConvert = CCV_NONE;
 
@@ -180,7 +188,7 @@ string CRegExp::CreateReplaceString(string &strReplacePattern, vector<string> &a
 			case '5':case '6':case '7':case '8':case '9':{
 				int iChar=0;
 				for (int I=0;I<3;I++) {
-					if (isdigit((unsigned char)*pszReplace)) {
+					if (isdigit((UTCHAR)*pszReplace)) {
 						iChar=iChar*8+(*pszReplace-'0');pszReplace++;
 					} else break;
 				}
@@ -189,7 +197,7 @@ string CRegExp::CreateReplaceString(string &strReplacePattern, vector<string> &a
 			case 'x':{
 				int iChar=0;pszReplace++;
 				for (int I=0;I<2;I++) {
-					if (isxdigit((unsigned char)*pszReplace)) {
+					if (isxdigit((UTCHAR)*pszReplace)) {
 						iChar=iChar*16+*pszReplace;
 						if (*pszReplace<='9') iChar-='0'; else
 						if (*pszReplace<='F') iChar+=10-'A'; else iChar+=10-'a';
@@ -212,7 +220,7 @@ string CRegExp::CreateReplaceString(string &strReplacePattern, vector<string> &a
 			break;
 		case '$':{
 			int iParam=0;
-			while (isdigit((unsigned char)pszReplace[1])) {
+			while (isdigit((UTCHAR)pszReplace[1])) {
 				iParam = iParam*10 + (pszReplace[1]-'0');
 				pszReplace++;
 			}
@@ -227,9 +235,9 @@ string CRegExp::CreateReplaceString(string &strReplacePattern, vector<string> &a
 	return strResult;
 }
 
-bool CRegExp::CreateReplace(string strAnalyze, string strReplacePattern, string &strResult, int iExecFlags)
+bool CRegExp::CreateReplace(tstring strAnalyze, tstring strReplacePattern, tstring &strResult, int iExecFlags)
 {
-	vector<string> arrReferences;
+	vector<tstring> arrReferences;
 	bool bResult = Match(strAnalyze, iExecFlags, &arrReferences);
 	if (!bResult) return false;
 
@@ -237,11 +245,11 @@ bool CRegExp::CreateReplace(string strAnalyze, string strReplacePattern, string 
 	return true;
 }
 
-bool CRegExp::Replace(string &strAnalyze, string strReplacePattern, bool bGlobal, int iExecFlags)
+bool CRegExp::Replace(tstring &strAnalyze, tstring strReplacePattern, bool bGlobal, int iExecFlags)
 {
 	int iStart = 0;
 	do {
-		string strReplace;
+		tstring strReplace;
 		bool bResult = CreateReplace(strAnalyze.substr(iStart), strReplacePattern, strReplace, iExecFlags);
 		if (!bResult) return m_pPattern!=NULL;
 		strAnalyze.replace(iStart + m_piRefs[0], m_piRefs[1] - m_piRefs[0], strReplace);
@@ -250,22 +258,22 @@ bool CRegExp::Replace(string &strAnalyze, string strReplacePattern, bool bGlobal
 	return true;
 }
 
-bool CRegExp::Match(string strAnalyze, string strPattern, int iCompileFlags, int iExecFlags, vector<string> *arrReferences)
+bool CRegExp::Match(tstring strAnalyze, tstring strPattern, int iCompileFlags, int iExecFlags, vector<tstring> *arrReferences)
 {
 	CRegExp RegExp(strPattern, iCompileFlags);
 	if (!RegExp.m_pPattern) return false;
 	return RegExp.Match(strAnalyze, iExecFlags, arrReferences);
 }
 
-bool CRegExp::CreateReplace(string strAnalyze, string strPattern, string strReplacePattern,
-					  string &strResult, int iCompileFlags, int iExecFlags)
+bool CRegExp::CreateReplace(tstring strAnalyze, tstring strPattern, tstring strReplacePattern,
+					  tstring &strResult, int iCompileFlags, int iExecFlags)
 {
 	CRegExp RegExp(strPattern, iCompileFlags);
 	if (!RegExp.m_pPattern) return false;
 	return RegExp.CreateReplace(strAnalyze, strReplacePattern, strResult, iExecFlags);
 }
 
-bool CRegExp::Replace(string &strAnalyze, string strPattern, string strReplacePattern,
+bool CRegExp::Replace(tstring &strAnalyze, tstring strPattern, tstring strReplacePattern,
 					  bool bGlobal, int iCompileFlags, int iExecFlags)
 {
 	CRegExp RegExp(strPattern, iCompileFlags);
@@ -273,7 +281,7 @@ bool CRegExp::Replace(string &strAnalyze, string strPattern, string strReplacePa
 	return RegExp.Replace(strAnalyze, strReplacePattern, bGlobal, iExecFlags);
 }
 
-bool CRegExp::Split(string strAnalyze, string strPattern,  vector<string> *arrSplit, int iCompileFlags, int iExecFlags)
+bool CRegExp::Split(tstring strAnalyze, tstring strPattern,  vector<tstring> *arrSplit, int iCompileFlags, int iExecFlags)
 {
 	CRegExp RegExp(strPattern, iCompileFlags);
 	if (!RegExp.m_pPattern) return false;
@@ -283,16 +291,16 @@ bool CRegExp::Split(string strAnalyze, string strPattern,  vector<string> *arrSp
 		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), iStart,
 			iExecFlags & ~PCRE_SPLIT_FLAGS, RegExp.m_piRefs, RegExp.m_iRefCount*3);
 		if (iResult < 0) break;
-		if (((iExecFlags&PCRE_SPLIT_STRIPLEADING) == 0) || (RegExp.m_piRefs[0] != 0) || (strPattern == " "))
+		if (((iExecFlags&PCRE_SPLIT_STRIPLEADING) == 0) || (RegExp.m_piRefs[0] != 0) || (strPattern == _T(" ")))
 			if (arrSplit) arrSplit->push_back(strAnalyze.substr(iStart, RegExp.m_piRefs[0] - iStart));
 		iStart = RegExp.m_piRefs[1];
 	} while (true);
-	if (((iExecFlags&PCRE_SPLIT_NOSTRIPTRAILING) != 0) || (iStart != strAnalyze.size()) || (strPattern == " "))
+	if (((iExecFlags&PCRE_SPLIT_NOSTRIPTRAILING) != 0) || (iStart != strAnalyze.size()) || (strPattern == _T(" ")))
 		if (arrSplit) arrSplit->push_back(strAnalyze.substr(iStart));
 	return true;
 }
 
-bool CRegExp::Grep(string strAnalyze, string strPattern, string strReplacePattern, vector<string> *arrFound, int iCompileFlags, int iExecFlags)
+bool CRegExp::Grep(tstring strAnalyze, tstring strPattern, tstring strReplacePattern, vector<tstring> *arrFound, int iCompileFlags, int iExecFlags)
 {
 	CRegExp RegExp(strPattern, iCompileFlags);
 	if (!RegExp.m_pPattern) return false;
@@ -301,9 +309,9 @@ bool CRegExp::Grep(string strAnalyze, string strPattern, string strReplacePatter
 	do {
 		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), iStart, iExecFlags, RegExp.m_piRefs, RegExp.m_iRefCount*3);
 		if (iResult < 0) break;
-		vector<string> arrReferences;
+		vector<tstring> arrReferences;
 		RegExp.FillReferences(strAnalyze, iResult, &arrReferences);
-		string strResult = RegExp.CreateReplaceString(strReplacePattern, arrReferences);
+		tstring strResult = RegExp.CreateReplaceString(strReplacePattern, arrReferences);
 		if (arrFound) arrFound->push_back(strResult);
 		iStart = RegExp.m_piRefs[1];
 	} while (true);

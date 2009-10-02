@@ -65,6 +65,10 @@ CFileMapping::operator char *() {
 	return (char *)m_pData;
 }
 
+CFileMapping::operator wchar_t *() {
+	return (wchar_t *)m_pData;
+}
+
 HANDLE CFileMapping::GetFileHandle() {
 	return m_hFile;
 }

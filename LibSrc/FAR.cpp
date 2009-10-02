@@ -31,11 +31,19 @@ int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	return -1;
 }
 
+CFarMenuItem::CFarMenuItem() {
+	Selected = Checked = Separator = 0;
+#ifdef UNICODE
+	Text = _tcsdup(_T(""));
+#else
+	Text[0] = 0;
+#endif
+}
+
 CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
 	Selected = Checked = Separator = 0;
-#ifdef _UNICODE
-	m_strText = szTitle;
-	Text = m_strText.c_str();
+#ifdef UNICODE
+	Text = _tcsdup(szTitle);
 #else
 	_tcscpy(Text, szTitle);
 #endif
@@ -43,9 +51,8 @@ CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
 
 CFarMenuItem::CFarMenuItem(const tstring &strTitle) {
 	Selected = Checked = Separator = 0;
-#ifdef _UNICODE
-	m_strText = strTitle;
-	Text = m_strText.c_str();
+#ifdef UNICODE
+	Text = _tcsdup(strTitle.c_str());
 #else
 	_tcscpy(Text, strTitle.c_str());
 #endif
@@ -53,9 +60,8 @@ CFarMenuItem::CFarMenuItem(const tstring &strTitle) {
 
 CFarMenuItem::CFarMenuItem(int nMsgID) {
 	Selected = Checked = Separator = 0;
-#ifdef _UNICODE
-	m_strText = GetMsg(nMsgID);
-	Text = m_strText.c_str();
+#ifdef UNICODE
+	Text = _tcsdup(GetMsg(nMsgID));
 #else
 	_tcscpy(Text, GetMsg(nMsgID));
 #endif
@@ -64,9 +70,8 @@ CFarMenuItem::CFarMenuItem(int nMsgID) {
 CFarMenuItem::CFarMenuItem(bool bSeparator) {
 	Selected = Checked = 0;
 	Separator = bSeparator ? 1 : 0;
-#ifdef _UNICODE
-	m_strText = _T("");
-	Text = m_strText.c_str();
+#ifdef UNICODE
+	Text = _tcsdup(_T(""));
 #else
 	Text[0] = 0;
 #endif
@@ -74,19 +79,29 @@ CFarMenuItem::CFarMenuItem(bool bSeparator) {
 
 CFarMenuItem::CFarMenuItem(const CFarMenuItem &Item)
 {
+	*this = (const FarMenuItem &)Item;
+}
+
+CFarMenuItem::CFarMenuItem(const FarMenuItem &Item)
+{
 	*this = Item;
 }
 
-void CFarMenuItem::operator=(const CFarMenuItem &Item)
+void CFarMenuItem::operator=(const FarMenuItem &Item)
 {
 	Selected = Item.Selected;
 	Checked = Item.Checked;
 	Separator = Item.Separator;
-#ifdef _UNICODE
-	m_strText = Item.m_strText;
-	Text = m_strText.c_str();
+#ifdef UNICODE
+	Text = _tcsdup(Item.Text);
 #else
 	_tcscpy(Text, Item.Text);
+#endif
+}
+
+CFarMenuItem::~CFarMenuItem() {
+#ifdef UNICODE
+	if (Text) free((TCHAR *)Text);
 #endif
 }
 
