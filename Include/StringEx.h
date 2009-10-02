@@ -22,10 +22,14 @@ int  GetWord(string Line,string &Word,int RetWhat=GW_SKIPLEN);
 int  GetStripWord(string &Line,string &Word);
 string FormatStr(const char *szFormat, ...);
 
-wstring ToUnicode(const string &strOEM);
+wstring StrToUnicode(const string &strMBCS, UINT nCP);
+wstring OEMToUnicode(const string &strOEM);
 wstring ANSIToUnicode(const string &strANSI);
-string FromUnicode(const wstring &wstrUnicode);
+wstring UTF8ToUnicode(const string &strUTF8);
+string StrFromUnicode(const wstring &wstrUnicode, UINT nCP);
+string OEMFromUnicode(const wstring &wstrUnicode);
 string ANSIFromUnicode(const wstring &wstrUnicode);
+string UTF8FromUnicode(const wstring &wstrUnicode);
 
 #if (defined _VECTOR_) || (defined _STLP_VECTOR)
 void ParseWordsTo(string Line,vector<string> &Coll);

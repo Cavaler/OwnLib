@@ -125,26 +125,22 @@ int  IsWildcard(char *WildCard,char *Name) {
 	}
 }
 
-wstring ToUnicode(const string &strOEM) {
-	vector<wchar_t> wszBuffer(strOEM.length()+1);
-	MultiByteToWideChar(CP_OEMCP, 0, strOEM.c_str(), -1, &wszBuffer[0], wszBuffer.size());
+wstring StrToUnicode(const string &strMBCS, UINT nCP) {
+	vector<wchar_t> wszBuffer(strMBCS.length()+1);
+	MultiByteToWideChar(nCP, 0, strMBCS.c_str(), -1, &wszBuffer[0], wszBuffer.size());
 	return &wszBuffer[0];
 }
 
-wstring ANSIToUnicode(const string &strANSI) {
-	vector<wchar_t> wszBuffer(strANSI.length()+1);
-	MultiByteToWideChar(CP_ACP, 0, strANSI.c_str(), -1, &wszBuffer[0], wszBuffer.size());
-	return &wszBuffer[0];
-}
+wstring OEMToUnicode(const string &strOEM) { return StrToUnicode(strOEM, CP_OEMCP); }
+wstring ANSIToUnicode(const string &strANSI) { return StrToUnicode(strANSI, CP_ACP); }
+wstring UTF8ToUnicode(const string &strUTF8) { return StrToUnicode(strUTF8, CP_UTF8); }
 
-string FromUnicode(const wstring &wstrUnicode) {
-	vector<char> szBuffer(wstrUnicode.length()+1);
-	WideCharToMultiByte(CP_OEMCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
+string StrFromUnicode(const wstring &wstrUnicode, UINT nCP) {
+	vector<char> szBuffer(wstrUnicode.length()*4+4);
+	WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
 	return &szBuffer[0];
 }
 
-string ANSIFromUnicode(const wstring &wstrUnicode) {
-	vector<char> szBuffer(wstrUnicode.length()+1);
-	WideCharToMultiByte(CP_ACP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
-	return &szBuffer[0];
-}
+string OEMFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_OEMCP); }
+string ANSIFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_ACP); }
+string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_UTF8); }

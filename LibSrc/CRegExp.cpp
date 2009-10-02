@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <CRegExp.h>
 #include <StringEx.h>
+#include <map>
 
 #ifdef UNICODE
 
@@ -18,10 +19,10 @@ const wchar_t *WError(const char *szErrorPtr) {
 }
 
 pcre * pcre_compile(const wchar_t *pattern, int options, const wchar_t **errorptr, int *erroroffset, const unsigned char *tables) {
-	string szPattern = ANSIFromUnicode(pattern);
+	string szPattern = UTF8FromUnicode(pattern);
 
 	const char *szErrorPtr;
-	pcre *re = pcre_compile(szPattern.c_str(), options, &szErrorPtr, erroroffset, tables);
+	pcre *re = pcre_compile(szPattern.c_str(), options | PCRE_UTF8, &szErrorPtr, erroroffset, tables);
 	*errorptr = WError(szErrorPtr);
 
 	return re;
@@ -39,9 +40,32 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 			  const wchar_t *subject, int length, int start_offset, int options, int *offsets,
 			  int offsetcount) {
 
-	string szSubject = ANSIFromUnicode(wstring(subject, length));
+	string szSubject = UTF8FromUnicode(wstring(subject, length));
 
-	return pcre_exec(argument_re, extra_data, szSubject.c_str(), length, start_offset, options, offsets, offsetcount);
+	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), length, start_offset, options, offsets, offsetcount);
+
+	if ((nResult >= 0) && offsets && offsetcount) {
+		std::map<int, int> utf2char;
+		utf2char[-1] = -1;	// For nonexistent matches
+		int nChar = 0;
+		for (int nByte = 0; nByte < szSubject.length(); ) {
+			utf2char[nByte] = nChar;
+			char c = szSubject[nByte];
+			if		((c & 0x80) == 0x00) nByte += 1;		//	0xxxxxxx
+			else if ((c & 0xE0) == 0xC0) nByte += 2;		//	110xxxxx
+			else if ((c & 0xF0) == 0xE0) nByte += 3;		//	1110xxxx
+			else if ((c & 0xF8) == 0xF0) nByte += 4;		//	11110xxx
+			else nByte += 1;
+			nChar++;
+		}
+
+		for (int nMatch = 0; nMatch < nResult; nMatch++) {
+			offsets[nMatch*2  ] = utf2char[offsets[nMatch*2  ]];
+			offsets[nMatch*2+1] = utf2char[offsets[nMatch*2+1]];
+		}
+	}
+
+	return nResult;
 }
 
 #endif

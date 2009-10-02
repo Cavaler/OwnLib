@@ -331,7 +331,9 @@ tstring FarMaskToRE(const TCHAR *szMask) {
 	return strRE;
 }
 
-CFarMaskSet::CFarMaskSet(const TCHAR *szMasks) {
+CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
+: m_pInclude(NULL), m_pIncludeExtra(NULL), m_pExclude(NULL), m_pExcludeExtra(NULL)
+{
 	bool bExclude = false;
 	tstring strCurMask = _T("");
 
