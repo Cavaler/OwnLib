@@ -231,13 +231,13 @@ them both to 0; an emulation function will be used. */
 /* #undef SUPPORT_LIBZ */
 
 /* Define to enable support for Unicode properties */
-/* #undef SUPPORT_UCP */
+#define SUPPORT_UCP
 
 /* Define to enable support for the UTF-8 Unicode encoding. This will work
    even in an EBCDIC environment, but it is incompatible with the EBCDIC
    macro. That is, PCRE can support *either* EBCDIC code *or* ASCII/UTF-8, but
    not both at once. */
-/* #undef SUPPORT_UTF8 */
+#define SUPPORT_UTF8
 
 /* Version number of package */
 #define VERSION "7.9"
