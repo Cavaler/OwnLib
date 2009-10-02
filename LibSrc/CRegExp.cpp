@@ -42,7 +42,7 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 
 	string szSubject = UTF8FromUnicode(wstring(subject, length));
 
-	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), length, start_offset, options, offsets, offsetcount);
+	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), start_offset, options, offsets, offsetcount);
 
 	if ((nResult >= 0) && offsets && offsetcount) {
 		std::map<int, int> utf2char;
