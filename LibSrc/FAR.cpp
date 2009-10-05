@@ -544,6 +544,98 @@ tstring CFarSplitString::Combine() {
 	return strResult;
 }
 
+#ifdef UNICODE
+
+CPluginPanelItem::CPluginPanelItem()
+{
+	FindData.lpwszFileName = NULL;
+	FindData.lpwszAlternateFileName = NULL;
+	Description = NULL;
+	Owner = NULL;
+}
+
+CPluginPanelItem::CPluginPanelItem(const CPluginPanelItem &item)
+{
+	*this = (const PluginPanelItem &)item;
+}
+
+CPluginPanelItem::CPluginPanelItem(const PluginPanelItem &item)
+{
+	*this = item;
+}
+
+void CPluginPanelItem::operator = (const PluginPanelItem &item)
+{
+	(PluginPanelItem &)(*this) = item;
+
+	if (FindData.lpwszFileName) FindData.lpwszFileName = _wcsdup(FindData.lpwszFileName);
+	if (FindData.lpwszAlternateFileName) FindData.lpwszAlternateFileName = _wcsdup(FindData.lpwszAlternateFileName);
+	if (Description) Description = _wcsdup(Description);
+	if (Owner) Owner = _wcsdup(Owner);
+}
+
+CPluginPanelItem::~CPluginPanelItem() {
+	if (FindData.lpwszFileName) free(FindData.lpwszFileName);
+	if (FindData.lpwszAlternateFileName) free(FindData.lpwszAlternateFileName);
+	if (Description) free(Description);
+	if (Owner) free(Owner);
+}
+
+void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems)
+{
+	PluginPanelItem Item;
+	arrItems.clear();
+
+	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
+	DWORD dwCtl = bSelected ? FCTL_GETSELECTEDPANELITEM : FCTL_GETPANELITEM;
+
+	for (int nItem = 0; nItem < nCount; nItem++) {
+		int nSize = StartupInfo.Control(hPanel, dwCtl, nItem, NULL);
+
+		vector<BYTE> arrItem(nSize);
+		StartupInfo.Control(hPanel, dwCtl, nItem, (LONG_PTR)&arrItem[0]);
+
+		memmove(&Item, &arrItem[0], sizeof(PluginPanelItem));
+		arrItems.push_back(Item);
+	}
+}
+
+void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
+	HANDLE hPlugin = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
+	StartupInfo.Control(hPlugin, FCTL_BEGINSELECTION, 0, NULL);
+
+	for (size_t nItem = 0; nItem < arrItems.size(); nItem++)
+		StartupInfo.Control(hPlugin, FCTL_SETSELECTION, nItem, arrItems[nItem].Flags & PPIF_SELECTED);
+
+	StartupInfo.Control(hPlugin, FCTL_ENDSELECTION, 0, NULL);
+}
+
+void CPanelInfo::GetInfo(bool bAnotherPanel)
+{
+	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
+
+	StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this);
+
+	wchar_t szCurDir[MAX_PATH];
+	StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
+	strCurDir = szCurDir;
+	CurDir = strCurDir.c_str();
+
+	GetPanelItems(ItemsNumber, false, bAnotherPanel, PanelItems);
+	GetPanelItems(SelectedItemsNumber, false, bAnotherPanel, SelectedItems);
+}
+
+#else // UNICODE
+
+void CPanelInfo::GetInfo(bool bAnotherPanel)
+{
+	StartupInfo.Control(INVALID_HANDLE_VALUE,
+		bAnotherPanel ? FCTL_GETANOTHERPANELINFO : FCTL_GETPANELINFO,
+		(PanelInfo *)this);
+}
+
+#endif // UNICODE
+
 #ifndef FAR_NO_NAMESPACE
 };
 #endif

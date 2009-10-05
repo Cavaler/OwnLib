@@ -231,16 +231,6 @@ protected:
 	CFarDoubleConverter *m_pDConverter;
 };
 
-#ifdef UNICODE
-struct CPluginPanelItem : PluginPanelItem {
-	CPluginPanelItem();
-	CPluginPanelItem(const CPluginPanelItem &item);
-	CPluginPanelItem(const PluginPanelItem &item);
-	void operator = (const PluginPanelItem &item);
-	~CPluginPanelItem();
-};
-#endif
-
 // *********************** HANDLERS ***********************
 
 class CFarEventHandler {

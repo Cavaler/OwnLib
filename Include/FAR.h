@@ -112,6 +112,37 @@ public:
 	~CFarMenuItem();
 };
 
+#ifdef UNICODE
+
+struct CPluginPanelItem : PluginPanelItem {
+	CPluginPanelItem();
+	CPluginPanelItem(const CPluginPanelItem &item);
+	CPluginPanelItem(const PluginPanelItem &item);
+	void operator = (const PluginPanelItem &item);
+	~CPluginPanelItem();
+};
+
+typedef vector<CPluginPanelItem> panelitem_vector;
+void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems);
+void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems);
+
+struct CPanelInfo : PanelInfo {
+	LPCWSTR CurDir;
+	panelitem_vector PanelItems;
+	panelitem_vector SelectedItems;
+
+	void GetInfo(bool bAnotherPanel);
+	wstring strCurDir;
+};
+
+#else
+
+struct CPanelInfo : PanelInfo {
+	void GetInfo(bool bAnotherPanel);
+};
+
+#endif	// UNICODE
+
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,

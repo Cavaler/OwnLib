@@ -494,45 +494,6 @@ bool CFarWindowProcHandler::Process(HANDLE hDlg, int Msg, int Param1, long Param
 	}
 }
 
-#ifdef UNICODE
-
-CPluginPanelItem::CPluginPanelItem()
-{
-	FindData.lpwszFileName = NULL;
-	FindData.lpwszAlternateFileName = NULL;
-	Description = NULL;
-	Owner = NULL;
-}
-
-CPluginPanelItem::CPluginPanelItem(const CPluginPanelItem &item)
-{
-	*this = (const PluginPanelItem &)item;
-}
-
-CPluginPanelItem::CPluginPanelItem(const PluginPanelItem &item)
-{
-	*this = item;
-}
-
-void CPluginPanelItem::operator = (const PluginPanelItem &item)
-{
-	(PluginPanelItem &)(*this) = item;
-
-	if (FindData.lpwszFileName) FindData.lpwszFileName = _wcsdup(FindData.lpwszFileName);
-	if (FindData.lpwszAlternateFileName) FindData.lpwszAlternateFileName = _wcsdup(FindData.lpwszAlternateFileName);
-	if (Description) Description = _wcsdup(Description);
-	if (Owner) Owner = _wcsdup(Owner);
-}
-
-CPluginPanelItem::~CPluginPanelItem() {
-	if (FindData.lpwszFileName) free(FindData.lpwszFileName);
-	if (FindData.lpwszAlternateFileName) free(FindData.lpwszAlternateFileName);
-	if (Description) free(Description);
-	if (Owner) free(Owner);
-}
-
-#endif
-
 #ifndef FAR_NO_NAMESPACE
 };
 #endif
