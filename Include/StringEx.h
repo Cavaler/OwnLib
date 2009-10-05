@@ -20,7 +20,13 @@ char *FormatSz(const char *szFormat, ...);
 #if (defined _XSTRING_) || (defined _STLP_STRING)
 int  GetWord(string Line,string &Word,int RetWhat=GW_SKIPLEN);
 int  GetStripWord(string &Line,string &Word);
-string FormatStr(const char *szFormat, ...);
+string FormatStrA(const char *szFormat, ...);
+wstring FormatStrW(const wchar_t *szFormat, ...);
+#ifdef UNICODE
+#define FormatStr FormatStrW
+#else
+#define FormatStr FormatStrA
+#endif
 
 wstring StrToUnicode(const string &strMBCS, UINT nCP);
 wstring OEMToUnicode(const string &strOEM);

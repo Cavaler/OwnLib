@@ -90,11 +90,22 @@ int  GetStripWord(string &strLine, string &strWord) {
 	return nStrip;
 }
 
-string FormatStr(const char *szFormat, ...) {
+string FormatStrA(const char *szFormat, ...) {
 	va_list List;
 	va_start(List, szFormat);
 	vector<char> strBuffer(1024);
 	while (_vsnprintf(&strBuffer[0], strBuffer.size(), szFormat, List) == -1) {
+		strBuffer.resize(strBuffer.size()*2);
+	}
+	va_end(List);
+	return &strBuffer[0];
+}
+
+wstring FormatStrW(const wchar_t *szFormat, ...) {
+	va_list List;
+	va_start(List, szFormat);
+	vector<wchar_t> strBuffer(1024);
+	while (_vsnwprintf(&strBuffer[0], strBuffer.size(), szFormat, List) == -1) {
 		strBuffer.resize(strBuffer.size()*2);
 	}
 	va_end(List);
