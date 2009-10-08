@@ -546,6 +546,23 @@ tstring CFarSplitString::Combine() {
 
 #ifdef UNICODE
 
+WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data) {
+	WIN32_FIND_DATA fd;
+
+	fd.dwFileAttributes = Data.dwFileAttributes;
+	fd.ftCreationTime = Data.ftCreationTime;
+	fd.ftLastAccessTime = Data.ftLastAccessTime;
+	fd.ftLastWriteTime = Data.ftLastWriteTime;
+	fd.nFileSizeHigh = (DWORD)(Data.nFileSize >> 32);
+	fd.nFileSizeLow = (DWORD)(Data.nFileSize);
+	fd.dwReserved0 = 0;
+	fd.dwReserved1 = 0;
+	_tcsncpy(fd.cFileName, Data.lpwszFileName, sizeof(fd.cFileName)/sizeof(fd.cFileName[0]));
+	_tcsncpy(fd.cAlternateFileName, Data.lpwszAlternateFileName, sizeof(fd.cAlternateFileName)/sizeof(fd.cAlternateFileName[0]));
+
+	return fd;
+}
+
 CPluginPanelItem::CPluginPanelItem()
 {
 	FindData.lpwszFileName = NULL;

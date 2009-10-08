@@ -114,6 +114,9 @@ public:
 
 #ifdef UNICODE
 
+#define FarFileName(fd) (fd).lpwszFileName
+WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
+
 struct CPluginPanelItem : PluginPanelItem {
 	CPluginPanelItem();
 	CPluginPanelItem(const CPluginPanelItem &item);
@@ -136,6 +139,9 @@ struct CPanelInfo : PanelInfo {
 };
 
 #else
+
+#define FarFileName(fd) (fd).cFileName
+#define FFDtoWFD(Data) (Data)
 
 struct CPanelInfo : PanelInfo {
 	void GetInfo(bool bAnotherPanel);
