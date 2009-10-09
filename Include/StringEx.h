@@ -11,6 +11,7 @@ int  GetStripWord(char *Line,char *Word);
 int  IsWildcard(char *WildCard,char *Name);
 
 const char *NextWord(const char *&szLine, int &nLength, int &nCount);
+const wchar_t *NextWord(const wchar_t *&szLine, int &nLength, int &nCount);
 
 #ifdef __COLLECT_H
 void ParseWordsTo(char *Line,CStringCollection &Coll);
@@ -20,6 +21,8 @@ char *FormatSz(const char *szFormat, ...);
 #if (defined _XSTRING_) || (defined _STLP_STRING)
 int  GetWord(string Line,string &Word,int RetWhat=GW_SKIPLEN);
 int  GetStripWord(string &Line,string &Word);
+int  GetWord(wstring Line,wstring &Word,int RetWhat=GW_SKIPLEN);
+int  GetStripWord(wstring &Line,wstring &Word);
 string FormatStrA(const char *szFormat, ...);
 wstring FormatStrW(const wchar_t *szFormat, ...);
 #ifdef UNICODE

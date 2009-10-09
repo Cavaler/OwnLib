@@ -591,6 +591,12 @@ void CPluginPanelItem::operator = (const PluginPanelItem &item)
 	if (Owner) Owner = _wcsdup(Owner);
 }
 
+void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
+{
+	FindData.lpwszFileName = _wcsdup(fd.cFileName);
+	FindData.lpwszAlternateFileName = _wcsdup(fd.cAlternateFileName);
+}
+
 CPluginPanelItem::~CPluginPanelItem() {
 	if (FindData.lpwszFileName) free(FindData.lpwszFileName);
 	if (FindData.lpwszAlternateFileName) free(FindData.lpwszAlternateFileName);

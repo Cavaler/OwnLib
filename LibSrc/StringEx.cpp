@@ -46,6 +46,34 @@ const char *NextWord(const char *&szLine, int &nLength, int &nCount) {
 	return szStart;
 }
 
+const wchar_t *NextWord(const wchar_t *&szLine, int &nLength, int &nCount) {
+	if (nLength == -1) nLength = wcslen(szLine);
+	while (nLength && isspace(szLine[0])) {szLine++;nLength--;}
+	if (!nLength) {if (&nCount) nCount = 0;return szLine;}
+
+	const wchar_t *szStart = szLine;
+	if ((szLine[0] == '"') || (szLine[0] == '\'')) {
+		szStart++;
+		const wchar_t *szEnd = wmemchr(szLine+1, szLine[0], nLength);
+		if (szEnd) {
+			if (&nCount) nCount = szEnd-szStart;
+			nLength -= szEnd-szStart+2;
+			szLine = szEnd+1;
+			while (nLength && isspace(szLine[0])) {szLine++;nLength--;}
+		} else {
+			if (&nCount) nCount = nLength-1;
+			szLine += nLength;
+			nLength = 0;
+		}
+		return szStart;
+	}
+
+	while (nLength && !isspace(szLine[0])) {szLine++;nLength--;}
+	if (&nCount) nCount = szLine-szStart;
+	while (nLength && isspace(szLine[0])) {szLine++;nLength--;}
+	return szStart;
+}
+
 int GetWord(char *Line,char *Word,int RetWhat) {
 	int I=0,J=0;
 	char EC1,EC2;
@@ -72,22 +100,40 @@ int GetStripWord(char *Line,char *Word) {
 	return I;
 }
 
-int  GetWord(string strLine, string &strWord, int iRetWhat) {
-	const char *szLine = strLine.c_str();
+template<class CHAR>
+int  GetWord(basic_string<CHAR> strLine, basic_string<CHAR> &strWord, int iRetWhat) {
+	const CHAR *szLine = strLine.c_str();
 	int nLength = strLine.length(), nCount;
-	const char *szWord = NextWord(szLine, nLength, nCount);
-	strWord = string(szWord, nCount);
+	const CHAR *szWord = NextWord(szLine, nLength, nCount);
+	strWord = basic_string<CHAR>(szWord, nCount);
 	return (iRetWhat == GW_SKIPLEN) ? szLine - strLine.c_str() : nCount;
 }
 
-int  GetStripWord(string &strLine, string &strWord) {
-	const char *szLine = strLine.c_str();
+template<class CHAR>
+int  GetStripWord(basic_string<CHAR> &strLine, basic_string<CHAR> &strWord) {
+	const CHAR *szLine = strLine.c_str();
 	int nLength = strLine.length(), nCount;
-	const char *szWord = NextWord(szLine, nLength, nCount);
-	strWord = string(szWord, nCount);
+	const CHAR *szWord = NextWord(szLine, nLength, nCount);
+	strWord = basic_string<CHAR>(szWord, nCount);
 	int nStrip = szLine - strLine.c_str();
 	strLine.erase(0, nStrip);
 	return nStrip;
+}
+
+int  GetWord(string strLine, string &strWord, int iRetWhat) {
+	return GetWord<char>(strLine, strWord, iRetWhat);
+}
+
+int  GetStripWord(string &strLine, string &strWord) {
+	return GetStripWord<char>(strLine, strWord);
+}
+
+int  GetWord(wstring strLine, wstring &strWord, int iRetWhat) {
+	return GetWord<wchar_t>(strLine, strWord, iRetWhat);
+}
+
+int  GetStripWord(wstring &strLine, wstring &strWord) {
+	return GetStripWord<wchar_t>(strLine, strWord);
 }
 
 string FormatStrA(const char *szFormat, ...) {

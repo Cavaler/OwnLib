@@ -120,12 +120,14 @@ public:
 
 #define FarFileName(fd) (fd).lpwszFileName
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
+typedef FAR_FIND_DATA WF_FIND_DATA;
 
 struct CPluginPanelItem : PluginPanelItem {
 	CPluginPanelItem();
 	CPluginPanelItem(const CPluginPanelItem &item);
 	CPluginPanelItem(const PluginPanelItem &item);
 	void operator = (const PluginPanelItem &item);
+	void SetFindData(const WIN32_FIND_DATA &fd);
 	~CPluginPanelItem();
 };
 typedef vector<CPluginPanelItem> panelitem_vector;
@@ -148,6 +150,7 @@ struct CPanelInfo : PanelInfo {
 
 #define FarFileName(fd) (fd).cFileName
 #define FFDtoWFD(Data) (Data)
+typedef WIN32_FIND_DATA WF_FIND_DATA;
 
 struct CPanelInfo : PanelInfo {
 	void GetInfo(bool bAnotherPanel);
