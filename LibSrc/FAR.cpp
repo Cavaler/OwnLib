@@ -600,10 +600,14 @@ CPluginPanelItem::~CPluginPanelItem() {
 
 void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems)
 {
+	GetPanelItems(nCount, bSelected, bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, arrItems);
+}
+
+void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &arrItems)
+{
 	PluginPanelItem Item;
 	arrItems.clear();
 
-	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
 	DWORD dwCtl = bSelected ? FCTL_GETSELECTEDPANELITEM : FCTL_GETPANELITEM;
 
 	for (int nItem = 0; nItem < nCount; nItem++) {
@@ -629,8 +633,11 @@ void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
 
 void CPanelInfo::GetInfo(bool bAnotherPanel)
 {
-	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
+	GetInfo(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE);
+}
 
+void CPanelInfo::GetInfo(HANDLE hPanel)
+{
 	StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this);
 
 	wchar_t szCurDir[MAX_PATH];
@@ -638,8 +645,8 @@ void CPanelInfo::GetInfo(bool bAnotherPanel)
 	strCurDir = szCurDir;
 	CurDir = strCurDir.c_str();
 
-	GetPanelItems(ItemsNumber, false, bAnotherPanel, PanelItems);
-	GetPanelItems(SelectedItemsNumber, false, bAnotherPanel, SelectedItems);
+	GetPanelItems(ItemsNumber, false, hPanel, PanelItems);
+	GetPanelItems(SelectedItemsNumber, false, hPanel, SelectedItems);
 }
 
 #else // UNICODE
@@ -649,6 +656,11 @@ void CPanelInfo::GetInfo(bool bAnotherPanel)
 	StartupInfo.Control(INVALID_HANDLE_VALUE,
 		bAnotherPanel ? FCTL_GETANOTHERPANELINFO : FCTL_GETPANELINFO,
 		(PanelInfo *)this);
+}
+
+void CPanelInfo::GetInfo(HANDLE hPanel)
+{
+	StartupInfo.Control(hPanel, FCTL_GETPANELINFO, (PanelInfo *)this);
 }
 
 #endif // UNICODE

@@ -15,11 +15,15 @@
 #include "tstring.h"
 
 #define _FAR_USE_WIN32_FIND_DATA
-#ifdef _UNICODE
+
+#ifdef UNICODE
 #include <plugin2.hpp>
+#define FAR_EXPORT(name) name##W
 #else
 #include <plugin.hpp>
+#define FAR_EXPORT(name) name
 #endif
+
 #include <CRegExp.h>
 
 #define PSI140SIZE	312
@@ -124,9 +128,10 @@ struct CPluginPanelItem : PluginPanelItem {
 	void operator = (const PluginPanelItem &item);
 	~CPluginPanelItem();
 };
-
 typedef vector<CPluginPanelItem> panelitem_vector;
+
 void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems);
+void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &arrItems);
 void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems);
 
 struct CPanelInfo : PanelInfo {
@@ -135,6 +140,7 @@ struct CPanelInfo : PanelInfo {
 	panelitem_vector SelectedItems;
 
 	void GetInfo(bool bAnotherPanel);
+	void GetInfo(HANDLE hPanel);
 	wstring strCurDir;
 };
 
@@ -145,7 +151,11 @@ struct CPanelInfo : PanelInfo {
 
 struct CPanelInfo : PanelInfo {
 	void GetInfo(bool bAnotherPanel);
+	void GetInfo(HANDLE hPanel);
 };
+
+typedef PluginPanelItem CPluginPanelItem;
+typedef vector<CPluginPanelItem> panelitem_vector;
 
 #endif	// UNICODE
 
