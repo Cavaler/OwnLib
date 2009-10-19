@@ -42,23 +42,25 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 
 	string szSubject = UTF8FromUnicode(wstring(subject, length));
 
-	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), start_offset, options, offsets, offsetcount);
+	std::map<int, int> utf2char;
+	std::map<int, int> char2utf;
+	utf2char[-1] = -1;	// For nonexistent matches
+	int nChar = 0;
+	for (int nByte = 0; nByte < szSubject.length(); ) {
+		utf2char[nByte] = nChar;
+		char2utf[nChar] = nByte;
+		char c = szSubject[nByte];
+		if		((c & 0x80) == 0x00) nByte += 1;		//	0xxxxxxx
+		else if ((c & 0xE0) == 0xC0) nByte += 2;		//	110xxxxx
+		else if ((c & 0xF0) == 0xE0) nByte += 3;		//	1110xxxx
+		else if ((c & 0xF8) == 0xF0) nByte += 4;		//	11110xxx
+		else nByte += 1;
+		nChar++;
+	}
+
+	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), char2utf[start_offset], options, offsets, offsetcount);
 
 	if ((nResult >= 0) && offsets && offsetcount) {
-		std::map<int, int> utf2char;
-		utf2char[-1] = -1;	// For nonexistent matches
-		int nChar = 0;
-		for (int nByte = 0; nByte < szSubject.length(); ) {
-			utf2char[nByte] = nChar;
-			char c = szSubject[nByte];
-			if		((c & 0x80) == 0x00) nByte += 1;		//	0xxxxxxx
-			else if ((c & 0xE0) == 0xC0) nByte += 2;		//	110xxxxx
-			else if ((c & 0xF0) == 0xE0) nByte += 3;		//	1110xxxx
-			else if ((c & 0xF8) == 0xF0) nByte += 4;		//	11110xxx
-			else nByte += 1;
-			nChar++;
-		}
-
 		for (int nMatch = 0; nMatch < nResult; nMatch++) {
 			offsets[nMatch*2  ] = utf2char[offsets[nMatch*2  ]];
 			offsets[nMatch*2+1] = utf2char[offsets[nMatch*2+1]];
