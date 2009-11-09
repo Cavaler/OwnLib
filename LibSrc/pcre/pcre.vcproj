@@ -429,8 +429,8 @@
 				Optimization="0"
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;_DEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
-				RuntimeLibrary="1"
-				StructMemberAlignment="4"
+				RuntimeLibrary="3"
+				StructMemberAlignment="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -454,7 +454,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMTd8x64.lib"
+				OutputFile="..\..\Lib\pcreMDd8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -586,7 +586,7 @@
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="4"
+				StructMemberAlignment="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -708,6 +708,7 @@
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -730,8 +731,8 @@
 				Optimization="0"
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;_DEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
-				RuntimeLibrary="1"
-				StructMemberAlignment="4"
+				RuntimeLibrary="3"
+				StructMemberAlignment="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -755,7 +756,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\pcreMTd8x64.lib"
+				OutputFile="..\..\Lib\pcreMDd8Ux64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -859,6 +860,7 @@
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -888,7 +890,7 @@
 				PreprocessorDefinitions="HAVE_CONFIG_H;STATIC;NDEBUG;WIN32;_WINDOWS;_USE_COMPILER=VC7"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="4"
+				StructMemberAlignment="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -911,7 +913,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/LTCG"
-				OutputFile="..\..\Lib\pcreMT8x64.lib"
+				OutputFile="..\..\Lib\pcreMT8Ux64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
