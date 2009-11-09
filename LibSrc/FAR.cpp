@@ -593,6 +593,11 @@ void CPluginPanelItem::operator = (const PluginPanelItem &item)
 
 void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
 {
+	FindData.dwFileAttributes = fd.dwFileAttributes;
+	FindData.ftCreationTime = fd.ftCreationTime;
+	FindData.ftLastAccessTime = fd.ftLastAccessTime;
+	FindData.ftLastWriteTime = fd.ftLastWriteTime;
+	FindData.nFileSize = (((__int64)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
 	FindData.lpwszFileName = _wcsdup(fd.cFileName);
 	FindData.lpwszAlternateFileName = _wcsdup(fd.cAlternateFileName);
 }
