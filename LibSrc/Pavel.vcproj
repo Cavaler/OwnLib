@@ -276,8 +276,8 @@
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
-				RuntimeLibrary="3"
-				StructMemberAlignment="2"
+				RuntimeLibrary="1"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderThrough="StdAfx.h"
@@ -302,7 +302,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDd8x64.lib"
+				OutputFile="..\Lib\PavelMTd8x64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -589,7 +589,7 @@
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
@@ -735,8 +735,8 @@
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
-				RuntimeLibrary="3"
-				StructMemberAlignment="2"
+				RuntimeLibrary="1"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderThrough="StdAfx.h"
@@ -761,7 +761,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\Lib\PavelMDd8Ux64.lib"
+				OutputFile="..\Lib\PavelMTd8Ux64.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -895,7 +895,7 @@
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				StructMemberAlignment="2"
+				StructMemberAlignment="4"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="$(IntDir)\$(ProjectName).pch"
