@@ -45,8 +45,8 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 	std::map<int, int> utf2char;
 	std::map<int, int> char2utf;
 	utf2char[-1] = -1;	// For nonexistent matches
-	int nChar = 0;
-	for (int nByte = 0; nByte < szSubject.length(); ) {
+	int nByte = 0, nChar = 0;
+	for (; nByte < szSubject.length(); ) {
 		utf2char[nByte] = nChar;
 		char2utf[nChar] = nByte;
 		char c = szSubject[nByte];
@@ -57,6 +57,8 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 		else nByte += 1;
 		nChar++;
 	}
+	utf2char[nByte] = nChar;
+	char2utf[nChar] = nByte;
 
 	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), char2utf[start_offset], options, offsets, offsetcount);
 
