@@ -1670,15 +1670,15 @@ struct InfoPanelLine
 
 struct PanelMode
 {
-  char  *ColumnTypes;
-  char  *ColumnWidths;
-  char **ColumnTitles;
+  const char  *ColumnTypes;
+  const char  *ColumnWidths;
+  const char **ColumnTitles;
   int    FullScreen;
   int    DetailedStatus;
   int    AlignExtensions;
   int    CaseConversion;
-  char  *StatusColumnTypes;
-  char  *StatusColumnWidths;
+  const char  *StatusColumnTypes;
+  const char  *StatusColumnWidths;
   DWORD  Reserved[2];
 };
 
