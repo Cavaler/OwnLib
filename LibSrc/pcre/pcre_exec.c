@@ -1580,6 +1580,13 @@ for (;;)
     case OP_WORDCHAR:
     if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
     GETCHARINCTEST(c, eptr);
+#ifdef UTF8_USES_UCP
+	{
+	const ucd_record *prop = GET_UCD(c);
+	if (_pcre_ucp_gentype[prop->chartype] != ucp_L)
+		RRETURN(MATCH_NOMATCH);
+	}
+#else
     if (
 #ifdef SUPPORT_UTF8
        c >= 256 ||
@@ -1587,6 +1594,7 @@ for (;;)
        (md->ctypes[c] & ctype_word) == 0
        )
       RRETURN(MATCH_NOMATCH);
+#endif
     ecode++;
     break;
 
@@ -3220,9 +3228,19 @@ for (;;)
         case OP_WORDCHAR:
         for (i = 1; i <= min; i++)
           {
+#ifdef UTF8_USES_UCP
+          if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+		  GETCHARINCTEST(c, eptr);
+		  {
+		  const ucd_record *prop = GET_UCD(c);
+		  if (_pcre_ucp_gentype[prop->chartype] != ucp_L)
+			  RRETURN(MATCH_NOMATCH);
+		  }
+#else
           if (eptr >= md->end_subject ||
              *eptr >= 128 || (md->ctypes[*eptr++] & ctype_word) == 0)
             RRETURN(MATCH_NOMATCH);
+#endif
           /* No need to skip more bytes - we know it's a 1-byte character */
           }
         break;
@@ -3372,9 +3390,10 @@ for (;;)
         break;
 
         case OP_WORDCHAR:
-        for (i = 1; i <= min; i++)
+        for (i = 1; i <= min; i++) {
           if ((md->ctypes[*eptr++] & ctype_word) == 0)
             RRETURN(MATCH_NOMATCH);
+		}
         break;
 
         default:
@@ -3647,8 +3666,15 @@ for (;;)
             break;
 
             case OP_WORDCHAR:
+#ifdef UTF8_USES_UCP
+			{
+			const ucd_record *prop = GET_UCD(c);
+			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) RRETURN(MATCH_NOMATCH);
+			}
+#else
             if (c >= 256 || (md->ctypes[c] & ctype_word) == 0)
               RRETURN(MATCH_NOMATCH);
+#endif
             break;
 
             default:
@@ -3764,7 +3790,14 @@ for (;;)
             break;
 
             case OP_WORDCHAR:
+#ifdef UTF8_USES_UCP
+			{
+			const ucd_record *prop = GET_UCD(c);
+			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) RRETURN(MATCH_NOMATCH);
+			}
+#else
             if ((md->ctypes[c] & ctype_word) == 0) RRETURN(MATCH_NOMATCH);
+#endif
             break;
 
             default:
@@ -4117,7 +4150,14 @@ for (;;)
             int len = 1;
             if (eptr >= md->end_subject) break;
             GETCHARLEN(c, eptr, len);
+#ifdef UTF8_USES_UCP
+			{
+			const ucd_record *prop = GET_UCD(c);
+			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) break;
+			}
+#else
             if (c >= 256 || (md->ctypes[c] & ctype_word) == 0) break;
+#endif
             eptr+= len;
             }
           break;

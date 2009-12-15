@@ -239,6 +239,8 @@ them both to 0; an emulation function will be used. */
    not both at once. */
 #define SUPPORT_UTF8
 
+#define UTF8_USES_UCP
+
 /* Version number of package */
 #define VERSION "7.9"
 

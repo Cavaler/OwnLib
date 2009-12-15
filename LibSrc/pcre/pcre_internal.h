@@ -61,6 +61,14 @@ script prevents both being selected, but not everybody uses "configure". */
 /* If SUPPORT_UCP is defined, SUPPORT_UTF8 must also be defined. The
 "configure" script ensures this, but not everybody uses "configure". */
 
+#if defined UTF8_USES_UCP && !defined SUPPORT_UTF8
+#define SUPPORT_UTF8
+#endif
+
+#if defined UTF8_USES_UCP && !defined SUPPORT_UCP
+#define SUPPORT_UCP 1
+#endif
+
 #if defined SUPPORT_UCP && !defined SUPPORT_UTF8
 #define SUPPORT_UTF8 1
 #endif
