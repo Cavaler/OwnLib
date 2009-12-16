@@ -1798,13 +1798,6 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-#ifdef UTF8_USES_UCP
-	{
-	const ucd_record *prop = GET_UCD(c);
-	if (_pcre_ucp_gentype[prop->chartype] != ucp_L)
-		RRETURN(MATCH_NOMATCH);
-	}
-#else
     if (
 #ifdef SUPPORT_UTF8
        c >= 256 ||
@@ -1812,7 +1805,6 @@ for (;;)
        (md->ctypes[c] & ctype_word) == 0
        )
       RRETURN(MATCH_NOMATCH);
-#endif
     ecode++;
     break;
 
@@ -3711,17 +3703,8 @@ for (;;)
             SCHECK_PARTIAL();
             RRETURN(MATCH_NOMATCH);
             }
-#ifdef UTF8_USES_UCP
-		  GETCHARINCTEST(c, eptr);
-		  {
-		  const ucd_record *prop = GET_UCD(c);
-		  if (_pcre_ucp_gentype[prop->chartype] != ucp_L)
-			  RRETURN(MATCH_NOMATCH);
-		  }
-#else
           if (*eptr >= 128 || (md->ctypes[*eptr++] & ctype_word) == 0)
             RRETURN(MATCH_NOMATCH);
-#endif
           /* No need to skip more bytes - we know it's a 1-byte character */
           }
         break;
@@ -4251,15 +4234,8 @@ for (;;)
             break;
 
             case OP_WORDCHAR:
-#ifdef UTF8_USES_UCP
-			{
-			const ucd_record *prop = GET_UCD(c);
-			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) RRETURN(MATCH_NOMATCH);
-			}
-#else
             if (c >= 256 || (md->ctypes[c] & ctype_word) == 0)
               RRETURN(MATCH_NOMATCH);
-#endif
             break;
 
             default:
@@ -4379,14 +4355,7 @@ for (;;)
             break;
 
             case OP_WORDCHAR:
-#ifdef UTF8_USES_UCP
-			{
-			const ucd_record *prop = GET_UCD(c);
-			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) RRETURN(MATCH_NOMATCH);
-			}
-#else
             if ((md->ctypes[c] & ctype_word) == 0) RRETURN(MATCH_NOMATCH);
-#endif
             break;
 
             default:
@@ -4817,14 +4786,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-#ifdef UTF8_USES_UCP
-			{
-			const ucd_record *prop = GET_UCD(c);
-			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) break;
-			}
-#else
             if (c >= 256 || (md->ctypes[c] & ctype_word) == 0) break;
-#endif
             eptr+= len;
             }
           break;
