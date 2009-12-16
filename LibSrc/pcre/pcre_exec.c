@@ -1638,7 +1638,7 @@ for (;;)
           while((*lastptr & 0xc0) == 0x80) lastptr--;
           if (lastptr < md->start_used_ptr) md->start_used_ptr = lastptr;
           GETCHAR(c, lastptr);
-          prev_is_word = c < 256 && (md->ctypes[c] & ctype_word) != 0;
+          prev_is_word = CHAR_IS_WORDCHAR(c, utf8);
           }
         if (eptr >= md->end_subject)
           {
@@ -1648,7 +1648,7 @@ for (;;)
         else
           {
           GETCHAR(c, eptr);
-          cur_is_word = c < 256 && (md->ctypes[c] & ctype_word) != 0;
+          cur_is_word = CHAR_IS_WORDCHAR(c, utf8);
           }
         }
       else
