@@ -410,6 +410,10 @@ support is omitted, we don't even define it. */
 #define GETCHARLEN(c, eptr, len) c = *eptr;
 /* #define BACKCHAR(eptr) */
 
+#define CHAR_IS_WORDCHAR(c, utf8) (md->ctypes[c] & ctype_word)
+#define CHAR_IS_DIGIT(c, utf8) (md->ctypes[c] & ctype_digit)
+#define CHAR_IS_WHITESPACE(c, utf8) (md->ctypes[c] & ctype_space)
+
 #else   /* SUPPORT_UTF8 */
 
 /* Get the next UTF-8 character, not advancing the pointer. This is called when
@@ -525,6 +529,20 @@ it is. This is called only in UTF-8 mode - we don't put a test within the macro
 because almost all calls are already within a block of UTF-8 only code. */
 
 #define BACKCHAR(eptr) while((*eptr & 0xc0) == 0x80) eptr--
+
+#ifndef UTF8_USES_UCP
+
+#define CHAR_IS_WORDCHAR(c, utf8) ((c < 256) && (md->ctypes[c] & ctype_word))
+#define CHAR_IS_DIGIT(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_digit))
+#define CHAR_IS_WHITESPACE(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_space))
+
+#else
+
+#define CHAR_IS_WORDCHAR(c, utf8) (utf8 ? ucp_wordchar(c) : ((c < 256) && (md->ctypes[c] & ctype_word)))
+#define CHAR_IS_DIGIT(c, utf8) (utf8 ? ucp_digit(c) : ((c < 256) && ((md->ctypes[c] & ctype_digit)))
+#define CHAR_IS_WHITESPACE(c, utf8) (utf8 ? ucp_whitespace(c) : ((c < 256) && ((md->ctypes[c] & ctype_space)))
+
+#endif
 
 #endif
 
@@ -1782,6 +1800,10 @@ extern const int         _pcre_ucp_gentype[];
 #define UCD_SCRIPT(ch)    GET_UCD(ch)->script
 #define UCD_CATEGORY(ch)  _pcre_ucp_gentype[UCD_CHARTYPE(ch)]
 #define UCD_OTHERCASE(ch) (ch + GET_UCD(ch)->other_case)
+
+int ucp_wordchar(int c);
+int ucp_digit(int c);
+int ucp_space(int c);
 
 #endif
 

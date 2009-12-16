@@ -1781,13 +1781,7 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-    if (
-#ifdef SUPPORT_UTF8
-       c < 256 &&
-#endif
-       (md->ctypes[c] & ctype_word) != 0
-       )
-      RRETURN(MATCH_NOMATCH);
+	if (CHAR_IS_WORDCHAR(c, utf8)) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -1798,21 +1792,7 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-#ifdef UTF8_USES_UCP
-	{
-	const ucd_record *prop = GET_UCD(c);
-	if (_pcre_ucp_gentype[prop->chartype] != ucp_L)
-		RRETURN(MATCH_NOMATCH);
-	}
-#else
-    if (
-#ifdef SUPPORT_UTF8
-       c >= 256 ||
-#endif
-       (md->ctypes[c] & ctype_word) == 0
-       )
-      RRETURN(MATCH_NOMATCH);
-#endif
+	if (!CHAR_IS_WORDCHAR(c, utf8)) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -3696,10 +3676,20 @@ for (;;)
         case OP_NOT_WORDCHAR:
         for (i = 1; i <= min; i++)
           {
-          if (eptr >= md->end_subject ||
-             (*eptr < 128 && (md->ctypes[*eptr] & ctype_word) != 0))
+          if (eptr >= md->end_subject)
+            {
+            SCHECK_PARTIAL();
+            RRETURN(MATCH_NOMATCH);
+            }
+#ifdef UTF8_USES_UCP
+		  GETCHARINCTEST(c, eptr);
+		  if (CHAR_IS_WORDCHAR(c, utf8))
+			  RRETURN(MATCH_NOMATCH);
+#else
+          if (*eptr < 128 && (md->ctypes[*eptr] & ctype_word) != 0)
             RRETURN(MATCH_NOMATCH);
           while (++eptr < md->end_subject && (*eptr & 0xc0) == 0x80);
+#endif
           }
         break;
 
@@ -3713,11 +3703,8 @@ for (;;)
             }
 #ifdef UTF8_USES_UCP
 		  GETCHARINCTEST(c, eptr);
-		  {
-		  const ucd_record *prop = GET_UCD(c);
-		  if (_pcre_ucp_gentype[prop->chartype] != ucp_L)
+		  if (!CHAR_IS_WORDCHAR(c, utf8))
 			  RRETURN(MATCH_NOMATCH);
-		  }
 #else
           if (*eptr >= 128 || (md->ctypes[*eptr++] & ctype_word) == 0)
             RRETURN(MATCH_NOMATCH);
@@ -4246,20 +4233,13 @@ for (;;)
             break;
 
             case OP_NOT_WORDCHAR:
-            if (c < 256 && (md->ctypes[c] & ctype_word) != 0)
-              RRETURN(MATCH_NOMATCH);
+			if (CHAR_IS_WORDCHAR(c, utf8))
+				RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_WORDCHAR:
-#ifdef UTF8_USES_UCP
-			{
-			const ucd_record *prop = GET_UCD(c);
-			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) RRETURN(MATCH_NOMATCH);
-			}
-#else
-            if (c >= 256 || (md->ctypes[c] & ctype_word) == 0)
-              RRETURN(MATCH_NOMATCH);
-#endif
+            if (!CHAR_IS_WORDCHAR(c, utf8))
+				RRETURN(MATCH_NOMATCH);
             break;
 
             default:
@@ -4375,18 +4355,11 @@ for (;;)
             break;
 
             case OP_NOT_WORDCHAR:
-            if ((md->ctypes[c] & ctype_word) != 0) RRETURN(MATCH_NOMATCH);
+            if (CHAR_IS_WORDCHAR(c, utf8)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_WORDCHAR:
-#ifdef UTF8_USES_UCP
-			{
-			const ucd_record *prop = GET_UCD(c);
-			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) RRETURN(MATCH_NOMATCH);
-			}
-#else
-            if ((md->ctypes[c] & ctype_word) == 0) RRETURN(MATCH_NOMATCH);
-#endif
+            if (!CHAR_IS_WORDCHAR(c, utf8)) RRETURN(MATCH_NOMATCH);
             break;
 
             default:
@@ -4802,7 +4775,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-            if (c < 256 && (md->ctypes[c] & ctype_word) != 0) break;
+			if (CHAR_IS_WORDCHAR(c, utf8)) break;
             eptr+= len;
             }
           break;
@@ -4817,14 +4790,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-#ifdef UTF8_USES_UCP
-			{
-			const ucd_record *prop = GET_UCD(c);
-			if (_pcre_ucp_gentype[prop->chartype] != ucp_L) break;
-			}
-#else
-            if (c >= 256 || (md->ctypes[c] & ctype_word) == 0) break;
-#endif
+			if (!CHAR_IS_WORDCHAR(c, utf8)) break;
             eptr+= len;
             }
           break;
@@ -5835,6 +5801,26 @@ else
   DPRINTF((">>>> returning PCRE_ERROR_NOMATCH\n"));
   return PCRE_ERROR_NOMATCH;
   }
+}
+
+int ucp_wordchar(int c) {
+	const ucd_record *prop = GET_UCD(c);
+	return 
+		(_pcre_ucp_gentype[prop->chartype] == ucp_L) ||
+		(_pcre_ucp_gentype[prop->chartype] == ucp_N) ||
+		(c == '_');
+}
+
+int ucp_digit(int c) {
+	const ucd_record *prop = GET_UCD(c);
+	return 
+		(_pcre_ucp_gentype[prop->chartype] == ucp_N);
+}
+
+int ucp_space(int c) {
+	const ucd_record *prop = GET_UCD(c);
+	return 
+		(_pcre_ucp_gentype[prop->chartype] == ucp_Z);
 }
 
 /* End of pcre_exec.c */
