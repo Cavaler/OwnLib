@@ -3157,6 +3157,7 @@ for (;; ptr++)
 
           /* Save time by not doing this in the pre-compile phase. */
 
+#ifndef UTF8_USES_UCP
           if (lengthptr == NULL) switch (-c)
             {
             case ESC_d:
@@ -3196,7 +3197,71 @@ for (;; ptr++)
 
           else if (c == -ESC_d || c == -ESC_D || c == -ESC_w ||
                    c == -ESC_W || c == -ESC_s || c == -ESC_S) continue;
+#else
+            switch (-c)
+            {
+            case ESC_d:
+            class_utf8 = TRUE;
+            *class_utf8data++ = XCL_PROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_N;
+            class_charcount -= 2;
+            continue;
 
+            case ESC_D:
+            class_utf8 = TRUE;
+            *class_utf8data++ = XCL_NOTPROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_N;
+            class_charcount -= 2;
+            continue;
+
+            case ESC_w:
+            class_utf8 = TRUE;
+            *class_utf8data++ = XCL_PROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_L;
+            *class_utf8data++ = XCL_PROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_N;
+            class_charcount -= 2;
+            *class_utf8data++ = XCL_SINGLE;
+            *class_utf8data++ = '_';
+            continue;
+
+            case ESC_W:
+            class_utf8 = TRUE;
+            *class_utf8data++ = XCL_NOTPROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_L;
+            *class_utf8data++ = XCL_NOTPROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_N;
+            class_charcount -= 2;
+//            *class_utf8data++ = XCL_SINGLE;
+//            *class_utf8data++ = '_';
+            continue;
+
+            case ESC_s:
+            class_utf8 = TRUE;
+            *class_utf8data++ = XCL_PROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_Z;
+            class_charcount -= 2;
+            continue;
+
+            case ESC_S:
+            class_utf8 = TRUE;
+            *class_utf8data++ = XCL_NOTPROP;
+            *class_utf8data++ = PT_GC;
+            *class_utf8data++ = ucp_Z;
+            class_charcount -= 2;
+            continue;
+
+            default:
+            break;
+            }
+#endif
           /* We need to deal with \H, \h, \V, and \v in both phases because
           they use extra memory. */
 
