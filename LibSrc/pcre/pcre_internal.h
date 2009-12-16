@@ -539,8 +539,8 @@ because almost all calls are already within a block of UTF-8 only code. */
 #else
 
 #define CHAR_IS_WORDCHAR(c, utf8) (utf8 ? ucp_wordchar(c) : ((c < 256) && (md->ctypes[c] & ctype_word)))
-#define CHAR_IS_DIGIT(c, utf8) (utf8 ? ucp_digit(c) : ((c < 256) && ((md->ctypes[c] & ctype_digit)))
-#define CHAR_IS_WHITESPACE(c, utf8) (utf8 ? ucp_whitespace(c) : ((c < 256) && ((md->ctypes[c] & ctype_space)))
+#define CHAR_IS_DIGIT(c, utf8) (utf8 ? ucp_digit(c) : ((c < 256) && (md->ctypes[c] & ctype_digit)))
+#define CHAR_IS_WHITESPACE(c, utf8) (utf8 ? ucp_whitespace(c) : ((c < 256) && (md->ctypes[c] & ctype_space)))
 
 #endif
 
@@ -1803,7 +1803,7 @@ extern const int         _pcre_ucp_gentype[];
 
 int ucp_wordchar(int c);
 int ucp_digit(int c);
-int ucp_space(int c);
+int ucp_whitespace(int c);
 
 #endif
 

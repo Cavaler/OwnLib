@@ -1713,13 +1713,7 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-    if (
-#ifdef SUPPORT_UTF8
-       c < 256 &&
-#endif
-       (md->ctypes[c] & ctype_digit) != 0
-       )
-      RRETURN(MATCH_NOMATCH);
+	if (CHAR_IS_DIGIT(c, utf8)) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -1730,13 +1724,7 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-    if (
-#ifdef SUPPORT_UTF8
-       c >= 256 ||
-#endif
-       (md->ctypes[c] & ctype_digit) == 0
-       )
-      RRETURN(MATCH_NOMATCH);
+	if (!CHAR_IS_DIGIT(c, utf8)) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -1747,13 +1735,7 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-    if (
-#ifdef SUPPORT_UTF8
-       c < 256 &&
-#endif
-       (md->ctypes[c] & ctype_space) != 0
-       )
-      RRETURN(MATCH_NOMATCH);
+	if (CHAR_IS_WHITESPACE(c, utf8)) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -1764,13 +1746,7 @@ for (;;)
       RRETURN(MATCH_NOMATCH);
       }
     GETCHARINCTEST(c, eptr);
-    if (
-#ifdef SUPPORT_UTF8
-       c >= 256 ||
-#endif
-       (md->ctypes[c] & ctype_space) == 0
-       )
-      RRETURN(MATCH_NOMATCH);
+	if (!CHAR_IS_WHITESPACE(c, utf8)) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -3626,8 +3602,14 @@ for (;;)
             RRETURN(MATCH_NOMATCH);
             }
           GETCHARINC(c, eptr);
+#ifdef UTF8_USES_UCP
+		  GETCHARINCTEST(c, eptr);
+		  if (CHAR_IS_DIGIT(c, utf8))
+			  RRETURN(MATCH_NOMATCH);
+#else
           if (c < 128 && (md->ctypes[c] & ctype_digit) != 0)
             RRETURN(MATCH_NOMATCH);
+#endif
           }
         break;
 
@@ -3639,9 +3621,15 @@ for (;;)
             SCHECK_PARTIAL();
             RRETURN(MATCH_NOMATCH);
             }
+#ifdef UTF8_USES_UCP
+		  GETCHARINCTEST(c, eptr);
+		  if (!CHAR_IS_DIGIT(c, utf8))
+			  RRETURN(MATCH_NOMATCH);
+#else
           if (*eptr >= 128 || (md->ctypes[*eptr++] & ctype_digit) == 0)
             RRETURN(MATCH_NOMATCH);
           /* No need to skip more bytes - we know it's a 1-byte character */
+#endif
           }
         break;
 
@@ -3653,9 +3641,15 @@ for (;;)
             SCHECK_PARTIAL();
             RRETURN(MATCH_NOMATCH);
             }
+#ifdef UTF8_USES_UCP
+		  GETCHARINCTEST(c, eptr);
+		  if (CHAR_IS_WHITESPACE(c, utf8))
+			  RRETURN(MATCH_NOMATCH);
+#else
           if (*eptr < 128 && (md->ctypes[*eptr] & ctype_space) != 0)
             RRETURN(MATCH_NOMATCH);
           while (++eptr < md->end_subject && (*eptr & 0xc0) == 0x80);
+#endif
           }
         break;
 
@@ -3667,9 +3661,15 @@ for (;;)
             SCHECK_PARTIAL();
             RRETURN(MATCH_NOMATCH);
             }
+#ifdef UTF8_USES_UCP
+		  GETCHARINCTEST(c, eptr);
+		  if (!CHAR_IS_WHITESPACE(c, utf8))
+			  RRETURN(MATCH_NOMATCH);
+#else
           if (*eptr >= 128 || (md->ctypes[*eptr++] & ctype_space) == 0)
             RRETURN(MATCH_NOMATCH);
           /* No need to skip more bytes - we know it's a 1-byte character */
+#endif
           }
         break;
 
@@ -3708,8 +3708,8 @@ for (;;)
 #else
           if (*eptr >= 128 || (md->ctypes[*eptr++] & ctype_word) == 0)
             RRETURN(MATCH_NOMATCH);
-#endif
           /* No need to skip more bytes - we know it's a 1-byte character */
+#endif
           }
         break;
 
@@ -3918,7 +3918,7 @@ for (;;)
             SCHECK_PARTIAL();
             RRETURN(MATCH_NOMATCH);
             }
-          if ((md->ctypes[*eptr++] & ctype_word) != 0)
+          if ((md->ctypes[*eptr++] & ctype_word) != 0) 
             RRETURN(MATCH_NOMATCH);
           }
         break;
@@ -4213,22 +4213,22 @@ for (;;)
             break;
 
             case OP_NOT_DIGIT:
-            if (c < 256 && (md->ctypes[c] & ctype_digit) != 0)
+			if (CHAR_IS_DIGIT(c, utf8))
               RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_DIGIT:
-            if (c >= 256 || (md->ctypes[c] & ctype_digit) == 0)
+			if (!CHAR_IS_DIGIT(c, utf8))
               RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_NOT_WHITESPACE:
-            if (c < 256 && (md->ctypes[c] & ctype_space) != 0)
+			if (CHAR_IS_WHITESPACE(c, utf8))
               RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_WHITESPACE:
-            if  (c >= 256 || (md->ctypes[c] & ctype_space) == 0)
+			if (!CHAR_IS_WHITESPACE(c, utf8))
               RRETURN(MATCH_NOMATCH);
             break;
 
@@ -4339,19 +4339,19 @@ for (;;)
             break;
 
             case OP_NOT_DIGIT:
-            if ((md->ctypes[c] & ctype_digit) != 0) RRETURN(MATCH_NOMATCH);
+			if (CHAR_IS_DIGIT(c, utf8)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_DIGIT:
-            if ((md->ctypes[c] & ctype_digit) == 0) RRETURN(MATCH_NOMATCH);
+            if (!CHAR_IS_DIGIT(c, utf8)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_NOT_WHITESPACE:
-            if ((md->ctypes[c] & ctype_space) != 0) RRETURN(MATCH_NOMATCH);
+			if (CHAR_IS_WHITESPACE(c, utf8)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_WHITESPACE:
-            if  ((md->ctypes[c] & ctype_space) == 0) RRETURN(MATCH_NOMATCH);
+			if (!CHAR_IS_WHITESPACE(c, utf8)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_NOT_WORDCHAR:
@@ -4715,7 +4715,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-            if (c < 256 && (md->ctypes[c] & ctype_digit) != 0) break;
+            if (CHAR_IS_DIGIT(c, utf8)) break;
             eptr+= len;
             }
           break;
@@ -4730,7 +4730,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-            if (c >= 256 ||(md->ctypes[c] & ctype_digit) == 0) break;
+            if (!CHAR_IS_DIGIT(c, utf8)) break;
             eptr+= len;
             }
           break;
@@ -4745,7 +4745,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-            if (c < 256 && (md->ctypes[c] & ctype_space) != 0) break;
+            if (CHAR_IS_WHITESPACE(c, utf8)) break;
             eptr+= len;
             }
           break;
@@ -4760,7 +4760,7 @@ for (;;)
               break;
               }
             GETCHARLEN(c, eptr, len);
-            if (c >= 256 ||(md->ctypes[c] & ctype_space) == 0) break;
+            if (!CHAR_IS_WHITESPACE(c, utf8)) break;
             eptr+= len;
             }
           break;
@@ -5817,7 +5817,7 @@ int ucp_digit(int c) {
 		(_pcre_ucp_gentype[prop->chartype] == ucp_N);
 }
 
-int ucp_space(int c) {
+int ucp_whitespace(int c) {
 	const ucd_record *prop = GET_UCD(c);
 	return 
 		(_pcre_ucp_gentype[prop->chartype] == ucp_Z);
