@@ -410,9 +410,9 @@ support is omitted, we don't even define it. */
 #define GETCHARLEN(c, eptr, len) c = *eptr;
 /* #define BACKCHAR(eptr) */
 
-#define CHAR_IS_WORDCHAR(c, utf8) (md->ctypes[c] & ctype_word)
-#define CHAR_IS_DIGIT(c, utf8) (md->ctypes[c] & ctype_digit)
-#define CHAR_IS_WHITESPACE(c, utf8) (md->ctypes[c] & ctype_space)
+#define CHAR_IS_WORDCHAR(c, utf8) ((md->ctypes[c] & ctype_word) != 0)
+#define CHAR_IS_DIGIT(c, utf8) ((md->ctypes[c] & ctype_digit) != 0)
+#define CHAR_IS_WHITESPACE(c, utf8) ((md->ctypes[c] & ctype_space) != 0)
 
 #else   /* SUPPORT_UTF8 */
 
@@ -532,15 +532,29 @@ because almost all calls are already within a block of UTF-8 only code. */
 
 #ifndef UTF8_USES_UCP
 
-#define CHAR_IS_WORDCHAR(c, utf8) ((c < 256) && (md->ctypes[c] & ctype_word))
-#define CHAR_IS_DIGIT(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_digit))
-#define CHAR_IS_WHITESPACE(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_space))
+#define CHAR_IS_WORDCHAR(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_word) != 0))
+#define CHAR_IS_DIGIT(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_digit) != 0))
+#define CHAR_IS_WHITESPACE(c, utf8) ((c < 256) && ((md->ctypes[c] & ctype_space) != 0))
 
 #else
 
-#define CHAR_IS_WORDCHAR(c, utf8) (utf8 ? ucp_wordchar(c) : ((c < 256) && (md->ctypes[c] & ctype_word)))
-#define CHAR_IS_DIGIT(c, utf8) (utf8 ? ucp_digit(c) : ((c < 256) && (md->ctypes[c] & ctype_digit)))
-#define CHAR_IS_WHITESPACE(c, utf8) (utf8 ? ucp_whitespace(c) : ((c < 256) && (md->ctypes[c] & ctype_space)))
+#define UCP_IS_WORDCHAR(c)		\
+		(prop = GET_UCD(c),		\
+		(_pcre_ucp_gentype[prop->chartype] == ucp_L) ||	\
+		(_pcre_ucp_gentype[prop->chartype] == ucp_N) ||	\
+		(c == '_'))
+
+#define UCP_IS_DIGIT(c)			\
+		(prop = GET_UCD(c),		\
+		(_pcre_ucp_gentype[prop->chartype] == ucp_N))
+
+#define UCP_IS_WHITESPACE(c)	\
+		(prop = GET_UCD(c),		\
+		(_pcre_ucp_gentype[prop->chartype] == ucp_Z))
+
+#define CHAR_IS_WORDCHAR(c, utf8) (utf8 ? UCP_IS_WORDCHAR(c) : ((c < 256) && ((md->ctypes[c] & ctype_word) != 0)))
+#define CHAR_IS_DIGIT(c, utf8) (utf8 ? UCP_IS_DIGIT(c) : ((c < 256) && ((md->ctypes[c] & ctype_digit) != 0)))
+#define CHAR_IS_WHITESPACE(c, utf8) (utf8 ? UCP_IS_WHITESPACE(c) : ((c < 256) && ((md->ctypes[c] & ctype_space) != 0)))
 
 #endif
 
@@ -1800,10 +1814,6 @@ extern const int         _pcre_ucp_gentype[];
 #define UCD_SCRIPT(ch)    GET_UCD(ch)->script
 #define UCD_CATEGORY(ch)  _pcre_ucp_gentype[UCD_CHARTYPE(ch)]
 #define UCD_OTHERCASE(ch) (ch + GET_UCD(ch)->other_case)
-
-int ucp_wordchar(int c);
-int ucp_digit(int c);
-int ucp_whitespace(int c);
 
 #endif
 

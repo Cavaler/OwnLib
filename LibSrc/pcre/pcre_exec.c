@@ -462,6 +462,9 @@ register int  rrc;         /* Returns from recursive calls */
 register int  i;           /* Used for loops not involving calls to RMATCH() */
 register unsigned int c;   /* Character values not kept over RMATCH() calls */
 register BOOL utf8;        /* Local copy of UTF-8 flag for speed */
+#ifdef UTF8_USES_UCP
+const ucd_record *prop;
+#endif
 
 BOOL minimize, possessive; /* Quantifier options */
 int condcode;
@@ -5801,26 +5804,6 @@ else
   DPRINTF((">>>> returning PCRE_ERROR_NOMATCH\n"));
   return PCRE_ERROR_NOMATCH;
   }
-}
-
-int ucp_wordchar(int c) {
-	const ucd_record *prop = GET_UCD(c);
-	return 
-		(_pcre_ucp_gentype[prop->chartype] == ucp_L) ||
-		(_pcre_ucp_gentype[prop->chartype] == ucp_N) ||
-		(c == '_');
-}
-
-int ucp_digit(int c) {
-	const ucd_record *prop = GET_UCD(c);
-	return 
-		(_pcre_ucp_gentype[prop->chartype] == ucp_N);
-}
-
-int ucp_whitespace(int c) {
-	const ucd_record *prop = GET_UCD(c);
-	return 
-		(_pcre_ucp_gentype[prop->chartype] == ucp_Z);
 }
 
 /* End of pcre_exec.c */
