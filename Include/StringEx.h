@@ -39,6 +39,7 @@ string StrFromUnicode(const wstring &wstrUnicode, UINT nCP);
 string OEMFromUnicode(const wstring &wstrUnicode);
 string ANSIFromUnicode(const wstring &wstrUnicode);
 string UTF8FromUnicode(const wstring &wstrUnicode);
+bool   DefCharFromUnicode();
 
 #if (defined _VECTOR_) || (defined _STLP_VECTOR)
 void ParseWordsTo(string Line,vector<string> &Coll);

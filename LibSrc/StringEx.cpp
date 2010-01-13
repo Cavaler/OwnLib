@@ -182,6 +182,8 @@ int  IsWildcard(char *WildCard,char *Name) {
 	}
 }
 
+BOOL g_bUsedDefaultChar = FALSE;
+
 wstring StrToUnicode(const string &strMBCS, UINT nCP) {
 	vector<wchar_t> wszBuffer(strMBCS.length()+1);
 	MultiByteToWideChar(nCP, 0, strMBCS.c_str(), -1, &wszBuffer[0], wszBuffer.size());
@@ -194,10 +196,21 @@ wstring UTF8ToUnicode(const string &strUTF8) { return StrToUnicode(strUTF8, CP_U
 
 string StrFromUnicode(const wstring &wstrUnicode, UINT nCP) {
 	vector<char> szBuffer(wstrUnicode.length()*4+4);
-	WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
+
+	if (WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, &g_bUsedDefaultChar) == 0) {
+		if (GetLastError() == ERROR_INVALID_PARAMETER)
+			WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
+		else
+			return string();
+	}
+
 	return &szBuffer[0];
 }
 
 string OEMFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_OEMCP); }
 string ANSIFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_ACP); }
 string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_UTF8); }
+
+bool DefCharFromUnicode() {
+	return g_bUsedDefaultChar != 0;
+}
