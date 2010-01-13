@@ -240,6 +240,22 @@ void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wstring &wstrVa
 
 #endif
 
+void QueryRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, std::vector<BYTE> &arrData) {
+	DWORD dwType, dwBufSize=0;
+	LONG lRes = RegQueryValueEx(hKey, pszKeyName, NULL, &dwType, NULL, &dwBufSize);
+	if (((lRes!=ERROR_SUCCESS) && (lRes!=ERROR_MORE_DATA)) || (dwType!=REG_BINARY) || (dwBufSize == 0)) {
+		arrData.clear();
+		return;
+	}
+
+	arrData.resize(dwBufSize);
+	RegQueryValueEx(hKey, pszKeyName, NULL, &dwType, &arrData[0], &dwBufSize);
+}
+
+void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const std::vector<BYTE> &arrData) {
+	RegSetValueEx(hKey, pszKeyName, 0, REG_BINARY, arrData.empty() ? NULL : &arrData[0], arrData.size());
+}
+
 void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const void *pData,  int nLength) {
 	RegSetValueEx(hKey, pszKeyName, 0, REG_BINARY, (LPBYTE)pData, nLength);
 }

@@ -40,6 +40,11 @@ void SetRegStringValue(HKEY hKey, const TCHAR *pszKeyName, const wchar_t *pwszVa
 #endif
 void SetRegIntValue(HKEY hKey, const TCHAR *pszKeyName, int iValue);
 #define SetRegBoolValue(hKey, pszKeyName, bValue) SetRegIntValue(hKey, pszKeyName, (bValue)?1:0)
+
+//__if_exists (std::vector) {
+void QueryRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, std::vector<BYTE> &arrData);
+void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const std::vector<BYTE> &arrData);
+//}
 void SetRegBinaryValue(HKEY hKey, const TCHAR *pszKeyName, const void *pData,  int nLength);
 
 __if_exists (std::string) {
