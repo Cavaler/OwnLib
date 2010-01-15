@@ -185,9 +185,11 @@ int  IsWildcard(char *WildCard,char *Name) {
 BOOL g_bUsedDefaultChar = FALSE;
 
 wstring StrToUnicode(const string &strMBCS, UINT nCP) {
-	vector<wchar_t> wszBuffer(strMBCS.length()+1);
-	MultiByteToWideChar(nCP, 0, strMBCS.c_str(), -1, &wszBuffer[0], wszBuffer.size());
-	return &wszBuffer[0];
+	if (strMBCS.empty()) return wstring();
+
+	vector<wchar_t> wszBuffer(strMBCS.length());
+	int nCount = MultiByteToWideChar(nCP, 0, strMBCS.c_str(), strMBCS.length(), &wszBuffer[0], wszBuffer.size());
+	return wstring(&wszBuffer[0], nCount);
 }
 
 wstring OEMToUnicode(const string &strOEM) { return StrToUnicode(strOEM, CP_OEMCP); }
@@ -195,16 +197,15 @@ wstring ANSIToUnicode(const string &strANSI) { return StrToUnicode(strANSI, CP_A
 wstring UTF8ToUnicode(const string &strUTF8) { return StrToUnicode(strUTF8, CP_UTF8); }
 
 string StrFromUnicode(const wstring &wstrUnicode, UINT nCP) {
-	vector<char> szBuffer(wstrUnicode.length()*4+4);
+	if (wstrUnicode.empty()) return string();
 
-	if (WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, &g_bUsedDefaultChar) == 0) {
-		if (GetLastError() == ERROR_INVALID_PARAMETER)
-			WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), -1, &szBuffer[0], szBuffer.size(), NULL, NULL);
-		else
-			return string();
-	}
+	vector<char> szBuffer(wstrUnicode.length()*4);
+	int nCount = WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), wstrUnicode.length(), &szBuffer[0], szBuffer.size(), NULL, &g_bUsedDefaultChar);
 
-	return &szBuffer[0];
+	if ((nCount == 0) && (GetLastError() == ERROR_INVALID_PARAMETER))
+		nCount = WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), wstrUnicode.length(), &szBuffer[0], szBuffer.size(), NULL, NULL);
+
+	return string(&szBuffer[0], nCount);
 }
 
 string OEMFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_OEMCP); }
