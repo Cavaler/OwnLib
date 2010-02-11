@@ -642,14 +642,14 @@ void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
 	StartupInfo.Control(hPlugin, FCTL_ENDSELECTION, 0, NULL);
 }
 
-void CPanelInfo::GetInfo(bool bAnotherPanel)
+bool CPanelInfo::GetInfo(bool bAnotherPanel)
 {
-	GetInfo(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE);
+	return GetInfo(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE);
 }
 
-void CPanelInfo::GetInfo(HANDLE hPanel)
+bool CPanelInfo::GetInfo(HANDLE hPanel)
 {
-	StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this);
+	if (!StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
 
 	wchar_t szCurDir[MAX_PATH];
 	StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
@@ -658,20 +658,22 @@ void CPanelInfo::GetInfo(HANDLE hPanel)
 
 	GetPanelItems(ItemsNumber, false, hPanel, PanelItems);
 	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems);
+
+	return true;
 }
 
 #else // UNICODE
 
-void CPanelInfo::GetInfo(bool bAnotherPanel)
+bool CPanelInfo::GetInfo(bool bAnotherPanel)
 {
-	StartupInfo.Control(INVALID_HANDLE_VALUE,
+	return StartupInfo.Control(INVALID_HANDLE_VALUE,
 		bAnotherPanel ? FCTL_GETANOTHERPANELINFO : FCTL_GETPANELINFO,
-		(PanelInfo *)this);
+		(PanelInfo *)this) != 0;
 }
 
-void CPanelInfo::GetInfo(HANDLE hPanel)
+bool CPanelInfo::GetInfo(HANDLE hPanel)
 {
-	StartupInfo.Control(hPanel, FCTL_GETPANELINFO, (PanelInfo *)this);
+	return StartupInfo.Control(hPanel, FCTL_GETPANELINFO, (PanelInfo *)this) != 0;
 }
 
 #endif // UNICODE

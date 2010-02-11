@@ -141,8 +141,8 @@ struct CPanelInfo : PanelInfo {
 	panelitem_vector PanelItems;
 	panelitem_vector SelectedItems;
 
-	void GetInfo(bool bAnotherPanel);
-	void GetInfo(HANDLE hPanel);
+	bool GetInfo(bool bAnotherPanel);
+	bool GetInfo(HANDLE hPanel);
 	wstring strCurDir;
 };
 
@@ -153,8 +153,8 @@ struct CPanelInfo : PanelInfo {
 typedef WIN32_FIND_DATA WF_FIND_DATA;
 
 struct CPanelInfo : PanelInfo {
-	void GetInfo(bool bAnotherPanel);
-	void GetInfo(HANDLE hPanel);
+	bool GetInfo(bool bAnotherPanel);
+	bool GetInfo(HANDLE hPanel);
 };
 
 typedef PluginPanelItem CPluginPanelItem;
