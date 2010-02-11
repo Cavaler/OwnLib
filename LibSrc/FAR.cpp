@@ -657,7 +657,7 @@ void CPanelInfo::GetInfo(HANDLE hPanel)
 	CurDir = strCurDir.c_str();
 
 	GetPanelItems(ItemsNumber, false, hPanel, PanelItems);
-	GetPanelItems(SelectedItemsNumber, false, hPanel, SelectedItems);
+	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems);
 }
 
 #else // UNICODE

@@ -208,7 +208,7 @@ void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, tstring &strBuffer,
 	TCHAR *szValue = NULL;
 	DWORD dwSize;
 	AllocAndQueryRegStringValue(hKey, pszKeyName, &szValue, &dwSize, pszDefault);
-	strBuffer = (szValue && (dwSize > 0)) ? tstring(szValue, dwSize-1) : _T("");
+	strBuffer = (szValue && (dwSize > 0)) ? tstring(szValue, dwSize/sizeof(TCHAR)-1) : _T("");
 	free(szValue);
 }
 
