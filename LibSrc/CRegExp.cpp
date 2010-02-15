@@ -60,6 +60,9 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 	utf2char[nByte] = nChar;
 	char2utf[nChar] = nByte;
 
+#ifdef UNICODE
+	options |= PCRE_NO_START_OPTIMIZE;
+#endif
 	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), char2utf[start_offset], options, offsets, offsetcount);
 
 	if ((nResult >= 0) && offsets && offsetcount) {
