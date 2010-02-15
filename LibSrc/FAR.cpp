@@ -642,6 +642,12 @@ void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
 	StartupInfo.Control(hPlugin, FCTL_ENDSELECTION, 0, NULL);
 }
 
+void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
+	SetPanelSelection(bAnotherPanel, Info.PanelItems);
+	if (bRedraw)
+		StartupInfo.Control(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, FCTL_REDRAWPANEL, 0, NULL);
+}
+
 bool CPanelInfo::GetInfo(bool bAnotherPanel)
 {
 	return GetInfo(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE);
@@ -674,6 +680,12 @@ bool CPanelInfo::GetInfo(bool bAnotherPanel)
 bool CPanelInfo::GetInfo(HANDLE hPanel)
 {
 	return StartupInfo.Control(hPanel, FCTL_GETPANELINFO, (PanelInfo *)this) != 0;
+}
+
+void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
+	StartupInfo.Control(INVALID_HANDLE_VALUE, bAnotherPanel ? FCTL_SETANOTHERSELECTION : FCTL_SETSELECTION, &Info);
+	if (bRedraw)
+		StartupInfo.Control(INVALID_HANDLE_VALUE, bAnotherPanel ? FCTL_REDRAWANOTHERPANEL : FCTL_REDRAWPANEL, NULL);
 }
 
 #endif // UNICODE

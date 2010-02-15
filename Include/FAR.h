@@ -162,6 +162,8 @@ typedef vector<CPluginPanelItem> panelitem_vector;
 
 #endif	// UNICODE
 
+void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw);
+
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
