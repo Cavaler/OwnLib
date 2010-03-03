@@ -144,6 +144,8 @@ struct CPanelInfo : PanelInfo {
 	bool GetInfo(bool bAnotherPanel);
 	bool GetInfo(HANDLE hPanel);
 	wstring strCurDir;
+
+	int Find(LPCTSTR szFileName);
 };
 
 #else
@@ -155,6 +157,7 @@ typedef WIN32_FIND_DATA WF_FIND_DATA;
 struct CPanelInfo : PanelInfo {
 	bool GetInfo(bool bAnotherPanel);
 	bool GetInfo(HANDLE hPanel);
+	int Find(LPCTSTR szFileName);
 };
 
 typedef PluginPanelItem CPluginPanelItem;
@@ -189,6 +192,13 @@ bool SetFileName(PluginPanelItem &Item, const TCHAR *szName);
 bool SetFileName(PluginPanelItem &Item, const std::tstring& strName);
 
 void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int OpMode=0);
+
+tstring GetDlgItemText(HANDLE hDlg, int nItem);
+void SetDlgItemText(HANDLE hDlg, int nID, const TCHAR *szText);
+void ShowDlgItem(HANDLE hDlg, int nID, bool bShow);
+void EnableDlgItem(HANDLE hDlg, int nID, bool bEnable);
+bool IsDlgItemChecked(HANDLE hDlg, int nID);
+void CheckDlgItem(HANDLE hDlg, int nID, bool bCheck);
 
 // FarGetMsgEx.cpp
 void InitLanguageFiles();

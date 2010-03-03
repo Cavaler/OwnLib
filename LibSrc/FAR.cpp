@@ -690,6 +690,43 @@ void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
 
 #endif // UNICODE
 
+int CPanelInfo::Find(LPCTSTR szFileName) {
+	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
+		if (_tcscmp(FarFileName(PanelItems[nItem].FindData), szFileName) == 0) return nItem;
+	}
+	return -1;
+}
+
+tstring GetDlgItemText(HANDLE hDlg, int nItem) {
+#ifdef UNICODE
+	return (const wchar_t *)StartupInfo.SendDlgMessage(hDlg, DM_GETCONSTTEXTPTR, nItem, 0);
+#else
+	FarDialogItem Item;
+	StartupInfo.SendDlgMessage(hDlg, DM_GETDLGITEM, nItem, (LONG_PTR)&Item);
+	return (Item.Flags & DIF_VAREDIT) ? Item.Ptr.PtrData : Item.Data;
+#endif
+}
+
+void SetDlgItemText(HANDLE hDlg, int nID, const TCHAR *szText) {
+	StartupInfo.SendDlgMessage(hDlg, DM_SETTEXTPTR, nID, (LONG_PTR)szText);
+}
+
+void ShowDlgItem(HANDLE hDlg, int nID, bool bShow) {
+	StartupInfo.SendDlgMessage(hDlg, DM_SHOWITEM, nID, (bShow) ? 1 : 0);
+}
+
+void EnableDlgItem(HANDLE hDlg, int nID, bool bEnable) {
+	StartupInfo.SendDlgMessage(hDlg, DM_ENABLE, nID, bEnable);
+}
+
+bool IsDlgItemChecked(HANDLE hDlg, int nID) {
+	return StartupInfo.SendDlgMessage(hDlg, DM_GETCHECK, nID, 0) != 0;
+}
+
+void CheckDlgItem(HANDLE hDlg, int nID, bool bCheck) {
+	StartupInfo.SendDlgMessage(hDlg, DM_SETCHECK, nID, bCheck);
+}
+
 #ifndef FAR_NO_NAMESPACE
 };
 #endif
