@@ -358,6 +358,7 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
 	while (*szMasks) {
 		switch (*szMasks) {
 		case ' ':
+		case '\t':
 		case ';':
 		case ',':
 			szMasks++;
@@ -387,6 +388,8 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
 			break;
 		default:{
 			int nLen = _tcscspn(szMasks, _T(",;|"));
+			while ((nLen > 0) && (isspace(szMasks[nLen-1]))) nLen--;
+
 			if (!strCurMask.empty()) strCurMask += '|';
 			strCurMask += _T('(') + FarMaskToRE(tstring(szMasks, nLen).c_str()) + _T(')');
 			szMasks += nLen;
