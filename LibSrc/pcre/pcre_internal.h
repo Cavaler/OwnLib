@@ -550,7 +550,8 @@ because almost all calls are already within a block of UTF-8 only code. */
 
 #define UCP_IS_WHITESPACE(c)	\
 		(prop = GET_UCD(c),		\
-		(_pcre_ucp_gentype[prop->chartype] == ucp_Z))
+		(_pcre_ucp_gentype[prop->chartype] == ucp_Z) || \
+		((c < 32) && ((md->ctypes[c] & ctype_space) != 0)))
 
 #define CHAR_IS_WORDCHAR(c, utf8) (utf8 ? UCP_IS_WORDCHAR(c) : ((c < 256) && ((md->ctypes[c] & ctype_word) != 0)))
 #define CHAR_IS_DIGIT(c, utf8) (utf8 ? UCP_IS_DIGIT(c) : ((c < 256) && ((md->ctypes[c] & ctype_digit) != 0)))
