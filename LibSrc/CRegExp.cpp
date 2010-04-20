@@ -75,7 +75,6 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 		for (int nMatch = 0; nMatch < nResult; nMatch++) {
 			offsets[nMatch*2  ] = utf2char[g_origOffsets[nMatch*2  ]];
 			offsets[nMatch*2+1] = utf2char[g_origOffsets[nMatch*2+1]];
-			offsets[nMatch*2+2] =          g_origOffsets[nMatch*2+2];
 		}
 	}
 
