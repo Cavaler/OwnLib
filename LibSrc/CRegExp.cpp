@@ -36,6 +36,9 @@ pcre_extra * pcre_study(const pcre *external_re, int options, const wchar_t **er
 	return re;
 }
 
+//	We must store them for get_substring
+vector<int> g_origOffsets;
+
 int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 			  const wchar_t *subject, int length, int start_offset, int options, int *offsets,
 			  int offsetcount) {
@@ -60,20 +63,53 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 	utf2char[nByte] = nChar;
 	char2utf[nChar] = nByte;
 
+	g_origOffsets.resize(offsetcount);
+
 #ifdef UNICODE
 	options |= PCRE_NO_START_OPTIMIZE;
 #endif
-	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), char2utf[start_offset], options, offsets, offsetcount);
+	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), char2utf[start_offset],
+		options, offsetcount ? &g_origOffsets[0] : NULL, offsetcount);
 
 	if ((nResult >= 0) && offsets && offsetcount) {
 		for (int nMatch = 0; nMatch < nResult; nMatch++) {
-			offsets[nMatch*2  ] = utf2char[offsets[nMatch*2  ]];
-			offsets[nMatch*2+1] = utf2char[offsets[nMatch*2+1]];
+			offsets[nMatch*2  ] = utf2char[g_origOffsets[nMatch*2  ]];
+			offsets[nMatch*2+1] = utf2char[g_origOffsets[nMatch*2+1]];
+			offsets[nMatch*2+2] =          g_origOffsets[nMatch*2+2];
 		}
 	}
 
 	return nResult;
 }
+
+int pcre_get_named_substring(const pcre *code, const wchar_t *subject, int *ovector,
+							 int stringcount, const wchar_t *stringname, const wchar_t **stringptr)
+{
+	//	Last stored offsets
+	ovector = g_origOffsets.empty() ? NULL : &g_origOffsets[0];
+
+	// We have no length - let's use end of matched piece
+	string szSubject = UTF8FromUnicode(wstring(subject, ovector[1]));
+	string szName = UTF8FromUnicode(stringname);
+
+	const char *szString;
+	int nLen = pcre_get_named_substring(code, szSubject.c_str(), ovector, stringcount,
+		szName.c_str(), &szString);
+
+	if (nLen <= 0) {
+		*stringptr = NULL;
+		return nLen;
+	}
+
+	wstring strString = UTF8ToUnicode(string(szString, nLen));
+	pcre_free((void *)szString);
+
+	wchar_t *wszString = (wchar_t *)pcre_malloc(strString.size()*2+2);
+	memmove(wszString, strString.c_str(), strString.size()*2+2);
+	*stringptr = wszString;
+	return strString.size();
+}
+
 
 #endif
 
