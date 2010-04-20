@@ -14,8 +14,12 @@ namespace std {
 
 #ifdef UNICODE
 typedef unsigned short UTCHAR;
+#define _ttoa _itow
+#define _ttoi atoi
 #else
 typedef unsigned char UTCHAR;
+#define _ttoa _itoa
+#define _ttoi _wtoi
 #endif
 
 #endif
