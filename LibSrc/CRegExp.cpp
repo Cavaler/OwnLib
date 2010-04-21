@@ -109,6 +109,11 @@ int pcre_get_named_substring(const pcre *code, const wchar_t *subject, int *ovec
 	return strString.size();
 }
 
+int pcre_get_stringnumber(const pcre *code, const wchar_t *stringname) {
+	string szName = UTF8FromUnicode(stringname);
+
+	return pcre_get_stringnumber(code, szName.c_str());
+}
 
 #endif
 
