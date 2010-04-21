@@ -2290,6 +2290,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\tstring.cpp"
+				>
+			</File>
+			<File
 				RelativePath="UTF8.cpp"
 				>
 				<FileConfiguration
