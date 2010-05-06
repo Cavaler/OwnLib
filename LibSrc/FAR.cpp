@@ -31,17 +31,9 @@ int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	return -1;
 }
 
-CFarMenuItem::CFarMenuItem() {
-	Selected = Checked = Separator = 0;
-#ifdef UNICODE
-	Text = _tcsdup(_T(""));
-#else
-	Text[0] = 0;
-#endif
-}
+#pragma region("CFarMenuItem")
 
-CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
-	Selected = Checked = Separator = 0;
+void CFarMenuItem::SetText(const TCHAR *szTitle) {
 #ifdef UNICODE
 	Text = _tcsdup(szTitle);
 #else
@@ -49,32 +41,30 @@ CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
 #endif
 }
 
+CFarMenuItem::CFarMenuItem() {
+	Selected = Checked = Separator = 0;
+	SetText(_T(""));
+}
+
+CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
+	Selected = Checked = Separator = 0;
+	SetText(szTitle);
+}
+
 CFarMenuItem::CFarMenuItem(const tstring &strTitle) {
 	Selected = Checked = Separator = 0;
-#ifdef UNICODE
-	Text = _tcsdup(strTitle.c_str());
-#else
-	_tcscpy(Text, strTitle.c_str());
-#endif
+	SetText(strTitle.c_str());
 }
 
 CFarMenuItem::CFarMenuItem(int nMsgID) {
 	Selected = Checked = Separator = 0;
-#ifdef UNICODE
-	Text = _tcsdup(GetMsg(nMsgID));
-#else
-	_tcscpy(Text, GetMsg(nMsgID));
-#endif
+	SetText(GetMsg(nMsgID));
 }
 
 CFarMenuItem::CFarMenuItem(bool bSeparator) {
 	Selected = Checked = 0;
 	Separator = bSeparator ? 1 : 0;
-#ifdef UNICODE
-	Text = _tcsdup(_T(""));
-#else
-	Text[0] = 0;
-#endif
+	SetText(_T(""));
 }
 
 CFarMenuItem::CFarMenuItem(const CFarMenuItem &Item)
@@ -103,6 +93,105 @@ CFarMenuItem::~CFarMenuItem() {
 #ifdef UNICODE
 	if (Text) free((TCHAR *)Text);
 #endif
+}
+
+#pragma endregion
+
+#pragma region("CFarMenuItemEx")
+
+void CFarMenuItemEx::SetText(const TCHAR *szTitle) {
+#ifdef UNICODE
+	Text = _tcsdup(szTitle);
+#else
+	strncpy(Text.Text, szTitle, sizeof(Text));
+#endif
+}
+
+CFarMenuItemEx::CFarMenuItemEx()
+{
+	Flags = AccelKey = Reserved = UserData = 0;
+	SetText(_T(""));
+}
+
+CFarMenuItemEx::CFarMenuItemEx(const TCHAR *szTitle, DWORD dwFlags)
+{
+	Flags = dwFlags;
+	AccelKey = Reserved = UserData = 0;
+	SetText(szTitle);
+}
+
+CFarMenuItemEx::CFarMenuItemEx(const tstring &strTitle, DWORD dwFlags)
+{
+	Flags = dwFlags;
+	AccelKey = Reserved = UserData = 0;
+	SetText(strTitle.c_str());
+}
+
+CFarMenuItemEx::CFarMenuItemEx(int nMsgID, DWORD dwFlags)
+{
+	Flags = dwFlags;
+	AccelKey = Reserved = UserData = 0;
+	SetText(GetMsg(nMsgID));
+}
+
+CFarMenuItemEx::CFarMenuItemEx(bool bSeparator)
+{
+	Flags = bSeparator ? MIF_SEPARATOR : 0;
+	AccelKey = Reserved = UserData = 0;
+	SetText(_T(""));
+}
+
+CFarMenuItemEx::CFarMenuItemEx(const CFarMenuItemEx &Item) {
+	*this = (const FarMenuItemEx &)Item;
+}
+
+CFarMenuItemEx::CFarMenuItemEx(const FarMenuItemEx &Item) {
+	*this = Item;
+}
+
+void CFarMenuItemEx::operator=(const FarMenuItemEx &Item) {
+	Flags = Item.Flags;
+	AccelKey = Item.AccelKey;
+	Reserved = Item.Reserved;
+	UserData = Item.UserData;
+#ifdef UNICODE
+	SetText(Item.Text);
+#else
+	SetText(Item.Text.Text);
+#endif
+}
+
+CFarMenuItemEx::CFarMenuItemEx(const CFarMenuItem &Item) {
+	*this = (const FarMenuItem &)Item;
+}
+
+CFarMenuItemEx::CFarMenuItemEx(const FarMenuItem &Item) {
+	*this = Item;
+}
+
+void CFarMenuItemEx::operator=(const FarMenuItem &Item) {
+	Flags =
+		(Item.Selected  ? MIF_SELECTED  : 0) |
+		(Item.Checked   ? MIF_CHECKED   : 0) |
+		(Item.Separator ? MIF_SEPARATOR : 0);
+	AccelKey = 0;
+	Reserved = 0;
+	UserData = 0;
+	SetText(Item.Text);
+}
+
+CFarMenuItemEx::~CFarMenuItemEx() {
+#ifdef UNICODE
+	if (Text) free((void *)Text);
+#endif
+}
+
+#pragma endregion
+
+void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuItemEx> &arrDst) {
+	for (size_t nItem = 0; nItem < arrSrc.size(); nItem++) {
+		arrDst.push_back(arrSrc[nItem]);
+	}
 }
 
 int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,

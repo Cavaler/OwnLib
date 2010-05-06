@@ -114,7 +114,32 @@ public:
 	CFarMenuItem(const FarMenuItem &Item);
 	void operator=(const FarMenuItem &Item);
 	~CFarMenuItem();
+protected:
+	void SetText(const TCHAR *szTitle);
 };
+
+class CFarMenuItemEx : public FarMenuItemEx {
+public:
+	CFarMenuItemEx();
+	CFarMenuItemEx(const TCHAR *szTitle, DWORD dwFlags = 0);
+	CFarMenuItemEx(const tstring &strTitle, DWORD dwFlags = 0);
+	CFarMenuItemEx(int nMsgID, DWORD dwFlags = 0);
+	CFarMenuItemEx(bool bSeparator);
+
+	CFarMenuItemEx(const CFarMenuItemEx &Item);
+	CFarMenuItemEx(const FarMenuItemEx &Item);
+	void operator=(const FarMenuItemEx &Item);
+
+	CFarMenuItemEx(const CFarMenuItem &Item);
+	CFarMenuItemEx(const FarMenuItem &Item);
+	void operator=(const FarMenuItem &Item);
+
+	~CFarMenuItemEx();
+protected:
+	void SetText(const TCHAR *szTitle);
+};
+
+void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuItemEx> &arrDst);
 
 #ifdef UNICODE
 
