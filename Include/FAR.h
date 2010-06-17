@@ -112,7 +112,8 @@ public:
 	CFarMenuItem(bool bSeparator);
 	CFarMenuItem(const CFarMenuItem &Item);
 	CFarMenuItem(const FarMenuItem &Item);
-	void operator=(const FarMenuItem &Item);
+	void operator=(const  FarMenuItem &Item);
+	void operator=(const CFarMenuItem &Item);
 	~CFarMenuItem();
 protected:
 	void SetText(const TCHAR *szTitle);
@@ -127,12 +128,13 @@ public:
 	CFarMenuItemEx(bool bSeparator);
 
 	CFarMenuItemEx(const CFarMenuItemEx &Item);
-	CFarMenuItemEx(const FarMenuItemEx &Item);
-	void operator=(const FarMenuItemEx &Item);
+	CFarMenuItemEx(const  FarMenuItemEx &Item);
+	void operator=(const  FarMenuItemEx &Item);
+	void operator=(const CFarMenuItemEx &Item);
 
 	CFarMenuItemEx(const CFarMenuItem &Item);
-	CFarMenuItemEx(const FarMenuItem &Item);
-	void operator=(const FarMenuItem &Item);
+	CFarMenuItemEx(const  FarMenuItem &Item);
+	void operator=(const  FarMenuItem &Item);
 
 	~CFarMenuItemEx();
 protected:
@@ -150,8 +152,9 @@ typedef FAR_FIND_DATA WF_FIND_DATA;
 struct CPluginPanelItem : PluginPanelItem {
 	CPluginPanelItem();
 	CPluginPanelItem(const CPluginPanelItem &item);
-	CPluginPanelItem(const PluginPanelItem &item);
-	void operator = (const PluginPanelItem &item);
+	CPluginPanelItem(const  PluginPanelItem &item);
+	void operator = (const  PluginPanelItem &item);
+	void operator = (const CPluginPanelItem &item);
 	void SetFindData(const WIN32_FIND_DATA &fd);
 	~CPluginPanelItem();
 };

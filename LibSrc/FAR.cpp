@@ -89,6 +89,10 @@ void CFarMenuItem::operator=(const FarMenuItem &Item)
 #endif
 }
 
+void CFarMenuItem::operator=(const CFarMenuItem &Item) {
+	*this = (const FarMenuItem &)Item;
+}
+
 CFarMenuItem::~CFarMenuItem() {
 #ifdef UNICODE
 	if (Text) free((TCHAR *)Text);
@@ -159,6 +163,10 @@ void CFarMenuItemEx::operator=(const FarMenuItemEx &Item) {
 #else
 	SetText(Item.Text.Text);
 #endif
+}
+
+void CFarMenuItemEx::operator=(const CFarMenuItemEx &Item) {
+	*this = (const FarMenuItemEx &)Item;
 }
 
 CFarMenuItemEx::CFarMenuItemEx(const CFarMenuItem &Item) {
@@ -681,6 +689,11 @@ void CPluginPanelItem::operator = (const PluginPanelItem &item)
 	if (FindData.lpwszAlternateFileName) FindData.lpwszAlternateFileName = _wcsdup(FindData.lpwszAlternateFileName);
 	if (Description) Description = _wcsdup(Description);
 	if (Owner) Owner = _wcsdup(Owner);
+}
+
+void CPluginPanelItem::operator = (const CPluginPanelItem &item)
+{
+	*this = (PluginPanelItem &)item;
 }
 
 void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
