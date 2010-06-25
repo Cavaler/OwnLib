@@ -169,7 +169,7 @@ struct CPanelInfo : PanelInfo {
 	panelitem_vector PanelItems;
 	panelitem_vector SelectedItems;
 
-	bool GetInfo(bool bAnotherPanel);
+	bool GetInfo(bool bAnotherPanel = false);
 	bool GetInfo(HANDLE hPanel);
 	wstring strCurDir;
 
@@ -183,7 +183,7 @@ struct CPanelInfo : PanelInfo {
 typedef WIN32_FIND_DATA WF_FIND_DATA;
 
 struct CPanelInfo : PanelInfo {
-	bool GetInfo(bool bAnotherPanel);
+	bool GetInfo(bool bAnotherPanel = false);
 	bool GetInfo(HANDLE hPanel);
 	int Find(LPCTSTR szFileName);
 };
