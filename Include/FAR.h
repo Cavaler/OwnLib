@@ -18,9 +18,13 @@
 
 #ifdef UNICODE
 #include <plugin2.hpp>
+#include <farkeys2.hpp>
+#include <farcolor2.hpp>
 #define FAR_EXPORT(name) name##W
 #else
 #include <plugin.hpp>
+#include <farkeys.hpp>
+#include <farcolor.hpp>
 #define FAR_EXPORT(name) name
 #endif
 
