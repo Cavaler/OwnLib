@@ -21,6 +21,7 @@
 #include <farkeys2.hpp>
 #include <farcolor2.hpp>
 #define FAR_EXPORT(name) name##W
+#define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIR
 #else
 #include <plugin.hpp>
 #include <farkeys.hpp>
