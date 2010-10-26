@@ -708,10 +708,10 @@ void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
 }
 
 CPluginPanelItem::~CPluginPanelItem() {
-	if (FindData.lpwszFileName) free(FindData.lpwszFileName);
-	if (FindData.lpwszAlternateFileName) free(FindData.lpwszAlternateFileName);
-	if (Description) free(Description);
-	if (Owner) free(Owner);
+	if (FindData.lpwszFileName) free((void *)FindData.lpwszFileName);
+	if (FindData.lpwszAlternateFileName) free((void *)FindData.lpwszAlternateFileName);
+	if (Description) free((void *)Description);
+	if (Owner) free((void *)Owner);
 }
 
 void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems)
