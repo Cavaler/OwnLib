@@ -5,7 +5,7 @@
 /* This is the public header file for the PCRE library, to be #included by
 applications that call the PCRE functions.
 
-           Copyright (c) 1997-2009 University of Cambridge
+           Copyright (c) 1997-2010 University of Cambridge
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -41,10 +41,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* The current PCRE version information. */
 
-#define PCRE_MAJOR          7
-#define PCRE_MINOR          9
+#define PCRE_MAJOR          8
+#define PCRE_MINOR          10
 #define PCRE_PRERELEASE     
-#define PCRE_DATE           2009-04-11
+#define PCRE_DATE           2010-06-25
 
 /* When an application links to a PCRE DLL in Windows, the symbols that are
 imported have to be identified as such. When building PCRE, the appropriate
@@ -113,7 +113,8 @@ both, so we keep them all distinct. */
 #define PCRE_NO_AUTO_CAPTURE    0x00001000
 #define PCRE_NO_UTF8_CHECK      0x00002000
 #define PCRE_AUTO_CALLOUT       0x00004000
-#define PCRE_PARTIAL            0x00008000
+#define PCRE_PARTIAL_SOFT       0x00008000
+#define PCRE_PARTIAL            0x00008000  /* Backwards compatible synonym */
 #define PCRE_DFA_SHORTEST       0x00010000
 #define PCRE_DFA_RESTART        0x00020000
 #define PCRE_FIRSTLINE          0x00040000
@@ -128,6 +129,9 @@ both, so we keep them all distinct. */
 #define PCRE_JAVASCRIPT_COMPAT  0x02000000
 #define PCRE_NO_START_OPTIMIZE  0x04000000
 #define PCRE_NO_START_OPTIMISE  0x04000000
+#define PCRE_PARTIAL_HARD       0x08000000
+#define PCRE_NOTEMPTY_ATSTART   0x10000000
+#define PCRE_UCP                0x20000000
 
 /* Exec-time and get/set-time error codes */
 
@@ -174,6 +178,7 @@ both, so we keep them all distinct. */
 #define PCRE_INFO_OKPARTIAL         12
 #define PCRE_INFO_JCHANGED          13
 #define PCRE_INFO_HASCRORLF         14
+#define PCRE_INFO_MINLENGTH         15
 
 /* Request types for pcre_config(). Do not re-arrange, in order to remain
 compatible. */
@@ -196,6 +201,7 @@ these bits, just add new ones on the end, in order to remain compatible. */
 #define PCRE_EXTRA_CALLOUT_DATA           0x0004
 #define PCRE_EXTRA_TABLES                 0x0008
 #define PCRE_EXTRA_MATCH_LIMIT_RECURSION  0x0010
+#define PCRE_EXTRA_MARK                   0x0020
 
 /* Types */
 
@@ -221,6 +227,7 @@ typedef struct pcre_extra {
   void *callout_data;             /* Data passed back in callouts */
   const unsigned char *tables;    /* Pointer to character tables */
   unsigned long int match_limit_recursion; /* Max recursive calls to match() */
+  unsigned char **mark;           /* For passing back a mark pointer */
 } pcre_extra;
 
 /* The structure for passing out data via the pcre_callout_function. We use a
