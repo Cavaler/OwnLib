@@ -44,7 +44,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR **ppsz
 	if (!IsStringType(Type)) {
 		if (pszDefault) {
 			*ppszBuffer=_tcsdup(pszDefault);
-			if (BufSize) *BufSize=_tcslen(pszDefault)*sizeof(TCHAR);
+			if (BufSize) *BufSize=(_tcslen(pszDefault)+1)*sizeof(TCHAR);
 		} else {
 			*ppszBuffer=NULL;
 			if (BufSize) *BufSize=0;
@@ -115,7 +115,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **p
 		if ((Res!=ERROR_SUCCESS) || !IsStringType(Type)) {
 			if (pwszDefault) {
 				*ppwszBuffer=_wcsdup(pwszDefault);
-				if (pdwBufSize) *pdwBufSize=wcslen(pwszDefault);
+				if (pdwBufSize) *pdwBufSize=wcslen(pwszDefault)+1;
 			} else {
 				*ppwszBuffer=NULL;
 				if (pdwBufSize) *pdwBufSize=0;
@@ -140,7 +140,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **p
 		if ((Res!=ERROR_SUCCESS) || (Type!=REG_BINARY)) {
 			if (pwszDefault) {
 				*ppwszBuffer=_wcsdup(pwszDefault);
-				if (pdwBufSize) *pdwBufSize=wcslen(pwszDefault);
+				if (pdwBufSize) *pdwBufSize=wcslen(pwszDefault)+1;
 			} else {
 				*ppwszBuffer=NULL;
 				if (pdwBufSize) *pdwBufSize=0;
