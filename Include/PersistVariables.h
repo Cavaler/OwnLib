@@ -1,3 +1,13 @@
+#ifdef DEFINE_VARS
+#define EXTERN
+#define VALUE(n) = n
+#define CONSTRUCT(n) n
+#else
+#define EXTERN extern
+#define VALUE(n)
+#define CONSTRUCT(n)
+#endif
+
 #if defined DECLARE_PERSIST_VARS
 	#define PERSIST_BOOL_VARIABLE(Name, Default) EXTERN BOOL Name VALUE(Default);
 	#define PERSIST_bool_VARIABLE(Name, Default) EXTERN bool Name VALUE(Default);
