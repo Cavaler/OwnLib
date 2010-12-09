@@ -363,7 +363,12 @@ bool Interrupted() {
 		if (!dwRead) return FALSE;
 		if (!ReadConsoleInput(hInput,&rcInput,1,&dwRead)) return false;
 		if ((rcInput.EventType==KEY_EVENT) && (rcInput.Event.KeyEvent.bKeyDown)
-			&& (rcInput.Event.KeyEvent.wVirtualScanCode==VK_ESCAPE)) return g_bInterrupted=true;
+#ifdef _WIN64
+			&& (rcInput.Event.KeyEvent.wVirtualKeyCode==VK_ESCAPE))
+#else
+			&& (rcInput.Event.KeyEvent.wVirtualScanCode==VK_ESCAPE))
+#endif
+			return g_bInterrupted=true;
 	} while (dwRead);
 	return false;
 }
