@@ -25,7 +25,6 @@ public:
 	int  AddFrame(int TitleId);
 	int  AddFrame();
 	int  Add(CFarDialogItem *Item);
-	int  Add(CFarDialogItem *Item,CFarEventHandler *pHandler);
 	int  AddButton(const TCHAR *szTitle);
 	int  AddButton(int nId);
 	int  AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle);
@@ -43,7 +42,6 @@ protected:
 	CFarDialogItem **Items;
 	int ItemsNumber;
 	CFarEventHandler *m_pHandler;
-	vector<CFarEventHandler *> m_arrItemHandlers;
 
 	long m_lParam;
 	bool m_bHandled;

@@ -24,15 +24,6 @@ Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFl
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items=(CFarDialogItem **)realloc(Items,(ItemsNumber+1)*sizeof(CFarDialogItem *));
 	Items[ItemsNumber]=Item;
-	m_arrItemHandlers.push_back(NULL);
-	return ItemsNumber++;
-}
-
-int CFarDialog::Add(CFarDialogItem *Item,CFarEventHandler *pHandler) {
-	Items=(CFarDialogItem **)realloc(Items,(ItemsNumber+1)*sizeof(CFarDialogItem *));
-	Items[ItemsNumber]=Item;
-	m_arrItemHandlers.push_back(pHandler);
-	m_bHandled |= (pHandler!=NULL);
 	return ItemsNumber++;
 }
 
@@ -86,10 +77,6 @@ LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param
 	long lResult = 0;
 
 	if (m_pHandler && m_pHandler->ProcessChain(hDlg, Msg, Param1, Param2, lResult))
-		return lResult;
-
-	if ((Param1 >= 0) && (Param1 < (int)m_arrItemHandlers.size()) &&
-		m_arrItemHandlers[Param1] && m_arrItemHandlers[Param1]->ProcessChain(hDlg, Msg, Param1, Param2, lResult))
 		return lResult;
 
 	return StartupInfo.DefDlgProc(hDlg, Msg, Param1, Param2);
