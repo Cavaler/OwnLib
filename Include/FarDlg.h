@@ -13,7 +13,6 @@ namespace FarLib {
 #endif
 
 class CFarDialogItem;
-class CFarEventHandler;
 
 // *********************** GENERAL ***********************
 
@@ -29,23 +28,26 @@ public:
 	int  AddButton(int nId);
 	int  AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle);
 	int  AddButtons(int OKId,int CancelId);
+
 	void SetFocus(int Focus);
-	void SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam);
-	void SetHandler(CFarEventHandler *pHandler,long lParam);
-	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
-	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	int  Display(int ValidExitCodes,...);
+
+	void SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam);
 	~CFarDialog();
+
 protected:
+
 	int X1,Y1,X2,Y2,Focused;
 	const TCHAR *HelpTopic;
 	CFarDialogItem **Items;
 	int ItemsNumber;
-	CFarEventHandler *m_pHandler;
 
 	long m_lParam;
-	bool m_bHandled;
 	DWORD m_dwFlags;
+
+	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+	FARWINDOWPROC m_pWindowProc;
 };
 
 // *********************** HELPERS ***********************
@@ -227,37 +229,6 @@ protected:
 	};
 	CFarIntegerConverter *m_pConverter;
 	CFarDoubleConverter *m_pDConverter;
-};
-
-// *********************** HANDLERS ***********************
-
-class CFarEventHandler {
-public:
-	CFarEventHandler(CFarEventHandler *pNextHandler=NULL);
-	virtual bool Process(HANDLE hDlg, int Msg, int Param1, long Param2, long &Result)=0;
-	~CFarEventHandler();
-protected:
-	bool ProcessChain(HANDLE hDlg, int Msg, int Param1, long Param2, long &Result);
-	friend class CFarDialog;
-private:
-	CFarEventHandler *m_pNextHandler;
-};
-
-enum {FWP_FALSE, FWP_ASRESULT, FWP_TRUE};
-
-class CFarWindowProcHandler : public CFarEventHandler {
-public:
-	CFarWindowProcHandler(FARWINDOWPROC pProc, int nResult, CFarEventHandler *pNextHandler = NULL);
-	virtual bool Process(HANDLE hDlg, int Msg, int Param1, long Param2, long &Result);
-protected:
-	int m_nResult;
-	FARWINDOWPROC m_pProc;
-};
-
-class CFarItemEventHandler : public CFarEventHandler {
-public:
-	CFarItemEventHandler(CFarItemEventHandler *pNextHandler=NULL);
-	virtual bool Process(HANDLE hDlg, int Msg, int Param1, long Param2, long &Result);
 };
 
 // *********************** ITEMS ***********************

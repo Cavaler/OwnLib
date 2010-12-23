@@ -15,11 +15,11 @@ namespace FarLib {
 
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFlags(dwFlags) {}
+Items(NULL),ItemsNumber(0),m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags) {}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-Items(NULL),ItemsNumber(0),m_pHandler(NULL),m_lParam(0),m_bHandled(false),m_dwFlags(dwFlags) {}
+Items(NULL),ItemsNumber(0),m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags) {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items=(CFarDialogItem **)realloc(Items,(ItemsNumber+1)*sizeof(CFarDialogItem *));
@@ -76,22 +76,15 @@ LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_
 LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
 	long lResult = 0;
 
-	if (m_pHandler && m_pHandler->ProcessChain(hDlg, Msg, Param1, Param2, lResult))
-		return lResult;
+	if (m_pWindowProc) {
+		return m_pWindowProc(hDlg, Msg, Param1, Param2);
+	}
 
 	return StartupInfo.DefDlgProc(hDlg, Msg, Param1, Param2);
 }
 
 void CFarDialog::SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam) {
-	SetHandler(new CFarWindowProcHandler(lpWindowProc, FWP_ASRESULT, m_pHandler), lParam);
-}
-
-void CFarDialog::SetHandler(CFarEventHandler *pHandler,long lParam) {
-	if (m_pHandler)
-		m_pHandler->m_pNextHandler = pHandler;
-	else
-		m_pHandler = pHandler;
-	m_bHandled |= (pHandler!=NULL);
+	m_pWindowProc = lpWindowProc;
 	m_lParam = lParam;
 }
 
@@ -117,7 +110,7 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 #ifdef UNICODE
 		Result = StartupInfo.DialogRun(hDlg);
 #else
-		if (m_bHandled || m_dwFlags) {
+		if (m_pWindowProc || m_dwFlags) {
 			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
 		} else {
 			Result=StartupInfo.Dialog(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber);
@@ -446,39 +439,6 @@ CFarIntegerStorage::operator tstring() const {
 	TCHAR szBuffer[64];
 	Get(szBuffer, sizeof(szBuffer));
 	return szBuffer;
-}
-
-CFarEventHandler::CFarEventHandler(CFarEventHandler *pNextHandler) :
-m_pNextHandler(pNextHandler) {}
-
-bool CFarEventHandler::ProcessChain(HANDLE hDlg, int Msg, int Param1, long Param2, long &Result) {
-	if (Process(hDlg, Msg, Param1, Param2, Result))
-		return true;
-	return m_pNextHandler && m_pNextHandler->ProcessChain(hDlg, Msg, Param1, Param2, Result);
-}
-
-CFarEventHandler::~CFarEventHandler() {
-	if (m_pNextHandler)
-		delete m_pNextHandler;
-}
-
-CFarWindowProcHandler::CFarWindowProcHandler(FARWINDOWPROC pProc, int nResult, CFarEventHandler *pNextHandler) :
-CFarEventHandler(pNextHandler), m_pProc(pProc), m_nResult(nResult) {}
-
-bool CFarWindowProcHandler::Process(HANDLE hDlg, int Msg, int Param1, long Param2, long &Result) {
-	long lResult = m_pProc(hDlg, Msg, Param1, Param2);
-	switch (m_nResult) {
-	case FWP_ASRESULT:
-		if (lResult) {
-			Result = lResult;
-			return true;
-		}
-	case FWP_FALSE:
-		return false;
-	default:
-		Result = lResult;
-		return true;
-	}
 }
 
 #ifndef FAR_NO_NAMESPACE
