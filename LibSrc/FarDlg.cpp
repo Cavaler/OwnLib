@@ -15,16 +15,21 @@ namespace FarLib {
 
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-Items(NULL),ItemsNumber(0),m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags) {}
+m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false) {}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-Items(NULL),ItemsNumber(0),m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags) {}
+m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false) {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
-	Items=(CFarDialogItem **)realloc(Items,(ItemsNumber+1)*sizeof(CFarDialogItem *));
-	Items[ItemsNumber]=Item;
-	return ItemsNumber++;
+	Items.push_back(Item);
+	m_mapCodes[Item->m_nOwnID] = Items.size()-1;
+	return Items.size()-1;
+}
+
+int CFarDialog::Add(CFarDialogItem *Item, int nOwnID) {
+	Item->m_nOwnID = nOwnID;
+	return Add(Item);
 }
 
 int CFarDialog::AddFrame(const TCHAR *Title) {
@@ -61,7 +66,7 @@ int CFarDialog::AddButtons(int OKId,int CancelId) {
 }
 
 void CFarDialog::SetFocus(int Focus) {
-	if (Focus>=0) Focused=Focus; else Focused=ItemsNumber+Focus;
+	if (Focus>=0) Focused=Focus; else Focused=Items.size()+Focus;
 }
 
 LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
@@ -76,6 +81,10 @@ LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_
 LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
 	long lResult = 0;
 
+	if (m_pCWindowProc) {
+		return m_pCWindowProc(this, hDlg, Msg, Param1, Param2);
+	}
+
 	if (m_pWindowProc) {
 		return m_pWindowProc(hDlg, Msg, Param1, Param2);
 	}
@@ -88,32 +97,42 @@ void CFarDialog::SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam) {
 	m_lParam = lParam;
 }
 
+void CFarDialog::SetWindowProc(CFARWINDOWPROC lpCWindowProc,long lParam) {
+	m_pCWindowProc = lpCWindowProc;
+	m_lParam = lParam;
+}
+
+bool CFarDialog::AnyWindowProc()
+{
+	return m_pWindowProc || m_pCWindowProc;
+}
+
 int CFarDialog::Display(int ValidExitCodes,...) {
-	FarDialogItem *DialogItems=new FarDialogItem[ItemsNumber];
+	vector<FarDialogItem> DialogItems(Items.size());
 	int Result;
 
-	for (int I=0;I<ItemsNumber;I++) Items[I]->CreateItem(&DialogItems[I]);
-	if (Focused<ItemsNumber) DialogItems[Focused].Focus=TRUE;
+	for (size_t I=0; I<Items.size(); I++) Items[I]->CreateItem(&DialogItems[I]);
+	if (Focused < Items.size()) DialogItems[Focused].Focus=TRUE;
 
 #ifdef UNICODE
-	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,
-		m_bHandled ? s_WindowProc : NULL,(long)this);
-	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
+	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,Items.size(),0,m_dwFlags,
+		AnyWindowProc() ? s_WindowProc : NULL,(long)this);
+	for (int nItem = 0; nItem < Items.size(); nItem++) {
 		Items[nItem]->m_hDlg = hDlg;
 		Items[nItem]->m_nItem = nItem;
 	}
 #endif
 
 	do {
-		int I, Code=-1;
+		int Code=-1;
 
 #ifdef UNICODE
 		Result = StartupInfo.DialogRun(hDlg);
 #else
-		if (m_pWindowProc || m_dwFlags) {
-			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber,0,m_dwFlags,s_WindowProc,(long)this);
+		if (AnyWindowProc() || m_dwFlags) {
+			Result=StartupInfo.DialogEx(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,&DialogItems[0],Items.size(),0,m_dwFlags,s_WindowProc,(long)this);
 		} else {
-			Result=StartupInfo.Dialog(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,ItemsNumber);
+			Result=StartupInfo.Dialog(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,&DialogItems[0],Items.size());
 		}
 #endif
 		if (Result<0) break;
@@ -121,50 +140,75 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 		if (ValidExitCodes==0) {
 //			break;
 		} else if (ValidExitCodes==-1) {
-			if (Result!=ItemsNumber-2) break;
+			if (Result!=Items.size()-2) break;
 			Result=0;
 		} else {
 			va_list List;
 			va_start(List,ValidExitCodes);
-			for (I=0;I<ValidExitCodes;I++) {
+			for (size_t I=0; (int)I < ValidExitCodes; I++) {
 				Code=va_arg(List,int);
-				if (Code<0) Code=ItemsNumber+Code;
-				if (Code==Result) {Result=I;break;} else Code=-1;
+				if (m_bUseID) {
+					map<int, size_t>::iterator it = m_mapCodes.find(Code);
+					if ((it != m_mapCodes.end()) && (it->second == Result)) {
+						Result = Code;
+						break;
+					}
+				} else {
+					if (Code<0) Code=Items.size()+Code;
+					if (Code==Result) {
+						Result = I;
+						break;
+					}
+				}
+				Code=-1;
 			}
 			va_end(List);
 			if (Code<0) {Result=-1;break;}	// Bad exit code
 		}
 
-		for (I=0;I<ItemsNumber;I++) {
+		for (size_t I=0;I<Items.size();I++) {
 			if (!Items[I]->Validate(&DialogItems[I])) {
-				for (int J=0;J<ItemsNumber;J++) DialogItems[J].Focus=FALSE;
+				for (size_t J=0; J<Items.size(); J++) DialogItems[J].Focus=FALSE;
 				DialogItems[I].Focus=TRUE;
 				Result=-1;break;
 			}
 		}
 		if (Result==-1) continue;			// Validation failed
 
-		for (I=0;I<ItemsNumber;I++) Items[I]->StoreData(&DialogItems[I]);
+		for (size_t I=0;I<Items.size();I++) Items[I]->StoreData(&DialogItems[I]);
 		break;
 	} while (TRUE);
 
 #ifdef UNICODE
 	StartupInfo.DialogFree(hDlg);
 
-	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
+	for (int nItem = 0; nItem < Items.size(); nItem++) {
 		if (DialogItems[nItem].PtrData) free((TCHAR *)DialogItems[nItem].PtrData);
 	}
 #endif
 
-	delete[] DialogItems;
 	return Result;
 }
 
+
+void CFarDialog::SetUseID(bool bUseID)
+{
+	m_bUseID = bUseID;
+}
+
+int  CFarDialog::GetID(int nIndex)
+{
+	if ((nIndex < 0) || (nIndex >= Items.size())) return 0;
+	return Items[nIndex]->m_nOwnID;
+}
+
+int  CFarDialog::GetIndex(int nID)
+{
+	return m_mapCodes[nID];
+}
+
 CFarDialog::~CFarDialog() {
-	if (Items) {
-		for (int I=0;I<ItemsNumber;I++) delete Items[I];
-		free(Items);
-	}
+	for (size_t I=0; I<Items.size(); I++) delete Items[I];
 }
 
 // *********************** HELPERS ***********************

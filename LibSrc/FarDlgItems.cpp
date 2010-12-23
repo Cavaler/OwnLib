@@ -22,7 +22,7 @@ void SetItemText(FarDialogItem *pItem, const TCHAR *szText) {
 }
 
 CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,CFarText szText):
-	X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Flags(dwFlags),Text(szText)
+	X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Flags(dwFlags),Text(szText),m_nOwnID(szText.ID())
 {
 }
 

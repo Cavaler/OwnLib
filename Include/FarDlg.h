@@ -4,6 +4,7 @@
 #pragma warning(disable:4786)
 #include <vector>
 #include <string>
+#include <map>
 using namespace std;
 
 #include <Far.h>
@@ -12,9 +13,18 @@ using namespace std;
 namespace FarLib {
 #endif
 
+class CFarDialog;
 class CFarDialogItem;
 
 // *********************** GENERAL ***********************
+
+typedef LONG_PTR(WINAPI *CFARWINDOWPROC)(
+	CFarDialog *pDlg,
+    HANDLE      hDlg,
+    int         Msg,
+    int         Param1,
+    LONG_PTR    Param2
+);
 
 class CFarDialog {
 public:
@@ -24,6 +34,7 @@ public:
 	int  AddFrame(int TitleId);
 	int  AddFrame();
 	int  Add(CFarDialogItem *Item);
+	int  Add(CFarDialogItem *Item, int nOwnID);
 	int  AddButton(const TCHAR *szTitle);
 	int  AddButton(int nId);
 	int  AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle);
@@ -32,36 +43,50 @@ public:
 	void SetFocus(int Focus);
 	int  Display(int ValidExitCodes,...);
 
-	void SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam);
+	void SetUseID(bool bUseID);
+	int  GetID(int nIndex);
+	int  GetIndex(int nID);
+
+	void SetWindowProc( FARWINDOWPROC lpWindowProc,  long lParam);
+	void SetWindowProc(CFARWINDOWPROC lpCWindowProc, long lParam);
 	~CFarDialog();
 
 protected:
 
 	int X1,Y1,X2,Y2,Focused;
 	const TCHAR *HelpTopic;
-	CFarDialogItem **Items;
-	int ItemsNumber;
 
-	long m_lParam;
-	DWORD m_dwFlags;
+	vector<CFarDialogItem *>	Items;
+	map<int, size_t>			m_mapCodes;
+
+	long	m_lParam;
+	DWORD	m_dwFlags;
+
+	bool	m_bUseID;
 
 	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
-	FARWINDOWPROC m_pWindowProc;
+	 FARWINDOWPROC m_pWindowProc;
+	CFARWINDOWPROC m_pCWindowProc;
+
+	bool AnyWindowProc();
 };
 
 // *********************** HELPERS ***********************
 
 class CFarText {
 public:
-	CFarText() : m_strHolder() {}
-	CFarText(const CFarText &Text) : m_strHolder(Text.m_strHolder.c_str()) {}
-	CFarText(int nMsgID) : m_strHolder(GetMsg(nMsgID)) {}
-	CFarText(int nMsgID, const TCHAR *pszModule) : m_strHolder(GetMsgEx(nMsgID, pszModule)) {}
-	CFarText(const TCHAR *pszText) : m_strHolder(pszText ? pszText : _T("")) {}
-	CFarText(const tstring &strText) : m_strHolder(strText.c_str()) {}
+	CFarText() : m_strHolder(), m_nOwnID(0) {}
+	CFarText(const CFarText &Text) : m_strHolder(Text.m_strHolder.c_str()), m_nOwnID(Text.ID()) {}
+	CFarText(int nMsgID) : m_strHolder(GetMsg(nMsgID)), m_nOwnID(nMsgID) {}
+	CFarText(int nMsgID, const TCHAR *pszModule) : m_strHolder(GetMsgEx(nMsgID, pszModule)), m_nOwnID(nMsgID) {}
+	CFarText(const TCHAR *pszText) : m_strHolder(pszText ? pszText : _T("")), m_nOwnID(0) {}
+	CFarText(const tstring &strText) : m_strHolder(strText.c_str()), m_nOwnID(0) {}
+
+	int ID() const { return m_nOwnID; }
 	operator const TCHAR *() const {return m_strHolder.c_str();}
 protected:
+	int     m_nOwnID;
 	tstring m_strHolder;
 };
 
@@ -252,6 +277,8 @@ public:
 	wstring GetText() const;
 	int     SelectedItem() const;
 #endif
+public:
+	int		m_nOwnID;
 };
 
 class CFarCustomItem:public CFarDialogItem {
