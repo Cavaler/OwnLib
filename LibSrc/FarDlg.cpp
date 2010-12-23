@@ -15,11 +15,11 @@ namespace FarLib {
 
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false) {}
+m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false) {}
+m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items.push_back(Item);
@@ -139,17 +139,22 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 
 		if (ValidExitCodes==0) {
 //			break;
-		} else if (ValidExitCodes==-1) {
-			if (Result!=Items.size()-2) break;
-			Result=0;
+		} else if (ValidExitCodes == -1) {
+			if (m_bUseID) {
+				int nID = GetID(Result);
+				if (nID == m_nCancelID) {Result = -1; break;}
+				Result = nID;
+			} else {
+				if (Result != Items.size()-2) {Result = -1; break;}
+				Result = 0;
+			}
 		} else {
 			va_list List;
 			va_start(List,ValidExitCodes);
 			for (size_t I=0; (int)I < ValidExitCodes; I++) {
 				Code=va_arg(List,int);
 				if (m_bUseID) {
-					map<int, size_t>::iterator it = m_mapCodes.find(Code);
-					if ((it != m_mapCodes.end()) && (it->second == Result)) {
+					if (GetIndex(Code) == Result) {
 						Result = Code;
 						break;
 					}
@@ -205,6 +210,11 @@ int  CFarDialog::GetID(int nIndex)
 int  CFarDialog::GetIndex(int nID)
 {
 	return m_mapCodes[nID];
+}
+
+void CFarDialog::SetCancelID(int nCancelID)
+{
+	m_nCancelID = nCancelID;
 }
 
 CFarDialog::~CFarDialog() {

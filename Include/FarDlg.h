@@ -47,6 +47,8 @@ public:
 	int  GetID(int nIndex);
 	int  GetIndex(int nID);
 
+	void SetCancelID(int nCancelID);
+
 	void SetWindowProc( FARWINDOWPROC lpWindowProc,  long lParam);
 	void SetWindowProc(CFARWINDOWPROC lpCWindowProc, long lParam);
 	~CFarDialog();
@@ -63,6 +65,7 @@ protected:
 	DWORD	m_dwFlags;
 
 	bool	m_bUseID;
+	int		m_nCancelID;
 
 	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
