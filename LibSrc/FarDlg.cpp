@@ -71,18 +71,21 @@ void CFarDialog::SetFocus(int Focus) {
 
 LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
 	static CFarDialog *pDlg = NULL;
-	if (Msg == DN_INITDIALOG) {
-		pDlg = (CFarDialog *)Param2;
-		Param2 = pDlg->m_lParam;
-	}
+	if (Msg == DN_INITDIALOG) pDlg = (CFarDialog *)Param2;
+
 	return pDlg->WindowProc(hDlg, Msg, Param1, Param2);
 }
 
 LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
 	long lResult = 0;
 
+	if (Msg == DN_INITDIALOG) {
+		m_hDlg = hDlg;
+		Param2 = m_lParam;
+	}
+
 	if (m_pCWindowProc) {
-		return m_pCWindowProc(this, hDlg, Msg, Param1, Param2);
+		return m_pCWindowProc(this, Msg, Param1, Param2);
 	}
 
 	if (m_pWindowProc) {
@@ -218,9 +221,64 @@ void CFarDialog::SetCancelID(int nCancelID)
 	m_nCancelID = nCancelID;
 }
 
+int CFarDialog::Index(int nIndexOrID)
+{
+	return (m_bUseID) ? GetIndex(nIndexOrID) : nIndexOrID;
+}
+
+void CFarDialog::Close(int nID)
+{
+	StartupInfo.SendDlgMessage(m_hDlg, DM_CLOSE, Index(nID), 0);
+}
+
+tstring CFarDialog::GetDlgItemText(int nID)
+{
+	return FarLib::GetDlgItemText(m_hDlg, Index(nID));
+}
+
+void CFarDialog::SetDlgItemText(int nID, const TCHAR *szText)
+{
+	FarLib::SetDlgItemText(m_hDlg, Index(nID), szText);
+}
+
+void CFarDialog::ShowDlgItem(int nID, bool bShow)
+{
+	FarLib::ShowDlgItem(m_hDlg, Index(nID), bShow);
+}
+
+void CFarDialog::EnableDlgItem(int nID, bool bEnable)
+{
+	FarLib::EnableDlgItem(m_hDlg, Index(nID), bEnable);
+}
+
+bool CFarDialog::IsDlgItemChecked(int nID)
+{
+	return FarLib::IsDlgItemChecked(m_hDlg, Index(nID));
+}
+
+void CFarDialog::CheckDlgItem(int nID, bool bCheck)
+{
+	FarLib::CheckDlgItem(m_hDlg, Index(nID), bCheck);
+}
+
+int  CFarDialog::GetCursorPos(int nID)
+{
+	COORD coord;
+	StartupInfo.SendDlgMessage(m_hDlg, DM_GETCURSORPOS, Index(nID), (LONG_PTR)&coord);
+	return coord.X;
+}
+
+void CFarDialog::SetCursorPos(int nID, int nPos)
+{
+	COORD coord = {nPos, 0};
+	StartupInfo.SendDlgMessage(m_hDlg, DM_SETCURSORPOS, Index(nID), (LONG_PTR)&coord);
+}
+
 CFarDialog::~CFarDialog() {
 	for (size_t I=0; I<Items.size(); I++) delete Items[I];
 }
+
+//////////////////////////////////////////////////////////////////////////
 
 // *********************** HELPERS ***********************
 

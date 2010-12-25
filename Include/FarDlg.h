@@ -20,7 +20,6 @@ class CFarDialogItem;
 
 typedef LONG_PTR(WINAPI *CFARWINDOWPROC)(
 	CFarDialog *pDlg,
-    HANDLE      hDlg,
     int         Msg,
     int         Param1,
     LONG_PTR    Param2
@@ -28,6 +27,7 @@ typedef LONG_PTR(WINAPI *CFARWINDOWPROC)(
 
 class CFarDialog {
 public:
+	//	Building
 	CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags=0);
 	CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags=0);
 	int  AddFrame(const TCHAR *Title);
@@ -40,6 +40,7 @@ public:
 	int  AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle);
 	int  AddButtons(int OKId,int CancelId);
 
+	//	Management
 	void SetFocus(int Focus);
 	int  Display(int ValidExitCodes,...);
 
@@ -51,9 +52,28 @@ public:
 
 	void SetWindowProc( FARWINDOWPROC lpWindowProc,  long lParam);
 	void SetWindowProc(CFARWINDOWPROC lpCWindowProc, long lParam);
-	~CFarDialog();
 
+	HANDLE	hDlg() const;
+
+	void Close(int nID);
+
+	//	Generic
+	tstring GetDlgItemText(int nID);
+	void SetDlgItemText(int nID, const TCHAR *szText);
+	void ShowDlgItem(int nID, bool bShow);
+	void EnableDlgItem(int nID, bool bEnable);
+
+	//	Check / Radio buttons
+	bool IsDlgItemChecked(int nID);
+	void CheckDlgItem(int nID, bool bCheck);
+
+	//	Edit boxes
+	int  GetCursorPos(int nID);
+	void SetCursorPos(int nID, int nPos);
+
+	~CFarDialog();
 protected:
+	HANDLE	m_hDlg;
 
 	int X1,Y1,X2,Y2,Focused;
 	const TCHAR *HelpTopic;
@@ -66,6 +86,8 @@ protected:
 
 	bool	m_bUseID;
 	int		m_nCancelID;
+
+	int		Index(int nIndexOrID);
 
 	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
