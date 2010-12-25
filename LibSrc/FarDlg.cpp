@@ -15,11 +15,11 @@ namespace FarLib {
 
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
+m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-m_pWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
+m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items.push_back(Item);
@@ -115,7 +115,7 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	if (Focused < Items.size()) DialogItems[Focused].Focus=TRUE;
 
 #ifdef UNICODE
-	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,DialogItems,Items.size(),0,m_dwFlags,
+	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,&DialogItems[0],Items.size(),0,m_dwFlags,
 		AnyWindowProc() ? s_WindowProc : NULL,(long)this);
 	for (int nItem = 0; nItem < Items.size(); nItem++) {
 		Items[nItem]->m_hDlg = hDlg;
@@ -214,6 +214,7 @@ int  CFarDialog::GetIndex(int nID)
 
 void CFarDialog::SetCancelID(int nCancelID)
 {
+	m_bUseID = true;
 	m_nCancelID = nCancelID;
 }
 
