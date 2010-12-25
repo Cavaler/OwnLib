@@ -47,6 +47,7 @@ public:
 	void SetUseID(bool bUseID);
 	int  GetID(int nIndex);
 	int  GetIndex(int nID);
+	bool HasItem(int nID);
 
 	void SetCancelID(int nCancelID);
 
@@ -56,6 +57,7 @@ public:
 	HANDLE	hDlg() const;
 
 	void Close(int nID);
+	LRESULT DefDlgProc(int nMsg, int nParam1, LONG_PTR lParam2);
 
 	//	Generic
 	tstring GetDlgItemText(int nID);

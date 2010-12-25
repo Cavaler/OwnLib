@@ -15,11 +15,11 @@ namespace FarLib {
 
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
+m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
+m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items.push_back(Item);
@@ -66,7 +66,13 @@ int CFarDialog::AddButtons(int OKId,int CancelId) {
 }
 
 void CFarDialog::SetFocus(int Focus) {
-	if (Focus>=0) Focused=Focus; else Focused=Items.size()+Focus;
+	if (m_hDlg == NULL) {
+		//	Design-time
+		Focused = (Focus >= 0) ? Index(Focus) : Items.size()+Focus;
+	} else {
+		//	Run-time
+		StartupInfo.SendDlgMessage(m_hDlg, DM_SETFOCUS, Index(Focus), NULL);
+	}
 }
 
 LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
@@ -198,6 +204,10 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	return Result;
 }
 
+HANDLE CFarDialog::hDlg() const
+{
+	return m_hDlg;
+}
 
 void CFarDialog::SetUseID(bool bUseID)
 {
@@ -215,6 +225,11 @@ int  CFarDialog::GetIndex(int nID)
 	return m_mapCodes[nID];
 }
 
+bool CFarDialog::HasItem(int nID)
+{
+	return m_mapCodes.find(nID) != m_mapCodes.end();
+}
+
 void CFarDialog::SetCancelID(int nCancelID)
 {
 	m_bUseID = true;
@@ -229,6 +244,11 @@ int CFarDialog::Index(int nIndexOrID)
 void CFarDialog::Close(int nID)
 {
 	StartupInfo.SendDlgMessage(m_hDlg, DM_CLOSE, Index(nID), 0);
+}
+
+LRESULT CFarDialog::DefDlgProc(int nMsg, int nParam1, LONG_PTR lParam2)
+{
+	return StartupInfo.DefDlgProc(m_hDlg, nMsg, nParam1, lParam2);
 }
 
 tstring CFarDialog::GetDlgItemText(int nID)
