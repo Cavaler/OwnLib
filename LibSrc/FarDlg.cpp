@@ -65,13 +65,13 @@ int CFarDialog::AddButtons(int OKId,int CancelId) {
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,CancelId));
 }
 
-void CFarDialog::SetFocus(int Focus) {
+void CFarDialog::SetFocus(int Focus, int Shift) {
 	if (m_hDlg == NULL) {
 		//	Design-time
-		Focused = (Focus >= 0) ? Index(Focus) : Items.size()+Focus;
+		Focused = (Focus >= 0) ? Index(Focus)+Shift : Items.size()+Focus+Shift;
 	} else {
 		//	Run-time
-		StartupInfo.SendDlgMessage(m_hDlg, DM_SETFOCUS, Index(Focus), NULL);
+		StartupInfo.SendDlgMessage(m_hDlg, DM_SETFOCUS, Index(Focus)+Shift, NULL);
 	}
 }
 

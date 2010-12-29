@@ -41,7 +41,7 @@ public:
 	int  AddButtons(int OKId,int CancelId);
 
 	//	Management
-	void SetFocus(int Focus);
+	void SetFocus(int Focus, int Shift = 0);
 	int  Display(int ValidExitCodes,...);
 
 	void SetUseID(bool bUseID);
