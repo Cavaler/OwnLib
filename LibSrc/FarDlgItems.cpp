@@ -21,7 +21,7 @@ void SetItemText(FarDialogItem *pItem, const TCHAR *szText) {
 #endif
 }
 
-CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,CFarText szText):
+CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,DWORD dwFlags, const CFarText &szText):
 	X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Flags(dwFlags),Text(szText),m_nOwnID(szText.ID())
 {
 }
@@ -64,7 +64,7 @@ CFarDialogItem::~CFarDialogItem() {
 
 // ********************** CUSTOM************************
 
-CFarCustomItem::CFarCustomItem(int iX1,int iY1,int iX2,int iY2,int iSelected,DWORD dwFlags,CFarText szText):
+CFarCustomItem::CFarCustomItem(int iX1,int iY1,int iX2,int iY2,int iSelected,DWORD dwFlags, const CFarText &szText):
 CFarDialogItem(iX1,iY1,iX2,iY2,dwFlags,szText),Selected(iSelected) {}
 
 void CFarCustomItem::CreateItem(FarDialogItem *Item) {
@@ -75,7 +75,7 @@ void CFarCustomItem::CreateItem(FarDialogItem *Item) {
 
 // ************************ BOX ************************
 
-CFarBoxItem::CFarBoxItem(BOOL bDouble,int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,CFarText szText):
+CFarBoxItem::CFarBoxItem(BOOL bDouble,int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,const CFarText &szText):
 CFarDialogItem(iX1,iY1,iX2,iY2,dwFlags,szText),Double(bDouble) {}
 
 void CFarBoxItem::CreateItem(FarDialogItem *Item) {
@@ -85,7 +85,7 @@ void CFarBoxItem::CreateItem(FarDialogItem *Item) {
 
 // *********************** TEXT ************************
 
-CFarTextItem::CFarTextItem(int X,int Y,DWORD dwFlags,CFarText szText):
+CFarTextItem::CFarTextItem(int X,int Y,DWORD dwFlags, const CFarText &szText):
 CFarDialogItem(X,Y,0,0,dwFlags,szText) {}
 
 void CFarTextItem::CreateItem(FarDialogItem *Item) {
@@ -95,7 +95,7 @@ void CFarTextItem::CreateItem(FarDialogItem *Item) {
 
 // ********************** BUTTON ***********************
 
-CFarButtonItem::CFarButtonItem(int X,int Y,DWORD dwFlags,BOOL bDefault,CFarText szText):
+CFarButtonItem::CFarButtonItem(int X,int Y,DWORD dwFlags,BOOL bDefault, const CFarText &szText):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),Default(bDefault) {}
 
 void CFarButtonItem::CreateItem(FarDialogItem *Item) {
@@ -106,19 +106,19 @@ void CFarButtonItem::CreateItem(FarDialogItem *Item) {
 
 // ********************* CHECKBOX **********************
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags,CFarText szText,bool *pbVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool *pbVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(0),m_pbVariable(pbVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags,CFarText szText,bool &pbVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool &pbVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(0),m_pbVariable(&pbVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags,CFarText szText,BOOL *pBVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL *pBVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(1),m_pBVariable(pBVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags,CFarText szText,BOOL &pBVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL &pBVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(1),m_pBVariable(&pBVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags,CFarText szText,CFarIntegerStorage piStorage,int iMaskValue):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iMaskValue):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(2),m_piStorage(new CFarIntegerStorage(piStorage)),m_iValue(iMaskValue) {}
 
 void CFarCheckBoxItem::CreateItem(FarDialogItem *Item) {
@@ -169,10 +169,10 @@ CFarCheckBoxItem::~CFarCheckBoxItem() {
 
 // ********************* CHECKBOX3 **********************
 
-CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,DWORD dwFlags,CFarText szText,CFarIntegerStorage piStorage):
+CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage):
 CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(1),m_piStorage(new CFarIntegerStorage(piStorage)) {}
 
-CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,DWORD dwFlags,CFarText szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue):
+CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue):
 CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(1),m_pdwCleared(pdwCleared),m_pdwSet(pdwSet),m_dwMaskValue(dwMaskValue) {}
 
 void CFarCheckBox3Item::CreateItem(FarDialogItem *Item) {
@@ -230,19 +230,19 @@ CFarCheckBox3Item::~CFarCheckBox3Item() {
 
 // ******************** RADIOBUTTON ********************
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags,CFarText szText,bool *pbVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool *pbVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,pbVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags,CFarText szText,bool &pbVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool &pbVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,&pbVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags,CFarText szText,BOOL *pBVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL *pBVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,pBVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags,CFarText szText,BOOL &pBVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL &pBVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,&pBVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags,CFarText szText,CFarIntegerStorage piStorage,int iValue):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iValue):
 CFarCheckBoxItem(X,Y,dwFlags,szText,piStorage,iValue) {}
 
 void CFarRadioButtonItem::CreateItem(FarDialogItem *Item) {
