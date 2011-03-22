@@ -26,8 +26,11 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 int pcre_get_named_substring(const pcre *code, const wchar_t *subject, int *ovector,
 			int stringcount, const wchar_t *stringname, const wchar_t **stringptr);
 int pcre_get_stringnumber(const pcre *code, const wchar_t *stringname);
+int pcre_get_stringlist(const pcre *code, vector<wstring> &arrNames);
 
 #endif
+
+int pcre_get_stringlist(const pcre *code, vector<string> &arrNames);
 
 template<class CHAR>
 class CRegExpT

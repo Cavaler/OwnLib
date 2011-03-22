@@ -115,7 +115,51 @@ int pcre_get_stringnumber(const pcre *code, const wchar_t *stringname) {
 	return pcre_get_stringnumber(code, szName.c_str());
 }
 
+int pcre_get_stringlist(const pcre *code, vector<wstring> &arrNames)
+{
+	int rc, count, entrysize;
+	BYTE *nametable;
+
+	if ((rc = pcre_fullinfo(code, NULL, PCRE_INFO_NAMECOUNT, &count)) != 0)
+		return rc;
+	if ((rc = pcre_fullinfo(code, NULL, PCRE_INFO_NAMEENTRYSIZE, &entrysize)) != 0)
+		return rc;
+	if ((rc = pcre_fullinfo(code, NULL, PCRE_INFO_NAMETABLE, &nametable)) != 0)
+		return rc;
+
+	for (int item = 0; item < count; item++)
+	{
+		BYTE *entry = nametable + entrysize*item;
+		char *name  = (char *)(entry + 2);
+		arrNames.push_back(UTF8ToUnicode(name));
+	}
+
+	return count;
+}
+
 #endif
+
+int pcre_get_stringlist(const pcre *code, vector<string> &arrNames)
+{
+	int rc, count, entrysize;
+	BYTE *nametable;
+
+	if ((rc = pcre_fullinfo(code, NULL, PCRE_INFO_NAMECOUNT, &count)) != 0)
+		return rc;
+	if ((rc = pcre_fullinfo(code, NULL, PCRE_INFO_NAMEENTRYSIZE, &entrysize)) != 0)
+		return rc;
+	if ((rc = pcre_fullinfo(code, NULL, PCRE_INFO_NAMETABLE, &nametable)) != 0)
+		return rc;
+
+	for (int item = 0; item < count; item++)
+	{
+		BYTE *entry = nametable + entrysize*item;
+		char *name  = (char *)(entry + 2);
+		arrNames.push_back(name);
+	}
+
+	return count;
+}
 
 template<class CHAR>
 CRegExpT<CHAR>::CRegExpT() : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL), m_iRefCount(0) {
