@@ -184,33 +184,47 @@ int  IsWildcard(char *WildCard,char *Name) {
 
 BOOL g_bUsedDefaultChar = FALSE;
 
-wstring StrToUnicode(const string &strMBCS, UINT nCP) {
-	if (strMBCS.empty()) return wstring();
+//	The following 'combo' allows NRVO to kick in
+//	It's bad to edit basic_string in-place, but efficient
 
-	vector<wchar_t> wszBuffer(strMBCS.length());
-	int nCount = MultiByteToWideChar(nCP, 0, strMBCS.c_str(), strMBCS.length(), &wszBuffer[0], wszBuffer.size());
-	return wstring(&wszBuffer[0], nCount);
+void StrToUnicode(const string &strMBCS, UINT nCP, wstring &wstrResult) throw() {
+	wstrResult.resize(strMBCS.length());
+	if (strMBCS.empty()) return;
+
+	int nCount = MultiByteToWideChar(nCP, 0, strMBCS.c_str(), strMBCS.length(), (LPWSTR)wstrResult.data(), wstrResult.size());
+	wstrResult.erase(nCount);
+};
+
+wstring StrToUnicode(const string &strMBCS, UINT nCP) throw() {
+	wstring wstrResult;
+	StrToUnicode(strMBCS, nCP, wstrResult);
+	return wstrResult;
 }
 
-wstring OEMToUnicode(const string &strOEM) { return StrToUnicode(strOEM, CP_OEMCP); }
-wstring ANSIToUnicode(const string &strANSI) { return StrToUnicode(strANSI, CP_ACP); }
-wstring UTF8ToUnicode(const string &strUTF8) { return StrToUnicode(strUTF8, CP_UTF8); }
+wstring OEMToUnicode (const string &strOEM)  { return StrToUnicode(strOEM,  CP_OEMCP); }
+wstring ANSIToUnicode(const string &strANSI) { return StrToUnicode(strANSI, CP_ACP  ); }
+wstring UTF8ToUnicode(const string &strUTF8) { return StrToUnicode(strUTF8, CP_UTF8 ); }
 
-string StrFromUnicode(const wstring &wstrUnicode, UINT nCP) {
-	if (wstrUnicode.empty()) return string();
-
-	vector<char> szBuffer(wstrUnicode.length()*4);
-	int nCount = WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), wstrUnicode.length(), &szBuffer[0], szBuffer.size(), NULL, &g_bUsedDefaultChar);
+void StrFromUnicode(const wstring &wstrUnicode, UINT nCP, string &strResult) throw() {
+	strResult.resize(wstrUnicode.length()*4);
+	if (wstrUnicode.empty()) return;
+	int nCount = WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), wstrUnicode.length(), (LPSTR)strResult.data(), strResult.size(), NULL, &g_bUsedDefaultChar);
 
 	if ((nCount == 0) && (GetLastError() == ERROR_INVALID_PARAMETER))
-		nCount = WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), wstrUnicode.length(), &szBuffer[0], szBuffer.size(), NULL, NULL);
+		nCount = WideCharToMultiByte(nCP, 0, wstrUnicode.c_str(), wstrUnicode.length(), (LPSTR)strResult.data(), strResult.size(), NULL, NULL);
 
-	return string(&szBuffer[0], nCount);
+	strResult.erase(nCount);
 }
 
-string OEMFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_OEMCP); }
-string ANSIFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_ACP); }
-string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_UTF8); }
+string StrFromUnicode(const wstring &wstrUnicode, UINT nCP) throw() {
+	string strResult;
+	StrFromUnicode(wstrUnicode, nCP, strResult);
+	return strResult;
+}
+
+string OEMFromUnicode (const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_OEMCP); }
+string ANSIFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_ACP  ); }
+string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_UTF8 ); }
 
 bool DefCharFromUnicode() {
 	return g_bUsedDefaultChar != 0;
