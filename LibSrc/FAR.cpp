@@ -860,7 +860,7 @@ void SetFindDataName(PluginPanelItem &Item, const TCHAR *szFileName, const TCHAR
 	if (szAlternateFileName)
 		Item.FindData.lpwszAlternateFileName = _wcsdup(szAlternateFileName);
 #else
-	strcpy(Item.FindData.cFileName, pAlbum->FileName().c_str());
+	strcpy(Item.FindData.cFileName, szFileName);
 	if (szAlternateFileName)
 		strcpy(Item.FindData.cAlternateFileName, szAlternateFileName);
 #endif
