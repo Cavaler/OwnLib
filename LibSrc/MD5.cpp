@@ -319,3 +319,10 @@ void CMD5::FinalHex(char *Buffer) {
 	for (int c = 0; c < 16; c++)
 		sprintf(Buffer+c*2, "%02x", Digest[c]);
 }
+
+void CMD5::FinalHex(wchar_t *Buffer) {
+	BYTE Digest[16];
+	Final(Digest);
+	for (int c = 0; c < 16; c++)
+		swprintf(Buffer+c*2, L"%02x", Digest[c]);
+}

@@ -125,7 +125,11 @@ tstring CleanFileName(const tstring &strPath) {
 	tstring strResult = strPath;
 
 	for (size_t nPos = 0; nPos < strResult.length(); nPos++) {
+#ifdef UNICODE
+		if ((WORD)(strResult[nPos]) < 0x20) { strResult[nPos] = '_';continue; }
+#else
 		if ((BYTE)(strResult[nPos]) < 0x20) { strResult[nPos] = '_';continue; }
+#endif
 		switch (strResult[nPos]) {
 		case '<':	strResult[nPos] = '(';break;
 		case '>':	strResult[nPos] = ')';break;

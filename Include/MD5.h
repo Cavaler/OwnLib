@@ -51,6 +51,7 @@ class CMD5 {
 	void Update(const BYTE* InpBuf, UINT InpLen);
 	void Final(BYTE Result[16]);
 	void FinalHex(char *Buffer);
+	void FinalHex(wchar_t *Buffer);
 };
 
 #endif

@@ -198,6 +198,10 @@ typedef vector<CPluginPanelItem> panelitem_vector;
 
 #endif	// UNICODE
 
+void SetFindDataName(PluginPanelItem &Item, const TCHAR *szFileName, const TCHAR *szAlternateFileName = NULL);
+void StdFreeFindData(PluginPanelItem *PanelItems, int ItemsNumber);
+
+void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName = NULL, bool bAnotherPanel = false);
 void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw);
 
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
@@ -232,6 +236,8 @@ void ShowDlgItem(HANDLE hDlg, int nID, bool bShow);
 void EnableDlgItem(HANDLE hDlg, int nID, bool bEnable);
 bool IsDlgItemChecked(HANDLE hDlg, int nID);
 void CheckDlgItem(HANDLE hDlg, int nID, bool bCheck);
+int  GetDlgListPos(HANDLE hDlg, int nID);
+void SetDlgListPos(HANDLE hDlg, int nID, int nPos);
 
 // FarGetMsgEx.cpp
 void InitLanguageFiles();

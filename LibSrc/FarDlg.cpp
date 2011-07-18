@@ -294,6 +294,16 @@ void CFarDialog::SetCursorPos(int nID, int nPos)
 	StartupInfo.SendDlgMessage(m_hDlg, DM_SETCURSORPOS, Index(nID), (LONG_PTR)&coord);
 }
 
+int  CFarDialog::GetDlgListPos(int nID)
+{
+	return StartupInfo.SendDlgMessage(m_hDlg, DM_LISTGETCURPOS, Index(nID), NULL);
+}
+
+void CFarDialog::SetDlgListPos(int nID, int nPos)
+{
+	StartupInfo.SendDlgMessage(m_hDlg, DM_LISTSETCURPOS, Index(nID), nPos);
+}
+
 CFarDialog::~CFarDialog() {
 	for (size_t I=0; I<Items.size(); I++) delete Items[I];
 }

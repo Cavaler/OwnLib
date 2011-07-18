@@ -203,7 +203,12 @@ void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuIt
 }
 
 int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
-			int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
+			int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode)
+{
+	if (ItemCount == 0) {
+		while (ppszItems[ItemCount] != NULL) ItemCount++;
+	}
+
 	FarMenuItem *Items = new FarMenuItem[ItemCount];
 	for (int I=0;I<ItemCount;I++) {
 		Items[I].Checked=Items[I].Selected=FALSE;
@@ -742,6 +747,24 @@ void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &
 	}
 }
 
+void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnotherPanel)
+{
+	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
+	StartupInfo.Control(hPanel, FCTL_UPDATEPANEL, bClearSelection, NULL);
+
+	if (szCurrentName)
+	{
+		CPanelInfo PInfo;
+		PInfo.GetInfo(bAnotherPanel);
+		PanelRedrawInfo RInfo = {PInfo.Find(szCurrentName), 0};
+
+		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
+
+	} else {
+		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, NULL);
+	}
+}
+
 void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
 	HANDLE hPlugin = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
 	StartupInfo.Control(hPlugin, FCTL_BEGINSELECTION, 0, NULL);
@@ -792,6 +815,29 @@ bool CPanelInfo::GetInfo(HANDLE hPanel)
 	return StartupInfo.Control(hPanel, FCTL_GETPANELINFO, (PanelInfo *)this) != 0;
 }
 
+void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnotherPanel)
+{
+	StartupInfo.Control(INVALID_HANDLE_VALUE,
+		bAnotherPanel ? FCTL_UPDATEANOTHERPANEL : FCTL_UPDATEPANEL,
+		bClearSelection ? NULL : (void *)!NULL);
+
+	if (szCurrentName)
+	{
+		CPanelInfo PInfo;
+		PInfo.GetInfo(bAnotherPanel);
+		PanelRedrawInfo RInfo = {PInfo.Find(szCurrentName), 0};
+
+		StartupInfo.Control(INVALID_HANDLE_VALUE,
+			bAnotherPanel ? FCTL_REDRAWANOTHERPANEL : FCTL_REDRAWPANEL,
+			&RInfo);
+
+	} else {
+		StartupInfo.Control(INVALID_HANDLE_VALUE,
+			bAnotherPanel ? FCTL_REDRAWANOTHERPANEL : FCTL_REDRAWPANEL,
+			NULL);
+	}
+}
+
 void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
 	StartupInfo.Control(INVALID_HANDLE_VALUE, bAnotherPanel ? FCTL_SETANOTHERSELECTION : FCTL_SETSELECTION, &Info);
 	if (bRedraw)
@@ -805,6 +851,33 @@ int CPanelInfo::Find(LPCTSTR szFileName) {
 		if (_tcscmp(FarFileName(PanelItems[nItem].FindData), szFileName) == 0) return nItem;
 	}
 	return -1;
+}
+
+void SetFindDataName(PluginPanelItem &Item, const TCHAR *szFileName, const TCHAR *szAlternateFileName)
+{
+#ifdef UNICODE
+	Item.FindData.lpwszFileName = _wcsdup(szFileName);
+	if (szAlternateFileName)
+		Item.FindData.lpwszAlternateFileName = _wcsdup(szAlternateFileName);
+#else
+	strcpy(Item.FindData.cFileName, pAlbum->FileName().c_str());
+	if (szAlternateFileName)
+		strcpy(Item.FindData.cAlternateFileName, szAlternateFileName);
+#endif
+}
+
+void StdFreeFindData(PluginPanelItem *PanelItems, int ItemsNumber)
+{
+	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
+#ifdef UNICODE
+		if (PanelItems[nItem].FindData.lpwszFileName) free((void *)PanelItems[nItem].FindData.lpwszFileName);
+		if (PanelItems[nItem].FindData.lpwszAlternateFileName) free((void *)PanelItems[nItem].FindData.lpwszAlternateFileName);
+#endif
+		if (PanelItems[nItem].Description) free((void *)PanelItems[nItem].Description);
+		if (PanelItems[nItem].Owner) free((void *)PanelItems[nItem].Owner);
+	}
+
+	free(PanelItems);
 }
 
 tstring GetDlgItemText(HANDLE hDlg, int nItem) {
@@ -835,6 +908,14 @@ bool IsDlgItemChecked(HANDLE hDlg, int nID) {
 
 void CheckDlgItem(HANDLE hDlg, int nID, bool bCheck) {
 	StartupInfo.SendDlgMessage(hDlg, DM_SETCHECK, nID, bCheck);
+}
+
+int  GetDlgListPos(HANDLE hDlg, int nID) {
+	return StartupInfo.SendDlgMessage(hDlg, DM_LISTGETCURPOS, nID, NULL);
+}
+
+void SetDlgListPos(HANDLE hDlg, int nID, int nPos) {
+	StartupInfo.SendDlgMessage(hDlg, DM_LISTSETCURPOS, nID, nPos);
 }
 
 #ifndef FAR_NO_NAMESPACE

@@ -73,6 +73,10 @@ public:
 	int  GetCursorPos(int nID);
 	void SetCursorPos(int nID, int nPos);
 
+	//	List/combo boxes
+	int  GetDlgListPos(int nID);
+	void SetDlgListPos(int nID, int nPos);
+
 	~CFarDialog();
 protected:
 	HANDLE	m_hDlg;
