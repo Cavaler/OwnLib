@@ -232,6 +232,11 @@ public:
 	CFarIntegerStorage(signed char &pValue, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
 		m_nMethod(1), m_pSChar(&pValue), m_pConverter(pConverter) {}
 
+	CFarIntegerStorage(bool *pValue, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
+		m_nMethod(0), m_pUChar((unsigned char *)pValue), m_pConverter(pConverter) {}
+	CFarIntegerStorage(bool &pValue, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
+		m_nMethod(0), m_pUChar((unsigned char *)&pValue), m_pConverter(pConverter) {}
+
 	CFarIntegerStorage(unsigned short *pValue, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
 		m_nMethod(2), m_pUShort(pValue), m_pConverter(pConverter) {}
 	CFarIntegerStorage(unsigned short &pValue, CFarIntegerConverter *pConverter = &CFarIntegerConverter::Instance):
