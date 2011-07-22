@@ -79,6 +79,14 @@ input mode under Windows. */
 #define fileno _fileno
 #endif
 
+/* A user sent this fix for Borland Builder 5 under Windows. */
+
+#ifdef __BORLANDC__
+#define _setmode(handle, mode) setmode(handle, mode)
+#endif
+
+/* Not Windows */
+
 #else
 #include <sys/time.h>          /* These two includes are needed */
 #include <sys/resource.h>      /* for setrlimit(). */
@@ -513,6 +521,30 @@ static const unsigned char tables1[] = {
 18,18,18,18,18,18,18,0,
 18,18,18,18,18,18,18,18
 };
+
+
+
+
+#ifndef HAVE_STRERROR
+/*************************************************
+*     Provide strerror() for non-ANSI libraries  *
+*************************************************/
+
+/* Some old-fashioned systems still around (e.g. SunOS4) don't have strerror()
+in their libraries, but can provide the same facility by this simple
+alternative function. */
+
+extern int   sys_nerr;
+extern char *sys_errlist[];
+
+char *
+strerror(int n)
+{
+if (n < 0 || n >= sys_nerr) return "unknown error number";
+return sys_errlist[n];
+}
+#endif /* HAVE_STRERROR */
+
 
 
 
@@ -1564,6 +1596,7 @@ while (!done)
       case 'U': options |= PCRE_UNGREEDY; break;
       case 'W': options |= PCRE_UCP; break;
       case 'X': options |= PCRE_EXTRA; break;
+      case 'Y': options |= PCRE_NO_START_OPTIMISE; break;
       case 'Z': debug_lengths = 0; break;
       case '8': options |= PCRE_UTF8; use_utf8 = 1; break;
       case '?': options |= PCRE_NO_UTF8_CHECK; break;
@@ -1900,7 +1933,7 @@ while (!done)
       if (do_flip) all_options = byteflip(all_options, sizeof(all_options));
 
       if (get_options == 0) fprintf(outfile, "No options\n");
-        else fprintf(outfile, "Options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
+        else fprintf(outfile, "Options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
           ((get_options & PCRE_ANCHORED) != 0)? " anchored" : "",
           ((get_options & PCRE_CASELESS) != 0)? " caseless" : "",
           ((get_options & PCRE_EXTENDED) != 0)? " extended" : "",
@@ -1916,6 +1949,7 @@ while (!done)
           ((get_options & PCRE_UTF8) != 0)? " utf8" : "",
           ((get_options & PCRE_UCP) != 0)? " ucp" : "",
           ((get_options & PCRE_NO_UTF8_CHECK) != 0)? " no_utf8_check" : "",
+          ((get_options & PCRE_NO_START_OPTIMIZE) != 0)? " no_start_optimize" : "",
           ((get_options & PCRE_DUPNAMES) != 0)? " dupnames" : "");
 
       if (jchanged) fprintf(outfile, "Duplicate name status changes\n");
@@ -2108,6 +2142,7 @@ while (!done)
     int getlist = 0;
     int gmatched = 0;
     int start_offset = 0;
+    int start_offset_sign = 1;
     int g_notempty = 0;
     int use_dfa = 0;
 
@@ -2240,7 +2275,13 @@ while (!done)
         continue;
 
         case '>':
+        if (*p == '-')
+          {
+          start_offset_sign = -1;
+          p++;
+          }
         while(isdigit(*p)) start_offset = start_offset * 10 + *p++ - '0';
+        start_offset *= start_offset_sign;
         continue;
 
         case 'A':  /* Option setting */
@@ -2313,7 +2354,9 @@ while (!done)
 #endif
           use_dfa = 1;
         continue;
+#endif
 
+#if !defined NODFA
         case 'F':
         options |= PCRE_DFA_SHORTEST;
         continue;
@@ -2765,11 +2808,13 @@ while (!done)
       to advance the start offset, and continue. We won't be at the end of the
       string - that was checked before setting g_notempty.
 
-      Complication arises in the case when the newline option is "any" or
-      "anycrlf". If the previous match was at the end of a line terminated by
-      CRLF, an advance of one character just passes the \r, whereas we should
-      prefer the longer newline sequence, as does the code in pcre_exec().
-      Fudge the offset value to achieve this.
+      Complication arises in the case when the newline convention is "any",
+      "crlf", or "anycrlf". If the previous match was at the end of a line
+      terminated by CRLF, an advance of one character just passes the \r,
+      whereas we should prefer the longer newline sequence, as does the code in
+      pcre_exec(). Fudge the offset value to achieve this. We check for a
+      newline setting in the pattern; if none was set, use pcre_config() to
+      find the default.
 
       Otherwise, in the case of UTF-8 matching, the advance must be one
       character, not one byte. */
@@ -2794,6 +2839,7 @@ while (!done)
                     (d == -1)? PCRE_NEWLINE_ANY : 0;
             }
           if (((obits & PCRE_NEWLINE_BITS) == PCRE_NEWLINE_ANY ||
+               (obits & PCRE_NEWLINE_BITS) == PCRE_NEWLINE_CRLF ||
                (obits & PCRE_NEWLINE_BITS) == PCRE_NEWLINE_ANYCRLF)
               &&
               start_offset < len - 1 &&
@@ -2804,10 +2850,8 @@ while (!done)
             {
             while (start_offset + onechar < len)
               {
-              int tb = bptr[start_offset+onechar];
-              if (tb <= 127) break;
-              tb &= 0xc0;
-              if (tb != 0 && tb != 0xc0) onechar++;
+              if ((bptr[start_offset+onechar] & 0xc0) != 0x80) break;
+              onechar++;
               }
             }
           use_offsets[1] = start_offset + onechar;
