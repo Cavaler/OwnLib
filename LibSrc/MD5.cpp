@@ -284,7 +284,22 @@ void CMD5::Update(
 
 	// Buffer remaining input
 	memcpy( &m_Buffer[ Index ], &InpBuf[ i ], InpLen - i );
-	}
+}
+
+#include <string>
+using namespace std;
+#include "StringEx.h"
+
+void CMD5::Update(const char *szString)
+{
+	Update((BYTE *)szString, strlen(szString));
+}
+
+void CMD5::Update(const wchar_t *szString, int nCP)
+{
+	string strEncoded = StrFromUnicode(szString, nCP);
+	Update((BYTE *)strEncoded.data(), strEncoded.size());
+}
 
 /*----------------------------------------------------------
 	MD5 finalization.

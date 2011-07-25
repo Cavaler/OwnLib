@@ -36,7 +36,7 @@
 #define MD5_MSG_DIGEST_SIZE ( 16 )
 
 class CMD5 {
-	private:
+private:
 	DWORD m_State[4];	// state (ABCD)
 	DWORD m_Count[2];	// number of bits, modulo 2^64 (lsb first)
 	BYTE m_Buffer[64];	// input buffer
@@ -44,11 +44,14 @@ class CMD5 {
 	//@cmember Transformation.
 	void Transform(const BYTE block[64]);
 
-	public:
+public:
 	CMD5();
 	CMD5(const BYTE* InpBuf, UINT InpLen);
 
 	void Update(const BYTE* InpBuf, UINT InpLen);
+	void Update(const char *szString);
+	void Update(const wchar_t *szString, int nCP = CP_ACP);
+
 	void Final(BYTE Result[16]);
 	void FinalHex(char *Buffer);
 	void FinalHex(wchar_t *Buffer);
