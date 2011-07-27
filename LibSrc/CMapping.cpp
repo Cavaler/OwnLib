@@ -1,4 +1,7 @@
 #include "CMapping.h"
+#include <string>
+using namespace std;
+#include "StringEx.h"
 
 CFileMapping::CFileMapping() : m_hFile(INVALID_HANDLE_VALUE), m_hMapping(NULL), m_pData(NULL), m_dwPos(0) {
 }
@@ -18,7 +21,13 @@ bool CFileMapping::operator !() {
 void *CFileMapping::Open(const TCHAR *szFileName, bool bWriteable, DWORD dwResize) {
 	if (dwResize > 0) bWriteable = true;
 
-	m_hFile = CreateFile(szFileName,
+#ifdef UNICODE
+	std::wstring strFileName = L"\\\\?\\" + std::wstring(szFileName);
+#else
+	std::wstring strFileName = L"\\\\?\\" + OEMToUnicode(szFileName);
+#endif
+
+	m_hFile = CreateFileW(strFileName.c_str(),
 		bWriteable ? GENERIC_READ|GENERIC_WRITE : GENERIC_READ,
 		bWriteable ? 0 : FILE_SHARE_READ, NULL,
 		bWriteable ? OPEN_ALWAYS : OPEN_EXISTING,
