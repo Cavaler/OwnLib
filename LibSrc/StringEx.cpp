@@ -1,4 +1,3 @@
-#include "StringEx.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -7,6 +6,8 @@
 #include <vector>
 #include <string>
 using namespace std;
+
+#include "StringEx.h"
 
 const char *strechr(const char *str, int ch) {
 	const char *sz = strchr(str, ch);
@@ -228,4 +229,28 @@ string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrU
 
 bool DefCharFromUnicode() {
 	return g_bUsedDefaultChar != 0;
+}
+
+tstring URLEncode(const TCHAR *szString)
+{
+	tstring strResult;
+
+	while (szString[0]) {
+		BYTE c = (BYTE)szString[0];
+		
+		if (
+			((c >= 'a') && (c <= 'z')) ||
+			((c >= 'A') && (c <= 'Z')) ||
+			((c >= '0') && (c <= '9')) ||
+			(c == '-') || (c == '.') || (c == '_') || (c == '~')
+			)
+		{
+			strResult += szString[0];
+		} else {
+			strResult += FormatStr(_T("%%%02X"), c);
+		}
+		szString++;
+	}
+
+	return strResult;
 }

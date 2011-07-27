@@ -41,6 +41,9 @@ string ANSIFromUnicode(const wstring &wstrUnicode);
 string UTF8FromUnicode(const wstring &wstrUnicode);
 bool   DefCharFromUnicode();
 
+#include <tstring.h>
+tstring URLEncode(const TCHAR *szString);
+
 #if (defined _VECTOR_) || (defined _STLP_VECTOR)
 void ParseWordsTo(string Line,vector<string> &Coll);
 #endif
