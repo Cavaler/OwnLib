@@ -16,6 +16,8 @@ using namespace std;
 #define PCRE_SPLIT_STRIPLEADING			0x80000000
 #define PCRE_SPLIT_NOSTRIPTRAILING		0x40000000
 
+#define PCRE_FREE(p) if (p) { pcre_free(p); p = NULL; }
+
 #ifdef UNICODE
 
 pcre * pcre_compile(const wchar_t *pattern, int options, const wchar_t **errorptr, int *erroroffset, const unsigned char *tables);
