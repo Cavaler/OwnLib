@@ -76,8 +76,14 @@ void CFarDialog::SetFocus(int Focus, int Shift) {
 }
 
 LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
-	static CFarDialog *pDlg = NULL;
-	if (Msg == DN_INITDIALOG) pDlg = (CFarDialog *)Param2;
+	static std::map<HANDLE, CFarDialog *> sDlgMap;
+	CFarDialog *pDlg;
+	if (Msg == DN_INITDIALOG) {
+		pDlg = (CFarDialog *)Param2;
+		sDlgMap[hDlg] = pDlg;
+	} else {
+		pDlg = sDlgMap[hDlg];
+	}
 
 	return pDlg->WindowProc(hDlg, Msg, Param1, Param2);
 }
