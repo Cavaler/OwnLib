@@ -323,7 +323,7 @@ them both to 0; an emulation function will be used. */
 
 /* Define to the type of a signed integer type of width exactly 64 bits if
    such a type exists and the standard includes do not define it. */
-/* #undef int64_t */
+#define int64_t __int64
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
