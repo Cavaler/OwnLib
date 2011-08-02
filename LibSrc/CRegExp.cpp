@@ -45,10 +45,10 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 
 	string szSubject = UTF8FromUnicode(wstring(subject, length));
 
-	std::map<int, int> utf2char;
-	std::map<int, int> char2utf;
+	std::map<size_t, size_t> utf2char;
+	std::map<size_t, size_t> char2utf;
 	utf2char[-1] = -1;	// For nonexistent matches
-	int nByte = 0, nChar = 0;
+	size_t nByte = 0, nChar = 0;
 	for (; nByte < szSubject.length(); ) {
 		utf2char[nByte] = nChar;
 		char2utf[nChar] = nByte;

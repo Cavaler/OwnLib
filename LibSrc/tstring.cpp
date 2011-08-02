@@ -13,6 +13,11 @@ template<> static wchar_t * CStringT<wchar_t>::ctoa(int n, wchar_t *sz) { return
 template<> static int CStringT<char>   ::cstrlen(const char   *sz)  { return strlen(sz); }
 template<> static int CStringT<wchar_t>::cstrlen(const wchar_t *sz) { return wcslen(sz); }
 
+template<> static       char    *CStringT<char   >::cstrchr(      char    *sz, char    c) { return strchr(sz, c); }
+template<> static const char    *CStringT<char   >::cstrchr(const char    *sz, char    c) { return strchr(sz, c); }
+template<> static       wchar_t *CStringT<wchar_t>::cstrchr(      wchar_t *sz, wchar_t c) { return wcschr(sz, c); }
+template<> static const wchar_t *CStringT<wchar_t>::cstrchr(const wchar_t *sz, wchar_t c) { return wcschr(sz, c); }
+
 template<> static int CStringT<char>   ::csprintf_s(char    *sz, size_t count, const char    *szFormat, ...) {
 	va_list vaList;
 	va_start(vaList, szFormat);

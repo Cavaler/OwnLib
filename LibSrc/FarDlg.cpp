@@ -132,7 +132,7 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 #ifdef UNICODE
 	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,&DialogItems[0],Items.size(),0,m_dwFlags,
 		AnyWindowProc() ? s_WindowProc : NULL,(long)this);
-	for (int nItem = 0; nItem < Items.size(); nItem++) {
+	for (size_t nItem = 0; nItem < Items.size(); nItem++) {
 		Items[nItem]->m_hDlg = hDlg;
 		Items[nItem]->m_nItem = nItem;
 	}
@@ -202,7 +202,7 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 #ifdef UNICODE
 	StartupInfo.DialogFree(hDlg);
 
-	for (int nItem = 0; nItem < Items.size(); nItem++) {
+	for (size_t nItem = 0; nItem < Items.size(); nItem++) {
 		if (DialogItems[nItem].PtrData) free((TCHAR *)DialogItems[nItem].PtrData);
 	}
 #endif
@@ -222,7 +222,7 @@ void CFarDialog::SetUseID(bool bUseID)
 
 int  CFarDialog::GetID(int nIndex)
 {
-	if ((nIndex < 0) || (nIndex >= Items.size())) return 0;
+	if ((nIndex < 0) || (nIndex >= (int)Items.size())) return 0;
 	return Items[nIndex]->m_nOwnID;
 }
 

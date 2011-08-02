@@ -30,6 +30,8 @@ public:
 	static int ctoi(const CHAR *sz);
 	static CHAR *ctoa(int n, CHAR *sz);
 	static int cstrlen(const CHAR *sz);
+	static CHAR *cstrchr(CHAR *sz, CHAR c);
+	static const CHAR *cstrchr(const CHAR *sz, CHAR c);
 	static int csprintf_s(CHAR *sz, size_t count, const CHAR *szFormat, ...);
 
 	static CHAR *__T2(char *sz, wchar_t *wsz);

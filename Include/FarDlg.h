@@ -81,7 +81,8 @@ public:
 protected:
 	HANDLE	m_hDlg;
 
-	int X1,Y1,X2,Y2,Focused;
+	int X1,Y1,X2,Y2;
+	size_t Focused;
 	const TCHAR *HelpTopic;
 
 	vector<CFarDialogItem *>	Items;

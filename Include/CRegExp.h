@@ -41,10 +41,12 @@ public:
 	// Preparing
 	CRegExpT();
 	CRegExpT(cstring strPattern, int iCompileFlags = 0);
+	~CRegExpT();
+
 	bool Compile(cstring strPattern, int iCompileFlags = 0);
 	operator bool() {return m_pPattern != NULL;}
 	int RefCount() {return m_iRefCount;}
-	~CRegExpT();
+	int RefStart(int nRef) { return m_piRefs[nRef]; }
 
 	// Using
 	bool Match(cstring strAnalyze, int iExecFlags = 0, vector<cstring> *arrReferences = NULL);

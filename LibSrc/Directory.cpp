@@ -114,7 +114,11 @@ tstring GetFullFileName(const tstring &strPath)
 	vector<wchar_t> arrFull(dwSize);
 	GetFullPathNameW(wstrPath.c_str(), dwSize, &arrFull[0], NULL);
 
+#ifdef UNICODE
+	return &arrFull[0];
+#else
 	return StrFromUnicode(&arrFull[0], CP_OEMCP);
+#endif
 }
 
 tstring GetFullFileName(const tstring &strPath, const tstring &strBase) {
