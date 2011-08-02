@@ -227,6 +227,9 @@ string OEMFromUnicode (const wstring &wstrUnicode) { return StrFromUnicode(wstrU
 string ANSIFromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_ACP  ); }
 string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrUnicode, CP_UTF8 ); }
 
+string StrFromUnicode(const string &strMBCS, UINT nCP) { return strMBCS; }
+wstring StrToUnicode(const wstring &wstrUnicode, UINT nCP) { return wstrUnicode; }
+
 bool DefCharFromUnicode() {
 	return g_bUsedDefaultChar != 0;
 }

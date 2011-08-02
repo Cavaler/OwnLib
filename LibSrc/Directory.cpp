@@ -7,6 +7,7 @@
 using namespace std;
 
 #include <Directory.h>
+#include <StringEx.h>
 
 BOOL DirectoryExists(const TCHAR *DirName) {
 	int Length=_tcslen(DirName);
@@ -103,13 +104,17 @@ tstring GetFileName(const tstring &strPath) {
 	return (nPos == tstring::npos) ? strPath : strPath.substr(nPos + 1);
 }
 
-tstring GetFullFileName(const tstring &strPath) {
-	DWORD dwSize = GetFullPathName(strPath.c_str(), 0, NULL, NULL);
+tstring GetFullFileName(const tstring &strPath)
+{
+	wstring wstrPath = StrToUnicode(strPath, CP_OEMCP);
+
+	DWORD dwSize = GetFullPathNameW(wstrPath.c_str(), 0, NULL, NULL);
 	if (!dwSize) return _T("");
 
-	vector<TCHAR> arrFull(dwSize);
-	GetFullPathName(strPath.c_str(), dwSize, &arrFull[0], NULL);
-	return &arrFull[0];
+	vector<wchar_t> arrFull(dwSize);
+	GetFullPathNameW(wstrPath.c_str(), dwSize, &arrFull[0], NULL);
+
+	return StrFromUnicode(&arrFull[0], CP_OEMCP);
 }
 
 tstring GetFullFileName(const tstring &strPath, const tstring &strBase) {

@@ -41,6 +41,10 @@ string ANSIFromUnicode(const wstring &wstrUnicode);
 string UTF8FromUnicode(const wstring &wstrUnicode);
 bool   DefCharFromUnicode();
 
+//	These two are blanks to avoid #ifdef UNICODE sometimes
+string StrFromUnicode(const string &strMBCS, UINT nCP);
+wstring StrToUnicode(const wstring &wstrUnicode, UINT nCP);
+
 #include <tstring.h>
 tstring URLEncode(const TCHAR *szString);
 
