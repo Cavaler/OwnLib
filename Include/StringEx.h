@@ -45,6 +45,11 @@ bool   DefCharFromUnicode();
 string StrFromUnicode(const string &strMBCS, UINT nCP);
 wstring StrToUnicode(const wstring &wstrUnicode, UINT nCP);
 
+void   StrToStr(const  string &strFrom,  string &strTo, UINT nCP);
+void   StrToStr(const  string &strFrom, wstring &strTo, UINT nCP);
+void   StrToStr(const wstring &strFrom,  string &strTo, UINT nCP);
+void   StrToStr(const wstring &strFrom, wstring &strTo, UINT nCP);
+
 #include <tstring.h>
 tstring URLEncode(const TCHAR *szString);
 

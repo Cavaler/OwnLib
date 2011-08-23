@@ -3,6 +3,8 @@
 #include <windows.h>
 
 #include "tstring.h"
+using namespace std;
+#include "StringEx.h"
 
 template<> static int CStringT<char>   ::ctoi(const char    *sz) { return  atoi(sz); }
 template<> static int CStringT<wchar_t>::ctoi(const wchar_t *sz) { return _wtoi(sz); }
@@ -31,6 +33,22 @@ template<> static int CStringT<wchar_t>::csprintf_s(wchar_t *sz, size_t count, c
 
 template<> static char    * CStringT<char>   ::__T2(char *sz, wchar_t *wsz) { return  sz; }
 template<> static wchar_t * CStringT<wchar_t>::__T2(char *sz, wchar_t *wsz) { return wsz; }
+
+template<class CHAR>
+typename CStringT<CHAR>::cstring
+CStringT<CHAR>::Convert(const std:: string &str, UINT nCP) {
+	cstring cstr;
+	StrToStr(str, cstr, nCP);
+	return cstr;
+}
+
+template<class CHAR>
+typename CStringT<CHAR>::cstring
+CStringT<CHAR>::Convert(const std::wstring &str, UINT nCP) {
+	cstring cstr;
+	StrToStr(str, cstr, nCP);
+	return cstr;
+}
 
 template<> static char    CStringT<char>   ::ConvertCase(char    ch, ECaseConvert Cvt)
 {

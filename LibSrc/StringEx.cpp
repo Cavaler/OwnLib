@@ -230,6 +230,11 @@ string UTF8FromUnicode(const wstring &wstrUnicode) { return StrFromUnicode(wstrU
 string StrFromUnicode(const string &strMBCS, UINT nCP) { return strMBCS; }
 wstring StrToUnicode(const wstring &wstrUnicode, UINT nCP) { return wstrUnicode; }
 
+void   StrToStr(const  string &strFrom,  string &strTo, UINT nCP) { strTo = strFrom; }
+void   StrToStr(const  string &strFrom, wstring &strTo, UINT nCP) { strTo = StrToUnicode  (strFrom, nCP); }
+void   StrToStr(const wstring &strFrom,  string &strTo, UINT nCP) { strTo = StrFromUnicode(strFrom, nCP); }
+void   StrToStr(const wstring &strFrom, wstring &strTo, UINT nCP) { strTo = strFrom; }
+
 bool DefCharFromUnicode() {
 	return g_bUsedDefaultChar != 0;
 }

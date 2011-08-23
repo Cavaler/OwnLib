@@ -34,6 +34,9 @@ public:
 	static const CHAR *cstrchr(const CHAR *sz, CHAR c);
 	static int csprintf_s(CHAR *sz, size_t count, const CHAR *szFormat, ...);
 
+	static cstring Convert(const std:: string &str, UINT nCP);
+	static cstring Convert(const std::wstring &str, UINT nCP);
+
 	static CHAR *__T2(char *sz, wchar_t *wsz);
 
 	static CHAR ConvertCase(CHAR ch, ECaseConvert Cvt);
