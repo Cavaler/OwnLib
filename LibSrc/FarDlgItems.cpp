@@ -93,6 +93,11 @@ void CFarTextItem::CreateItem(FarDialogItem *Item) {
 	CFarDialogItem::CreateItem(Item);
 }
 
+tstring *CFarTextItem::HotkeyText()
+{
+	return (Flags & DIF_SEPARATOR|DIF_SEPARATOR2|DIF_SHOWAMPERSAND) ? NULL : &Text;
+}
+
 // ********************** BUTTON ***********************
 
 CFarButtonItem::CFarButtonItem(int X,int Y,DWORD dwFlags,BOOL bDefault, const CFarText &szText):
@@ -102,6 +107,11 @@ void CFarButtonItem::CreateItem(FarDialogItem *Item) {
 	Item->Type=DI_BUTTON;
 	CFarDialogItem::CreateItem(Item);
 	Item->DefaultButton=Default;
+}
+
+tstring *CFarButtonItem::HotkeyText()
+{
+	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
 }
 
 // ********************* CHECKBOX **********************
@@ -158,6 +168,11 @@ void CFarCheckBoxItem::StoreData(FarDialogItem *Item) {
 			m_piStorage->Put(m_piStorage->GetI() & ~m_iValue);
 		break;
 	}
+}
+
+tstring *CFarCheckBoxItem::HotkeyText()
+{
+	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
 }
 
 CFarCheckBoxItem::~CFarCheckBoxItem() {
@@ -221,6 +236,11 @@ void CFarCheckBox3Item::StoreData(FarDialogItem *Item) {
 	}
 }
 
+tstring *CFarCheckBox3Item::HotkeyText()
+{
+	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
+}
+
 CFarCheckBox3Item::~CFarCheckBox3Item() {
 	switch (m_nMethod) {
 	case 0:
@@ -279,6 +299,11 @@ void CFarRadioButtonItem::StoreData(FarDialogItem *Item) {
 		if (nSelected) m_piStorage->Put(m_iValue);
 		break;
 	}
+}
+
+tstring *CFarRadioButtonItem::HotkeyText()
+{
+	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
 }
 
 // ************************ LIST BOX ***********************

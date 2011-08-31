@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 using namespace std;
 
 #include <Far.h>
@@ -43,6 +44,9 @@ public:
 	//	Management
 	void SetFocus(int Focus, int Shift = 0);
 	int  Display(int ValidExitCodes,...);
+
+	static bool AutoHotkeys;
+	void EnableAutoHotkeys(bool bEnable);
 
 	void SetUseID(bool bUseID);
 	int  GetID(int nIndex);
@@ -93,6 +97,11 @@ protected:
 
 	bool	m_bUseID;
 	int		m_nCancelID;
+
+	bool	m_bAutoHotkeys;
+	set<TCHAR>	m_setHotkeys;
+	bool CheckHotkey(tstring &strText);
+	void UpdateHotkey(tstring &strText);
 
 	int		Index(int nIndexOrID);
 
@@ -302,6 +311,7 @@ public:
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item) {return true;};
 	virtual void StoreData(FarDialogItem *Item) {};
+	virtual tstring *HotkeyText() {return NULL;}
 	virtual ~CFarDialogItem();
 protected:
 	int X1,Y1,X2,Y2;
@@ -339,6 +349,7 @@ class CFarTextItem:public CFarDialogItem {
 public:
 	CFarTextItem(int X,int Y,DWORD dwFlags, const CFarText &szText=CFarText());
 	virtual void CreateItem(FarDialogItem *Item);
+	virtual tstring *HotkeyText();
 protected:
 	BOOL Double;
 };
@@ -347,6 +358,7 @@ class CFarButtonItem:public CFarDialogItem {
 public:
 	CFarButtonItem(int X,int Y,DWORD dwFlags,BOOL bDefault,const CFarText &szText);
 	virtual void CreateItem(FarDialogItem *Item);
+	virtual tstring *HotkeyText();
 protected:
 	BOOL Default;
 };
@@ -360,6 +372,7 @@ public:
 	CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iMaskValue);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
+	virtual tstring *HotkeyText();
 	virtual ~CFarCheckBoxItem();
 protected:
 	int m_nMethod;
@@ -379,6 +392,7 @@ public:
 	CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
+	virtual tstring *HotkeyText();
 	virtual ~CFarCheckBox3Item();
 protected:
 	int m_nMethod;
@@ -401,6 +415,7 @@ public:
 	CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iValue);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
+	virtual tstring *HotkeyText();
 };
 
 class CFarListBoxItem:public CFarDialogItem {

@@ -15,11 +15,15 @@ namespace FarLib {
 
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
-m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
+m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),
+m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1),m_bAutoHotkeys(AutoHotkeys)
+{}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
-m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1) {}
+m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),
+m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1),m_bAutoHotkeys(AutoHotkeys)
+{}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items.push_back(Item);
@@ -126,7 +130,17 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	vector<FarDialogItem> DialogItems(Items.size());
 	int Result;
 
-	for (size_t I=0; I<Items.size(); I++) Items[I]->CreateItem(&DialogItems[I]);
+	for (size_t I=0; I<Items.size(); I++) {
+		tstring *pstrText = Items[I]->HotkeyText();
+		if (pstrText) CheckHotkey(*pstrText);
+	}
+
+	for (size_t I=0; I<Items.size(); I++) {
+		tstring *pstrText = Items[I]->HotkeyText();
+		if (pstrText) UpdateHotkey(*pstrText);
+
+		Items[I]->CreateItem(&DialogItems[I]);
+	}
 	if (Focused < Items.size()) DialogItems[Focused].Focus=TRUE;
 
 #ifdef UNICODE
@@ -208,6 +222,70 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 #endif
 
 	return Result;
+}
+
+bool CFarDialog::AutoHotkeys = false;
+
+void CFarDialog::EnableAutoHotkeys(bool bEnable)
+{
+	m_bAutoHotkeys = bEnable;
+}
+
+TCHAR OEMUpper(TCHAR cKey)
+{
+#ifndef UNICODE
+	OemToCharBuffA(&cKey, &cKey, 1);
+	cKey = (int)CharUpperA((LPSTR)cKey);
+	CharToOemBuffA(&cKey, &cKey, 1);
+#else
+	cKey = (int)CharUpper((LPWSTR)cKey);
+#endif
+	return cKey;
+}
+
+bool CFarDialog::CheckHotkey(tstring &strText)
+{
+	if (!m_bAutoHotkeys) return true;
+	if (strText.empty()) return true;
+
+	TCHAR cKey = 0;
+	for (size_t nChar = 0; nChar < strText.size()-1; nChar++) {
+		if (strText[nChar] == '&') {
+			int nCount = strText.find_first_not_of('&', nChar);
+			if (nCount == tstring::npos) nCount = strText.size();
+			nCount = nCount-nChar;
+
+			if (nCount == 1) {
+				cKey = strText[nChar+1];
+				break;
+			} else if (nCount & 0x01) {
+				cKey = '&';
+				break;
+			}
+			nChar += nCount-1;
+		}
+	}
+
+	if (cKey != 0) {
+		m_setHotkeys.insert(OEMUpper(cKey));
+		return true;
+	}
+
+	return false;
+}
+
+void CFarDialog::UpdateHotkey(tstring &strText)
+{
+	if (CheckHotkey(strText)) return;
+
+	for (size_t nChar = 0; nChar < strText.size(); nChar++) {
+		TCHAR cKey = OEMUpper(strText[nChar]);
+		if (m_setHotkeys.find(cKey) == m_setHotkeys.end()) {
+			strText.insert(nChar, 1, '&');
+			m_setHotkeys.insert(cKey);
+			break;
+		}
+	}
 }
 
 HANDLE CFarDialog::hDlg() const
