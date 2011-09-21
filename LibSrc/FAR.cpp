@@ -360,6 +360,11 @@ void HideWaitMessage() {
 bool Interrupted() {
 	if (g_bInterrupted) return true;
 
+	static DWORD dwTick = 0;
+	DWORD dwCurTick = GetTickCount();
+	if (dwCurTick < dwTick+250) return false;
+	dwTick = dwCurTick;
+
 	static HANDLE hInput=GetStdHandle(STD_INPUT_HANDLE);
 	INPUT_RECORD rcInput;
 	DWORD dwRead;
