@@ -7,8 +7,7 @@ public:
 	inline CDebugTimer(const TCHAR *szMessage) : m_strMessage(szMessage), m_dwStart(GetTickCount()) {}
 
 	inline void Stop() {
-		OutputDebugString(FormatStr(m_strMessage.c_str(), GetTickCount() - m_dwStart).c_str());
-		OutputDebugString(_T("\r\n"));
+		OutputDebugString(FormatStr((m_strMessage+_T("\r\n")).c_str(), GetTickCount() - m_dwStart).c_str());
 		m_dwStart = 0;
 	}
 
