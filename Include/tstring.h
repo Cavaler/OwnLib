@@ -40,6 +40,9 @@ public:
 	static CHAR *__T2(char *sz, wchar_t *wsz);
 
 	static CHAR ConvertCase(CHAR ch, ECaseConvert Cvt);
+
+	//	Same as cstring(szString, nLength), but no error on string(NULL, 0);
+	static cstring MakeString(const CHAR *szString, size_t nLength);
 };
 
 #define _T2(sz) __T2(sz, L ## sz)

@@ -97,6 +97,12 @@ template<> static wchar_t CStringT<wchar_t>::ConvertCase(wchar_t ch, ECaseConver
 	}
 }
 
+template<class CHAR>
+typename CStringT<CHAR>::cstring
+CStringT<CHAR>::MakeString(const CHAR *szString, size_t nLength) {
+	return (nLength == 0) ? cstring() : cstring(szString, nLength);
+}
+
 template class CStringT<char>;
 #ifdef UNICODE
 template class CStringT<wchar_t>;
