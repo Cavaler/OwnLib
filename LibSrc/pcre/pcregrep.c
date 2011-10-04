@@ -74,9 +74,9 @@ typedef int BOOL;
 #define OFFSET_SIZE 99
 
 #if BUFSIZ > 8192
-#define MBUFTHIRD BUFSIZ
+#define PATBUFSIZE BUFSIZ
 #else
-#define MBUFTHIRD 8192
+#define PATBUFSIZE 8192
 #endif
 
 /* Values for the "filenames" variable, which specifies options for file name
@@ -135,6 +135,7 @@ static char *colour_string = (char *)"1;31";
 static char *colour_option = NULL;
 static char *dee_option = NULL;
 static char *DEE_option = NULL;
+static char *main_buffer = NULL;
 static char *newline = NULL;
 static char *pattern_filename = NULL;
 static char *stdin_name = (char *)"(standard input)";
@@ -159,6 +160,8 @@ static pcre *exclude_dir_compiled = NULL;
 static int after_context = 0;
 static int before_context = 0;
 static int both_context = 0;
+static int bufthird = PCREGREP_BUFSIZE;
+static int bufsize = 3*PCREGREP_BUFSIZE;
 static int dee_action = dee_READ;
 static int DEE_action = DEE_READ;
 static int error_count = 0;
@@ -214,12 +217,14 @@ used to identify them. */
 #define N_LBUFFER      (-12)
 #define N_M_LIMIT      (-13)
 #define N_M_LIMIT_REC  (-14)
+#define N_BUFSIZE      (-15)
 
 static option_item optionlist[] = {
   { OP_NODATA,     N_NULL,   NULL,              "",              "  terminate options" },
   { OP_NODATA,     N_HELP,   NULL,              "help",          "display this help and exit" },
   { OP_NUMBER,     'A',      &after_context,    "after-context=number", "set number of following context lines" },
   { OP_NUMBER,     'B',      &before_context,   "before-context=number", "set number of prior context lines" },
+  { OP_NUMBER,     N_BUFSIZE,&bufthird,         "buffer-size=number", "set processing buffer size parameter" },
   { OP_OP_STRING,  N_COLOUR, &colour_option,    "color=option",  "matched text color option" },
   { OP_OP_STRING,  N_COLOUR, &colour_option,    "colour=option", "matched text colour option" },
   { OP_NUMBER,     'C',      &both_context,     "context=number", "set number of context lines, before & after" },
@@ -634,7 +639,8 @@ Arguments:
   endptr    end of available data
   lenptr    where to put the length of the eol sequence
 
-Returns:    pointer to the last byte of the line, including the newline byte(s)
+Returns:    pointer after the last byte of the line,
+            including the newline byte(s)
 */
 
 static char *
@@ -935,10 +941,11 @@ is used multiple times for the same subject when colouring is enabled, in order
 to find all possible matches.
 
 Arguments:
-  matchptr    the start of the subject
-  length      the length of the subject to match
-  offsets     the offets vector to fill in
-  mrc         address of where to put the result of pcre_exec()
+  matchptr     the start of the subject
+  length       the length of the subject to match
+  startoffset  where to start matching
+  offsets      the offets vector to fill in
+  mrc          address of where to put the result of pcre_exec()
 
 Returns:      TRUE if there was a match
               FALSE if there was no match
@@ -946,7 +953,8 @@ Returns:      TRUE if there was a match
 */
 
 static BOOL
-match_patterns(char *matchptr, size_t length, int *offsets, int *mrc)
+match_patterns(char *matchptr, size_t length, int startoffset, int *offsets,
+  int *mrc)
 {
 int i;
 size_t slen = length;
@@ -958,8 +966,8 @@ if (slen > 200)
   }
 for (i = 0; i < pattern_count; i++)
   {
-  *mrc = pcre_exec(pattern_list[i], hints_list[i], matchptr, (int)length, 0,
-    PCRE_NOTEMPTY, offsets, OFFSET_SIZE);
+  *mrc = pcre_exec(pattern_list[i], hints_list[i], matchptr, (int)length,
+    startoffset, PCRE_NOTEMPTY, offsets, OFFSET_SIZE);
   if (*mrc >= 0) return TRUE;
   if (*mrc == PCRE_ERROR_NOMATCH) continue;
   fprintf(stderr, "pcregrep: pcre_exec() gave error %d while matching ", *mrc);
@@ -987,7 +995,7 @@ return FALSE;  /* No match, no errors */
 *************************************************/
 
 /* This is called from grep_or_recurse() below. It uses a buffer that is three
-times the value of MBUFTHIRD. The matching point is never allowed to stray into
+times the value of bufthird. The matching point is never allowed to stray into
 the top third of the buffer, thus keeping more of the file available for
 context printing or for multiline scanning. For large files, the pointer will
 be in the middle third most of the time, so the bottom third is available for
@@ -998,17 +1006,19 @@ Arguments:
                the gzFile pointer when reading is via libz
                the BZFILE pointer when reading is via libbz2
   frtype       FR_PLAIN, FR_LIBZ, or FR_LIBBZ2
+  filename     the file name or NULL (for errors)
   printname    the file name if it is to be printed for each match
                or NULL if the file name is not to be printed
                it cannot be NULL if filenames[_nomatch]_only is set
 
 Returns:       0 if there was at least one match
                1 otherwise (no matches)
-               2 if there is a read error on a .bz2 file
+               2 if an overlong line is encountered
+               3 if there is a read error on a .bz2 file
 */
 
 static int
-pcregrep(void *handle, int frtype, char *printname)
+pcregrep(void *handle, int frtype, char *filename, char *printname)
 {
 int rc = 1;
 int linenumber = 1;
@@ -1017,8 +1027,7 @@ int count = 0;
 int filepos = 0;
 int offsets[OFFSET_SIZE];
 char *lastmatchrestart = NULL;
-char buffer[3*MBUFTHIRD];
-char *ptr = buffer;
+char *ptr = main_buffer;
 char *endptr;
 size_t bufflength;
 BOOL endhyphenpending = FALSE;
@@ -1043,7 +1052,7 @@ fail. */
 if (frtype == FR_LIBZ)
   {
   ingz = (gzFile)handle;
-  bufflength = gzread (ingz, buffer, 3*MBUFTHIRD);
+  bufflength = gzread (ingz, main_buffer, bufsize);
   }
 else
 #endif
@@ -1052,7 +1061,7 @@ else
 if (frtype == FR_LIBBZ2)
   {
   inbz2 = (BZFILE *)handle;
-  bufflength = BZ2_bzread(inbz2, buffer, 3*MBUFTHIRD);
+  bufflength = BZ2_bzread(inbz2, main_buffer, bufsize);
   if ((int)bufflength < 0) return 2;   /* Gotcha: bufflength is size_t; */
   }                                    /* without the cast it is unsigned. */
 else
@@ -1062,11 +1071,11 @@ else
   in = (FILE *)handle;
   if (is_file_tty(in)) input_line_buffered = TRUE;
   bufflength = input_line_buffered?
-    read_one_line(buffer, 3*MBUFTHIRD, in) :
-    fread(buffer, 1, 3*MBUFTHIRD, in);
+    read_one_line(main_buffer, bufsize, in) :
+    fread(main_buffer, 1, bufsize, in);
   }
 
-endptr = buffer + bufflength;
+endptr = main_buffer + bufflength;
 
 /* Loop while the current pointer is not at the end of the file. For large
 files, endptr will be at the end of the buffer when we are in the middle of the
@@ -1077,6 +1086,7 @@ while (ptr < endptr)
   {
   int endlinelength;
   int mrc = 0;
+  int startoffset = 0;
   BOOL match;
   char *matchptr = ptr;
   char *t = ptr;
@@ -1093,6 +1103,20 @@ while (ptr < endptr)
   t = end_of_line(t, endptr, &endlinelength);
   linelength = t - ptr - endlinelength;
   length = multiline? (size_t)(endptr - ptr) : linelength;
+
+  /* Check to see if the line we are looking at extends right to the very end
+  of the buffer without a line terminator. This means the line is too long to
+  handle. */
+
+  if (endlinelength == 0 && t == main_buffer + bufsize)
+    {
+    fprintf(stderr, "pcregrep: line %d%s%s is too long for the internal buffer\n"
+                    "pcregrep: check the --buffer-size option\n",
+                    linenumber,
+                    (filename == NULL)? "" : " of file ",
+                    (filename == NULL)? "" : filename);
+    return 2;
+    }
 
   /* Extra processing for Jeffrey Friedl's debugging. */
 
@@ -1153,7 +1177,7 @@ while (ptr < endptr)
   than NOMATCH. This code is in a subroutine so that it can be re-used for
   finding subsequent matches when colouring matched lines. */
 
-  match = match_patterns(matchptr, length, offsets, &mrc);
+  match = match_patterns(matchptr, length, startoffset, offsets, &mrc);
 
   /* If it's a match or a not-match (as required), do what's wanted. */
 
@@ -1186,10 +1210,10 @@ while (ptr < endptr)
     captured portion of it, as long as this string is not empty, and the
     --file-offsets and --line-offsets options output offsets for the matching
     substring (they both force --only-matching = 0). None of these options
-    prints any context. Afterwards, adjust the start and length, and then jump
-    back to look for further matches in the same line. If we are in invert
-    mode, however, nothing is printed and we do not restart - this could still
-    be useful because the return code is set. */
+    prints any context. Afterwards, adjust the start and then jump back to look
+    for further matches in the same line. If we are in invert mode, however,
+    nothing is printed and we do not restart - this could still be useful
+    because the return code is set. */
 
     else if (only_matching >= 0)
       {
@@ -1216,11 +1240,10 @@ while (ptr < endptr)
             }
           }
         else if (printname != NULL || number) fprintf(stdout, "\n");
-        matchptr += offsets[1];
-        length -= offsets[1];
         match = FALSE;
         if (line_buffered) fflush(stdout);
-        rc = 0;    /* Had some success */
+        rc = 0;                      /* Had some success */
+        startoffset = offsets[1];    /* Restart after the match */
         goto ONLY_MATCHING_RESTART;
         }
       }
@@ -1279,11 +1302,11 @@ while (ptr < endptr)
         int linecount = 0;
         char *p = ptr;
 
-        while (p > buffer && (lastmatchnumber == 0 || p > lastmatchrestart) &&
+        while (p > main_buffer && (lastmatchnumber == 0 || p > lastmatchrestart) &&
                linecount < before_context)
           {
           linecount++;
-          p = previous_line(p, buffer);
+          p = previous_line(p, main_buffer);
           }
 
         if (lastmatchnumber > 0 && p > lastmatchrestart && !hyphenprinted)
@@ -1353,19 +1376,17 @@ while (ptr < endptr)
       if (do_colour && !invert)
         {
         int plength;
-        int last_offset = 0;
         FWRITE(ptr, 1, offsets[0], stdout);
         fprintf(stdout, "%c[%sm", 0x1b, colour_string);
         FWRITE(ptr + offsets[0], 1, offsets[1] - offsets[0], stdout);
         fprintf(stdout, "%c[00m", 0x1b);
         for (;;)
           {
-          last_offset += offsets[1];
-          matchptr += offsets[1];
-          length -= offsets[1];
-          if (last_offset >= linelength + endlinelength ||
-              !match_patterns(matchptr, length, offsets, &mrc)) break;
-          FWRITE(matchptr, 1, offsets[0], stdout);
+          startoffset = offsets[1];
+          if (startoffset >= linelength + endlinelength ||
+              !match_patterns(matchptr, length, startoffset, offsets, &mrc))
+            break;
+          FWRITE(matchptr + startoffset, 1, offsets[0] - startoffset, stdout);
           fprintf(stdout, "%c[%sm", 0x1b, colour_string);
           FWRITE(matchptr + offsets[0], 1, offsets[1] - offsets[0], stdout);
           fprintf(stdout, "%c[00m", 0x1b);
@@ -1375,9 +1396,8 @@ while (ptr < endptr)
         and its line-ending characters (if they matched the pattern), so there
         may be no more to print. */
 
-        plength = (linelength + endlinelength) - last_offset;
-        if (plength > 0)
-          FWRITE(ptr + last_offset, 1, plength, stdout);
+        plength = (linelength + endlinelength) - startoffset;
+        if (plength > 0) FWRITE(ptr + startoffset, 1, plength, stdout);
         }
 
       /* Not colouring; no need to search for further matches */
@@ -1426,9 +1446,9 @@ while (ptr < endptr)
   /* If input is line buffered, and the buffer is not yet full, read another
   line and add it into the buffer. */
 
-  if (input_line_buffered && bufflength < sizeof(buffer))
+  if (input_line_buffered && bufflength < bufsize)
     {
-    int add = read_one_line(ptr, sizeof(buffer) - (ptr - buffer), in);
+    int add = read_one_line(ptr, bufsize - (ptr - main_buffer), in);
     bufflength += add;
     endptr += add;
     }
@@ -1438,11 +1458,11 @@ while (ptr < endptr)
   1/3 and refill it. Before we do this, if some unprinted "after" lines are
   about to be lost, print them. */
 
-  if (bufflength >= sizeof(buffer) && ptr > buffer + 2*MBUFTHIRD)
+  if (bufflength >= bufsize && ptr > main_buffer + 2*bufthird)
     {
     if (after_context > 0 &&
         lastmatchnumber > 0 &&
-        lastmatchrestart < buffer + MBUFTHIRD)
+        lastmatchrestart < main_buffer + bufthird)
       {
       do_after_lines(lastmatchnumber, lastmatchrestart, endptr, printname);
       lastmatchnumber = 0;
@@ -1450,32 +1470,32 @@ while (ptr < endptr)
 
     /* Now do the shuffle */
 
-    memmove(buffer, buffer + MBUFTHIRD, 2*MBUFTHIRD);
-    ptr -= MBUFTHIRD;
+    memmove(main_buffer, main_buffer + bufthird, 2*bufthird);
+    ptr -= bufthird;
 
 #ifdef SUPPORT_LIBZ
     if (frtype == FR_LIBZ)
-      bufflength = 2*MBUFTHIRD +
-        gzread (ingz, buffer + 2*MBUFTHIRD, MBUFTHIRD);
+      bufflength = 2*bufthird +
+        gzread (ingz, main_buffer + 2*bufthird, bufthird);
     else
 #endif
 
 #ifdef SUPPORT_LIBBZ2
     if (frtype == FR_LIBBZ2)
-      bufflength = 2*MBUFTHIRD +
-        BZ2_bzread(inbz2, buffer + 2*MBUFTHIRD, MBUFTHIRD);
+      bufflength = 2*bufthird +
+        BZ2_bzread(inbz2, main_buffer + 2*bufthird, bufthird);
     else
 #endif
 
-    bufflength = 2*MBUFTHIRD +
+    bufflength = 2*bufthird +
       (input_line_buffered?
-       read_one_line(buffer + 2*MBUFTHIRD, MBUFTHIRD, in) :
-       fread(buffer + 2*MBUFTHIRD, 1, MBUFTHIRD, in));
-    endptr = buffer + bufflength;
+       read_one_line(main_buffer + 2*bufthird, bufthird, in) :
+       fread(main_buffer + 2*bufthird, 1, bufthird, in));
+    endptr = main_buffer + bufflength;
 
     /* Adjust any last match point */
 
-    if (lastmatchnumber > 0) lastmatchrestart -= MBUFTHIRD;
+    if (lastmatchnumber > 0) lastmatchrestart -= bufthird;
     }
   }     /* Loop through the whole file */
 
@@ -1555,7 +1575,7 @@ BZFILE *inbz2 = NULL;
 
 if (strcmp(pathname, "-") == 0)
   {
-  return pcregrep(stdin, FR_PLAIN,
+  return pcregrep(stdin, FR_PLAIN, stdin_name,
     (filenames > FN_DEFAULT || (filenames == FN_DEFAULT && !only_one_at_top))?
       stdin_name : NULL);
   }
@@ -1687,7 +1707,7 @@ if (handle == NULL)
 
 /* Now grep the file */
 
-rc = pcregrep(handle, frtype, (filenames > FN_DEFAULT ||
+rc = pcregrep(handle, frtype, pathname, (filenames > FN_DEFAULT ||
   (filenames == FN_DEFAULT && !only_one_at_top))? pathname : NULL);
 
 /* Close in an appropriate manner. */
@@ -1698,14 +1718,14 @@ if (frtype == FR_LIBZ)
 else
 #endif
 
-/* If it is a .bz2 file and the result is 2, it means that the first attempt to
+/* If it is a .bz2 file and the result is 3, it means that the first attempt to
 read failed. If the error indicates that the file isn't in fact bzipped, try
 again as a normal file. */
 
 #ifdef SUPPORT_LIBBZ2
 if (frtype == FR_LIBBZ2)
   {
-  if (rc == 2)
+  if (rc == 3)
     {
     int errnum;
     const char *err = BZ2_bzerror(inbz2, &errnum);
@@ -1717,6 +1737,7 @@ if (frtype == FR_LIBBZ2)
     else if (!silent)
       fprintf(stderr, "pcregrep: Failed to read %s using bzlib: %s\n",
         pathname, err);
+    rc = 2;    /* The normal "something went wrong" code */
     }
   BZ2_bzclose(inbz2);
   }
@@ -1809,9 +1830,12 @@ for (op = optionlist; op->one_char != 0; op++)
   printf("%.*s%s\n", n, "                     ", op->help_text);
   }
 
-printf("\nWhen reading patterns from a file instead of using a command line option,\n");
+printf("\nNumbers may be followed by K or M, e.g. --buffer-size=100K.\n");
+printf("The default value for --buffer-size is %d.\n", PCREGREP_BUFSIZE);
+printf("When reading patterns from a file instead of using a command line option,\n");
 printf("trailing white space is removed and blank lines are ignored.\n");
-printf("There is a maximum of %d patterns.\n", MAX_PATTERN_COUNT);
+printf("There is a maximum of %d patterns, each of maximum size %d bytes.\n",
+  MAX_PATTERN_COUNT, PATBUFSIZE);
 
 printf("\nWith no FILEs, read standard input. If fewer than two FILEs given, assume -h.\n");
 printf("Exit status is 0 if any matches, 1 if no matches, and 2 if trouble.\n");
@@ -1913,7 +1937,7 @@ Returns:         TRUE on success, FALSE after an error
 static BOOL
 compile_single_pattern(char *pattern, int options, char *filename, int count)
 {
-char buffer[MBUFTHIRD + 16];
+char buffer[PATBUFSIZE];
 const char *error;
 int errptr;
 
@@ -1924,7 +1948,7 @@ if (pattern_count >= MAX_PATTERN_COUNT)
   return FALSE;
   }
 
-sprintf(buffer, "%s%.*s%s", prefix[process_options], MBUFTHIRD, pattern,
+sprintf(buffer, "%s%.*s%s", prefix[process_options], bufthird, pattern,
   suffix[process_options]);
 pattern_list[pattern_count] =
   pcre_compile(buffer, options, &error, &errptr, pcretables);
@@ -1983,7 +2007,7 @@ compile_pattern(char *pattern, int options, char *filename, int count)
 if ((process_options & PO_FIXED_STRINGS) != 0)
   {
   char *eop = pattern + strlen(pattern);
-  char buffer[MBUFTHIRD];
+  char buffer[PATBUFSIZE];
   for(;;)
     {
     int ellength;
@@ -2295,6 +2319,16 @@ for (i = 1; i < argc; i++)
     while (*endptr != 0 && isspace((unsigned char)(*endptr))) endptr++;
     while (isdigit((unsigned char)(*endptr)))
       n = n * 10 + (int)(*endptr++ - '0');
+    if (toupper(*endptr) == 'K')
+      {
+      n *= 1024;
+      endptr++;
+      }
+    else if (toupper(*endptr) == 'M')
+      {
+      n *= 1024*1024;
+      endptr++;
+      }
     if (*endptr != 0)
       {
       if (longop)
@@ -2461,12 +2495,14 @@ if (jfriedl_XT != 0 || jfriedl_XR != 0)
   }
 #endif
 
-/* Get memory to store the pattern and hints lists. */
+/* Get memory for the main buffer, and to store the pattern and hints lists. */
 
+bufsize = 3*bufthird;
+main_buffer = (char *)malloc(bufsize);
 pattern_list = (pcre **)malloc(MAX_PATTERN_COUNT * sizeof(pcre *));
 hints_list = (pcre_extra **)malloc(MAX_PATTERN_COUNT * sizeof(pcre_extra *));
 
-if (pattern_list == NULL || hints_list == NULL)
+if (main_buffer == NULL || pattern_list == NULL || hints_list == NULL)
   {
   fprintf(stderr, "pcregrep: malloc failed\n");
   goto EXIT2;
@@ -2498,7 +2534,7 @@ if (pattern_filename != NULL)
   int linenumber = 0;
   FILE *f;
   char *filename;
-  char buffer[MBUFTHIRD];
+  char buffer[PATBUFSIZE];
 
   if (strcmp(pattern_filename, "-") == 0)
     {
@@ -2517,7 +2553,7 @@ if (pattern_filename != NULL)
     filename = pattern_filename;
     }
 
-  while (fgets(buffer, MBUFTHIRD, f) != NULL)
+  while (fgets(buffer, PATBUFSIZE, f) != NULL)
     {
     char *s = buffer + (int)strlen(buffer);
     while (s > buffer && isspace((unsigned char)(s[-1]))) s--;
@@ -2629,7 +2665,8 @@ if (include_dir_pattern != NULL)
 
 if (i >= argc)
   {
-  rc = pcregrep(stdin, FR_PLAIN, (filenames > FN_DEFAULT)? stdin_name : NULL);
+  rc = pcregrep(stdin, FR_PLAIN, stdin_name,
+    (filenames > FN_DEFAULT)? stdin_name : NULL);
   goto EXIT;
   }
 
@@ -2649,6 +2686,7 @@ for (; i < argc; i++)
   }
 
 EXIT:
+if (main_buffer != NULL) free(main_buffer);
 if (pattern_list != NULL)
   {
   for (i = 0; i < pattern_count; i++) free(pattern_list[i]);
