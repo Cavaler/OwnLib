@@ -1,6 +1,12 @@
 #ifndef __FAR_H
 #define __FAR_H
 
+#ifdef FAR3
+#define LIB_APPEND "_3"
+#endif
+#define LIB_NAME "FarLib"
+#include "GenLibName.h"
+
 #ifndef _WIN64
 #pragma pack(2)
 #endif
@@ -17,9 +23,14 @@
 #define _FAR_USE_WIN32_FIND_DATA
 
 #ifdef UNICODE
+#ifdef FAR3
+#include <plugin3.hpp>
+#include <farcolor3.hpp>
+#else
 #include <plugin2.hpp>
 #include <farkeys2.hpp>
 #include <farcolor2.hpp>
+#endif
 #define FAR_EXPORT(name) name##W
 #define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIR
 #else
