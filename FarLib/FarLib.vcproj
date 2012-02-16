@@ -1061,6 +1061,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\FAR12.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FAR3.cpp"
+				>
+			</File>
+			<File
 				RelativePath="FarDlg.cpp"
 				>
 				<FileConfiguration

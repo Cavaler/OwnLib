@@ -12,7 +12,7 @@ using namespace std;
 namespace FarLib {
 #endif
 
-PluginStartupInfo StartupInfo;
+CPluginStartupInfo StartupInfo;
 const TCHAR *g_pszErrorTitle;
 const TCHAR *g_pszErrorTopic;
 const TCHAR *g_pszLastErrorTopic;
@@ -21,7 +21,7 @@ HANDLE g_hSaveScreen;
 bool g_bInterrupted;
 
 const TCHAR *GetMsg(int MsgId) {
-	return const_cast<TCHAR *>(StartupInfo.GetMsg(StartupInfo.ModuleNumber,MsgId));
+	return const_cast<TCHAR *>(StartupInfo.GetMsg(MsgId));
 }
 #define strccpy(to, from) strncpy(to, from, sizeof(to))
 #define _tcsccpy(to, from) _tcsncpy(to, from, sizeof(to)/sizeof(to[0]))
@@ -30,76 +30,6 @@ int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	for (int I=0;I<ItemsNumber;I++) if (Item[I].Selected) return I;
 	return -1;
 }
-
-#pragma region("CFarMenuItem")
-
-void CFarMenuItem::SetText(const TCHAR *szTitle) {
-#ifdef UNICODE
-	Text = _tcsdup(szTitle);
-#else
-	_tcscpy(Text, szTitle);
-#endif
-}
-
-CFarMenuItem::CFarMenuItem() {
-	Selected = Checked = Separator = 0;
-	SetText(_T(""));
-}
-
-CFarMenuItem::CFarMenuItem(const TCHAR *szTitle) {
-	Selected = Checked = Separator = 0;
-	SetText(szTitle);
-}
-
-CFarMenuItem::CFarMenuItem(const tstring &strTitle) {
-	Selected = Checked = Separator = 0;
-	SetText(strTitle.c_str());
-}
-
-CFarMenuItem::CFarMenuItem(int nMsgID) {
-	Selected = Checked = Separator = 0;
-	SetText(GetMsg(nMsgID));
-}
-
-CFarMenuItem::CFarMenuItem(bool bSeparator) {
-	Selected = Checked = 0;
-	Separator = bSeparator ? 1 : 0;
-	SetText(_T(""));
-}
-
-CFarMenuItem::CFarMenuItem(const CFarMenuItem &Item)
-{
-	*this = (const FarMenuItem &)Item;
-}
-
-CFarMenuItem::CFarMenuItem(const FarMenuItem &Item)
-{
-	*this = Item;
-}
-
-void CFarMenuItem::operator=(const FarMenuItem &Item)
-{
-	Selected = Item.Selected;
-	Checked = Item.Checked;
-	Separator = Item.Separator;
-#ifdef UNICODE
-	Text = _tcsdup(Item.Text);
-#else
-	_tcscpy(Text, Item.Text);
-#endif
-}
-
-void CFarMenuItem::operator=(const CFarMenuItem &Item) {
-	*this = (const FarMenuItem &)Item;
-}
-
-CFarMenuItem::~CFarMenuItem() {
-#ifdef UNICODE
-	if (Text) free((TCHAR *)Text);
-#endif
-}
-
-#pragma endregion
 
 #pragma region("CFarMenuItemEx")
 
@@ -113,35 +43,65 @@ void CFarMenuItemEx::SetText(const TCHAR *szTitle) {
 
 CFarMenuItemEx::CFarMenuItemEx()
 {
-	Flags = AccelKey = Reserved = UserData = 0;
+	Flags = Reserved = UserData = 0;
+#ifdef FAR3
+	AccelKey.VirtualKeyCode = 0;
+	AccelKey.ControlKeyState = 0;
+#else
+	AccelKey = 0;
+#endif
 	SetText(_T(""));
 }
 
 CFarMenuItemEx::CFarMenuItemEx(const TCHAR *szTitle, DWORD dwFlags)
 {
 	Flags = dwFlags;
-	AccelKey = Reserved = UserData = 0;
+	Reserved = UserData = 0;
+#ifdef FAR3
+	AccelKey.VirtualKeyCode = 0;
+	AccelKey.ControlKeyState = 0;
+#else
+	AccelKey = 0;
+#endif
 	SetText(szTitle);
 }
 
 CFarMenuItemEx::CFarMenuItemEx(const tstring &strTitle, DWORD dwFlags)
 {
 	Flags = dwFlags;
-	AccelKey = Reserved = UserData = 0;
+	Reserved = UserData = 0;
+#ifdef FAR3
+	AccelKey.VirtualKeyCode = 0;
+	AccelKey.ControlKeyState = 0;
+#else
+	AccelKey = 0;
+#endif
 	SetText(strTitle.c_str());
 }
 
 CFarMenuItemEx::CFarMenuItemEx(int nMsgID, DWORD dwFlags)
 {
 	Flags = dwFlags;
-	AccelKey = Reserved = UserData = 0;
+	Reserved = UserData = 0;
+#ifdef FAR3
+	AccelKey.VirtualKeyCode = 0;
+	AccelKey.ControlKeyState = 0;
+#else
+	AccelKey = 0;
+#endif
 	SetText(GetMsg(nMsgID));
 }
 
 CFarMenuItemEx::CFarMenuItemEx(bool bSeparator)
 {
 	Flags = bSeparator ? MIF_SEPARATOR : 0;
-	AccelKey = Reserved = UserData = 0;
+	Reserved = UserData = 0;
+#ifdef FAR3
+	AccelKey.VirtualKeyCode = 0;
+	AccelKey.ControlKeyState = 0;
+#else
+	AccelKey = 0;
+#endif
 	SetText(_T(""));
 }
 
@@ -169,6 +129,8 @@ void CFarMenuItemEx::operator=(const CFarMenuItemEx &Item) {
 	*this = (const FarMenuItemEx &)Item;
 }
 
+#ifndef FAR3
+
 CFarMenuItemEx::CFarMenuItemEx(const CFarMenuItem &Item) {
 	*this = (const FarMenuItem &)Item;
 }
@@ -188,6 +150,8 @@ void CFarMenuItemEx::operator=(const FarMenuItem &Item) {
 	SetText(Item.Text);
 }
 
+#endif
+
 CFarMenuItemEx::~CFarMenuItemEx() {
 #ifdef UNICODE
 	if (Text) free((void *)Text);
@@ -195,104 +159,6 @@ CFarMenuItemEx::~CFarMenuItemEx() {
 }
 
 #pragma endregion
-
-void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuItemEx> &arrDst) {
-	for (size_t nItem = 0; nItem < arrSrc.size(); nItem++) {
-		arrDst.push_back(arrSrc[nItem]);
-	}
-}
-
-int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
-			int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode)
-{
-	if (ItemCount == 0) {
-		while (ppszItems[ItemCount] != NULL) ItemCount++;
-	}
-
-	FarMenuItem *Items = new FarMenuItem[ItemCount];
-	for (int I=0;I<ItemCount;I++) {
-		Items[I].Checked=Items[I].Selected=FALSE;
-		if (I == iDefault)
-			Items[I].Selected = TRUE;
-#ifdef _UNICODE
-		Items[I].Text = _tcsdup(ppszItems[I]);
-#else
-		strccpy(Items[I].Text,ppszItems[I]);
-#endif
-		Items[I].Separator=FALSE;
-	}
-
-	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,uiFlags,Title,Bottom,
-		HelpTopic,piBreakKeys,nBreakCode,Items,ItemCount);
-	
-#ifdef _UNICODE
-	for (int I=0;I<ItemCount;I++) if (Items[I].Text) free((void *)Items[I].Text);
-#endif
-	delete[] Items;
-
-	return Result;
-}
-
-int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...) {
-	FarMenuItem *Items=new FarMenuItem[ItemCount];
-	va_list List;
-	va_start(List,ItemCount);
-	for (int I=0;I<ItemCount;I++) {
-		const TCHAR *Item=va_arg(List,const TCHAR *);
-		Items[I].Checked=Items[I].Selected=FALSE;
-		if (Item) {
-#ifdef _UNICODE
-			Items[I].Text = _tcsdup(Item);
-#else
-			strccpy(Items[I].Text,Item);
-#endif
-			Items[I].Separator=FALSE;
-		} else {
-#ifdef _UNICODE
-			Items[I].Text=NULL;
-#else
-			Items[I].Text[0]=0;
-#endif
-			Items[I].Separator=TRUE;
-		}
-	}
-	va_end(List);
-
-	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,Title,Bottom,
-		HelpTopic,NULL,NULL,Items,ItemCount);
-
-#ifdef _UNICODE
-	for (int I=0;I<ItemCount;I++) if (Items[I].Text) free((void *)Items[I].Text);
-#endif
-	delete[] Items;
-
-	return Result;
-}
-
-int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
-			 int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
-	FarMenuItem *Items=new FarMenuItem[arrItems.size()];
-	for (size_t I = 0; I < arrItems.size(); I++) {
-		Items[I].Checked=Items[I].Selected=FALSE;
-		if (I == iDefault)
-			Items[I].Selected = TRUE;
-#ifdef _UNICODE
-		Items[I].Text = _tcsdup(arrItems[I].c_str());
-#else
-		_tcsccpy(Items[I].Text,arrItems[I].c_str());
-#endif
-		Items[I].Separator=FALSE;
-	}
-
-	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,uiFlags,Title,Bottom,
-		HelpTopic,piBreakKeys,nBreakCode,Items,arrItems.size());
-
-#ifdef _UNICODE
-	for (size_t I=0; I<arrItems.size(); I++) if (Items[I].Text) free((void *)Items[I].Text);
-#endif
-	delete[] Items;
-	return Result;
-}
 
 int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iItemsNumber, int iButtonsNumber, ...) {
 	const TCHAR **ppszItems = new const TCHAR *[iItemsNumber];
@@ -302,7 +168,7 @@ int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iItemsNumber, int iButt
 		ppszItems[I]=va_arg(List, const TCHAR *);
 	va_end(List);
 
-	int Result = StartupInfo.Message(StartupInfo.ModuleNumber, uiFlags, szHelpTopic, ppszItems, iItemsNumber, iButtonsNumber);
+	int Result = StartupInfo.Message(uiFlags, szHelpTopic, ppszItems, iItemsNumber, iButtonsNumber);
 	delete[] ppszItems;
 	return Result;
 }
@@ -312,7 +178,7 @@ int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iButtonsNumber, std::ve
 	for (int I=0; I < (int)arrItems.size(); I++)
 		ppszItems[I]=arrItems[I].c_str();
 
-	int Result = StartupInfo.Message(StartupInfo.ModuleNumber, uiFlags, szHelpTopic, ppszItems, arrItems.size(), iButtonsNumber);
+	int Result = StartupInfo.Message(uiFlags, szHelpTopic, ppszItems, arrItems.size(), iButtonsNumber);
 	delete[] ppszItems;
 	return Result;
 }
@@ -320,37 +186,37 @@ int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iButtonsNumber, std::ve
 void ShowMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
 	const TCHAR *ppszItems[] = {pszTitle, pszMessage1, pszMessage2, GetMsg(0)};
 	if (pszMessage2) {
-		StartupInfo.Message(StartupInfo.ModuleNumber, 0, _T(""), ppszItems, 4, 1);
+		StartupInfo.Message(0, _T(""), ppszItems, 4, 1);
 	} else {
 		ppszItems[2] = ppszItems[3];
-		StartupInfo.Message(StartupInfo.ModuleNumber, 0, _T(""), ppszItems, 3, 1);
+		StartupInfo.Message(0, _T(""), ppszItems, 3, 1);
 	}
 }
 
 void ShowError(const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
 	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage1, pszMessage2, GetMsg(0)};
 	if (pszMessage2) {
-		StartupInfo.Message(StartupInfo.ModuleNumber, FMSG_WARNING, g_pszErrorTopic, ppszItems, 4, 1);
+		StartupInfo.Message(FMSG_WARNING, g_pszErrorTopic, ppszItems, 4, 1);
 	} else {
 		ppszItems[2] = ppszItems[3];
-		StartupInfo.Message(StartupInfo.ModuleNumber, FMSG_WARNING, g_pszErrorTopic, ppszItems, 3, 1);
+		StartupInfo.Message(FMSG_WARNING, g_pszErrorTopic, ppszItems, 3, 1);
 	}
 }
 
 void ShowLastError(const TCHAR *pszMessage, const TCHAR *pszFileName) {
 	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage, pszFileName, GetMsg(0)};
 	if (pszFileName) {
-		StartupInfo.Message(StartupInfo.ModuleNumber, FMSG_WARNING|FMSG_ERRORTYPE, g_pszLastErrorTopic, ppszItems, 4, 1);
+		StartupInfo.Message(FMSG_WARNING|FMSG_ERRORTYPE, g_pszLastErrorTopic, ppszItems, 4, 1);
 	} else {
 		ppszItems[2] = ppszItems[3];
-		StartupInfo.Message(StartupInfo.ModuleNumber, FMSG_WARNING|FMSG_ERRORTYPE, g_pszLastErrorTopic, ppszItems, 3, 1);
+		StartupInfo.Message(FMSG_WARNING|FMSG_ERRORTYPE, g_pszLastErrorTopic, ppszItems, 3, 1);
 	}
 }
 
 void ShowWaitMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
 	g_hSaveScreen = StartupInfo.SaveScreen(0, 0, -1, -1);
 	const TCHAR *ppszItems[] = {pszTitle, pszMessage1, pszMessage2};
-	StartupInfo.Message(StartupInfo.ModuleNumber, 0, _T(""), ppszItems, pszMessage2?3:2, 0);
+	StartupInfo.Message(0, _T(""), ppszItems, pszMessage2?3:2, 0);
 }
 
 void HideWaitMessage() {
@@ -401,10 +267,9 @@ void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int O
 	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &iSortMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &iSortOrder);
 #else
-	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, (int)iViewMode, NULL);
-	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, (int)iSortMode, NULL);
-	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, (int)iSortOrder, NULL);
-#endif
+	StartupInfo.PanelControl(hPlugin, FCTL_SETVIEWMODE, (int)iViewMode, NULL);
+	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTMODE, (int)iSortMode, NULL);
+	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTORDER, (int)iSortOrder, NULL);
 }
 
 tstring FarMaskToRE(const TCHAR *szMask) {
@@ -597,7 +462,7 @@ void CFarPanelMode::SaveReg(HKEY hKey) {
 void CFarPanelMode::Assign(HANDLE hPlugin) {
 	PanelInfo PInfo;
 #ifdef UNICODE
-	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, 0, (LONG_PTR)&PInfo)) Assign(PInfo);
+	if (StartupInfo.PanelControl(hPlugin, FCTL_GETPANELINFO, 0, (LONG_PTR)&PInfo)) Assign(PInfo);
 #else
 	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, &PInfo)) Assign(PInfo);
 #endif
@@ -613,9 +478,9 @@ void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 	if (nOpMode & (OPM_SILENT | OPM_FIND)) return;
 
 #ifdef UNICODE
-	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, m_iViewMode, 0);
-	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, m_iSortMode, 0);
-	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, m_iSortOrder, 0);
+	StartupInfo.PanelControl(hPlugin, FCTL_SETVIEWMODE, m_iViewMode, NULL);
+	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTMODE, m_iSortMode, NULL);
+	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTORDER, m_iSortOrder, NULL);
 #else
 	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, &m_iViewMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &m_iSortMode);
@@ -661,6 +526,8 @@ tstring CFarSplitString::Combine() {
 
 #ifdef UNICODE
 
+#ifndef FAR3
+
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data) {
 	WIN32_FIND_DATA fd;
 
@@ -678,10 +545,17 @@ WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data) {
 	return fd;
 }
 
+#endif
+
 CPluginPanelItem::CPluginPanelItem()
 {
+#ifdef FAR3
+	FileName = NULL;
+	AlternateFileName = NULL;
+#else
 	FindData.lpwszFileName = NULL;
 	FindData.lpwszAlternateFileName = NULL;
+#endif
 	Description = NULL;
 	Owner = NULL;
 }
@@ -700,8 +574,14 @@ void CPluginPanelItem::operator = (const PluginPanelItem &item)
 {
 	(PluginPanelItem &)(*this) = item;
 
+#ifdef FAR3
+	if (FileName) FileName = _wcsdup(FileName);
+	if (AlternateFileName) AlternateFileName = _wcsdup(AlternateFileName);
+#else
 	if (FindData.lpwszFileName) FindData.lpwszFileName = _wcsdup(FindData.lpwszFileName);
 	if (FindData.lpwszAlternateFileName) FindData.lpwszAlternateFileName = _wcsdup(FindData.lpwszAlternateFileName);
+#endif
+
 	if (Description) Description = _wcsdup(Description);
 	if (Owner) Owner = _wcsdup(Owner);
 }
@@ -713,6 +593,15 @@ void CPluginPanelItem::operator = (const CPluginPanelItem &item)
 
 void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
 {
+#ifdef FAR3
+	FileAttributes = fd.dwFileAttributes;
+	CreationTime = fd.ftCreationTime;
+	LastAccessTime = fd.ftLastAccessTime;
+	LastWriteTime = fd.ftLastWriteTime;
+	FileSize = (((__int64)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
+	FileName = _wcsdup(fd.cFileName);
+	AlternateFileName = _wcsdup(fd.cAlternateFileName);
+#else
 	FindData.dwFileAttributes = fd.dwFileAttributes;
 	FindData.ftCreationTime = fd.ftCreationTime;
 	FindData.ftLastAccessTime = fd.ftLastAccessTime;
@@ -720,11 +609,18 @@ void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
 	FindData.nFileSize = (((__int64)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
 	FindData.lpwszFileName = _wcsdup(fd.cFileName);
 	FindData.lpwszAlternateFileName = _wcsdup(fd.cAlternateFileName);
+#endif
 }
 
-CPluginPanelItem::~CPluginPanelItem() {
+CPluginPanelItem::~CPluginPanelItem()
+{
+#ifdef FAR3
+	if (FileName) free((void *)FileName);
+	if (AlternateFileName) free((void *)AlternateFileName);
+#else
 	if (FindData.lpwszFileName) free((void *)FindData.lpwszFileName);
 	if (FindData.lpwszAlternateFileName) free((void *)FindData.lpwszAlternateFileName);
+#endif
 	if (Description) free((void *)Description);
 	if (Owner) free((void *)Owner);
 }
@@ -742,10 +638,10 @@ void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &
 	DWORD dwCtl = bSelected ? FCTL_GETSELECTEDPANELITEM : FCTL_GETPANELITEM;
 
 	for (int nItem = 0; nItem < nCount; nItem++) {
-		int nSize = StartupInfo.Control(hPanel, dwCtl, nItem, NULL);
+		int nSize = StartupInfo.PanelControl(hPanel, dwCtl, nItem, NULL);
 
 		vector<BYTE> arrItem(nSize);
-		StartupInfo.Control(hPanel, dwCtl, nItem, (LONG_PTR)&arrItem[0]);
+		StartupInfo.PanelControl(hPanel, dwCtl, nItem, (LONG_PTR)&arrItem[0]);
 
 		memmove(&Item, &arrItem[0], sizeof(PluginPanelItem));
 		arrItems.push_back(Item);
@@ -755,7 +651,7 @@ void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &
 void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnotherPanel)
 {
 	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
-	StartupInfo.Control(hPanel, FCTL_UPDATEPANEL, bClearSelection, NULL);
+	StartupInfo.PanelControl(hPanel, FCTL_UPDATEPANEL, bClearSelection, NULL);
 
 	if (szCurrentName)
 	{
@@ -763,27 +659,27 @@ void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnother
 		PInfo.GetInfo(bAnotherPanel);
 		PanelRedrawInfo RInfo = {PInfo.Find(szCurrentName), 0};
 
-		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
+		StartupInfo.PanelControl(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
 
 	} else {
-		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, NULL);
+		StartupInfo.PanelControl(hPanel, FCTL_REDRAWPANEL, 0, NULL);
 	}
 }
 
 void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
 	HANDLE hPlugin = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
-	StartupInfo.Control(hPlugin, FCTL_BEGINSELECTION, 0, NULL);
+	StartupInfo.PanelControl(hPlugin, FCTL_BEGINSELECTION, 0, NULL);
 
 	for (size_t nItem = 0; nItem < arrItems.size(); nItem++)
-		StartupInfo.Control(hPlugin, FCTL_SETSELECTION, nItem, arrItems[nItem].Flags & PPIF_SELECTED);
+		StartupInfo.PanelControl(hPlugin, FCTL_SETSELECTION, nItem, (arrItems[nItem].Flags & PPIF_SELECTED) ? 1 : 0);
 
-	StartupInfo.Control(hPlugin, FCTL_ENDSELECTION, 0, NULL);
+	StartupInfo.PanelControl(hPlugin, FCTL_ENDSELECTION, 0, NULL);
 }
 
 void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
 	SetPanelSelection(bAnotherPanel, Info.PanelItems);
 	if (bRedraw)
-		StartupInfo.Control(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, FCTL_REDRAWPANEL, 0, NULL);
+		StartupInfo.PanelControl(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, FCTL_REDRAWPANEL, 0, NULL);
 }
 
 bool CPanelInfo::GetInfo(bool bAnotherPanel)
@@ -793,10 +689,10 @@ bool CPanelInfo::GetInfo(bool bAnotherPanel)
 
 bool CPanelInfo::GetInfo(HANDLE hPanel)
 {
-	if (!StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
+	if (!StartupInfo.PanelControl(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
 
 	wchar_t szCurDir[MAX_PATH];
-	StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
+	StartupInfo.PanelControl(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
 	strCurDir = szCurDir;
 	CurDir = strCurDir.c_str();
 
@@ -853,7 +749,7 @@ void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
 
 int CPanelInfo::Find(LPCTSTR szFileName) {
 	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
-		if (_tcscmp(FarFileName(PanelItems[nItem].FindData), szFileName) == 0) return nItem;
+		if (_tcscmp(FarPanelFileName(PanelItems[nItem]), szFileName) == 0) return nItem;
 	}
 	return -1;
 }
@@ -861,9 +757,15 @@ int CPanelInfo::Find(LPCTSTR szFileName) {
 void SetFindDataName(PluginPanelItem &Item, const TCHAR *szFileName, const TCHAR *szAlternateFileName)
 {
 #ifdef UNICODE
+#ifdef FAR3
+	Item.FileName = _wcsdup(szFileName);
+	if (szAlternateFileName)
+		Item.AlternateFileName = _wcsdup(szAlternateFileName);
+#else
 	Item.FindData.lpwszFileName = _wcsdup(szFileName);
 	if (szAlternateFileName)
 		Item.FindData.lpwszAlternateFileName = _wcsdup(szAlternateFileName);
+#endif
 #else
 	strcpy(Item.FindData.cFileName, szFileName);
 	if (szAlternateFileName)
@@ -875,8 +777,13 @@ void StdFreeFindData(PluginPanelItem *PanelItems, int ItemsNumber)
 {
 	for (int nItem = 0; nItem < ItemsNumber; nItem++) {
 #ifdef UNICODE
+#ifdef FAR3
+		if (PanelItems[nItem].FileName) free((void *)PanelItems[nItem].FileName);
+		if (PanelItems[nItem].AlternateFileName) free((void *)PanelItems[nItem].AlternateFileName);
+#else
 		if (PanelItems[nItem].FindData.lpwszFileName) free((void *)PanelItems[nItem].FindData.lpwszFileName);
 		if (PanelItems[nItem].FindData.lpwszAlternateFileName) free((void *)PanelItems[nItem].FindData.lpwszAlternateFileName);
+#endif
 #endif
 		if (PanelItems[nItem].Description) free((void *)PanelItems[nItem].Description);
 		if (PanelItems[nItem].Owner) free((void *)PanelItems[nItem].Owner);

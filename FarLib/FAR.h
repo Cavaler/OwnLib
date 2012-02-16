@@ -26,18 +26,24 @@
 #ifdef FAR3
 #include <plugin3.hpp>
 #include <farcolor3.hpp>
+#define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIRECTORY
 #else
 #include <plugin2.hpp>
 #include <farkeys2.hpp>
 #include <farcolor2.hpp>
+#define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIR
 #endif
 #define FAR_EXPORT(name) name##W
-#define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIR
 #else
 #include <plugin.hpp>
 #include <farkeys.hpp>
 #include <farcolor.hpp>
 #define FAR_EXPORT(name) name
+#endif
+
+#ifdef FAR3
+#else
+#define PanelControl Control
 #endif
 
 #include <CRegExp.h>
@@ -52,7 +58,25 @@
 namespace FarLib {
 #endif
 
-extern PluginStartupInfo StartupInfo;
+class CPluginStartupInfo : public PluginStartupInfo
+{
+public:
+	const wchar_t *GetMsg(int MsgId);
+	int Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, 	int ItemsNumber, int ButtonsNumber);
+
+#ifdef FAR3
+	GUID	m_GUID;
+	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+		const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
+	INT_PTR PanelControl(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
+	INT_PTR SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+#else
+	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+		const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
+#endif
+};
+
+extern CPluginStartupInfo StartupInfo;
 extern const TCHAR *g_pszErrorTitle;
 extern const TCHAR *g_pszErrorTopic;
 extern const TCHAR *g_pszLastErrorTopic;
@@ -119,6 +143,9 @@ protected:
 	vector<tstring> m_arrLines;
 };
 
+#ifdef FAR3
+#define FarMenuItemEx FarMenuItem
+#else
 class CFarMenuItem : public FarMenuItem {
 public:
 	CFarMenuItem();
@@ -134,6 +161,7 @@ public:
 protected:
 	void SetText(const TCHAR *szTitle);
 };
+#endif
 
 class CFarMenuItemEx : public FarMenuItemEx {
 public:
@@ -148,22 +176,32 @@ public:
 	void operator=(const  FarMenuItemEx &Item);
 	void operator=(const CFarMenuItemEx &Item);
 
+#ifndef FAR3
 	CFarMenuItemEx(const CFarMenuItem &Item);
 	CFarMenuItemEx(const  FarMenuItem &Item);
 	void operator=(const  FarMenuItem &Item);
+#endif
 
 	~CFarMenuItemEx();
 protected:
 	void SetText(const TCHAR *szTitle);
 };
 
+#ifndef FAR3
 void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuItemEx> &arrDst);
+#endif
 
 #ifdef UNICODE
 
+#ifdef FAR3
+#define FarPanelFileName(pi) (pi).FileName
+typedef WIN32_FIND_DATA WF_FIND_DATA;
+#else
 #define FarFileName(fd) (fd).lpwszFileName
+#define FarPanelFileName(pi) FarFileName((pi).FindData)
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 typedef FAR_FIND_DATA WF_FIND_DATA;
+#endif
 
 struct CPluginPanelItem : PluginPanelItem {
 	CPluginPanelItem();
@@ -195,6 +233,7 @@ struct CPanelInfo : PanelInfo {
 #else
 
 #define FarFileName(fd) (fd).cFileName
+#define FarPanelFileName(pi) FarFileName((pi).FindData)
 #define FFDtoWFD(Data) (Data)
 typedef WIN32_FIND_DATA WF_FIND_DATA;
 
