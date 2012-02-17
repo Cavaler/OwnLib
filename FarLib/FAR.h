@@ -72,6 +72,7 @@ public:
 	INT_PTR Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
 	INT_PTR SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 #else
+	void operator =(const PluginStartupInfo &Info);
 	int Menu(int X, int Y, int MaxHeight, DWORD Flags, const TCHAR *Title, const TCHAR *Bottom,
 		const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
 #endif

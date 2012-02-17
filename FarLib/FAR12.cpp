@@ -17,6 +17,11 @@ namespace FarLib {
 
 #ifndef FAR3
 
+void CPluginStartupInfo::operator =(const PluginStartupInfo &Info)
+{
+	(PluginStartupInfo &)(*this) = Info;
+}
+
 const TCHAR *CPluginStartupInfo::GetMsg(int MsgId)
 {
 	return __super::GetMsg(ModuleNumber, MsgId);
