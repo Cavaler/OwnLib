@@ -15,6 +15,13 @@ namespace FarLib {
 
 #ifdef FAR3
 
+void CPluginStartupInfo::operator =(const PluginStartupInfo &Info)
+{
+	(PluginStartupInfo &)(*this) = Info;
+
+	wcscpy(RootKey, L"SOFTWARE\\Far3\\Plugins");
+}
+
 const wchar_t *CPluginStartupInfo::GetMsg(int MsgId)
 {
 	return __super::GetMsg(&m_GUID, MsgId);

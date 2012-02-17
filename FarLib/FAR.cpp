@@ -698,6 +698,10 @@ bool CPanelInfo::GetInfo(HANDLE hPanel)
 	GetPanelItems(ItemsNumber, false, hPanel, PanelItems);
 	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems);
 
+#ifdef FAR3
+	Plugin = PluginHandle != NULL;
+#endif
+
 	return true;
 }
 

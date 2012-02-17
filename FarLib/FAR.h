@@ -24,8 +24,10 @@
 
 #ifdef UNICODE
 #ifdef FAR3
+#pragma pack(push,8)
 #include <plugin3.hpp>
 #include <farcolor3.hpp>
+#pragma pack(pop)
 #define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIRECTORY
 #define FCTL_CLOSEPLUGIN FCTL_CLOSEPANEL
 #else
@@ -62,6 +64,9 @@ public:
 
 #ifdef FAR3
 	GUID	m_GUID;
+	wchar_t RootKey[MAX_PATH];
+	void operator =(const PluginStartupInfo &Info);
+
 	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
 		const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
 	INT_PTR Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
@@ -224,6 +229,9 @@ struct CPanelInfo : PanelInfo {
 	wstring strCurDir;
 
 	int Find(LPCTSTR szFileName);
+#ifdef FAR3
+	bool Plugin;
+#endif
 };
 
 #else
