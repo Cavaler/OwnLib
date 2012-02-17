@@ -8,13 +8,16 @@
 #include <string>
 using namespace std;
 
+#define strccpy(to, from) strncpy(to, from, sizeof(to))
+#define _tcsccpy(to, from) _tcsncpy(to, from, sizeof(to)/sizeof(to[0]))
+
 #ifndef FAR_NO_NAMESPACE
 namespace FarLib {
 #endif
 
 #ifndef FAR3
 
-const wchar_t *CPluginStartupInfo::GetMsg(int MsgId)
+const TCHAR *CPluginStartupInfo::GetMsg(int MsgId)
 {
 	return __super::GetMsg(ModuleNumber, MsgId);
 }
@@ -24,7 +27,7 @@ int CPluginStartupInfo::Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR
 	return __super::Message(ModuleNumber, Flags, HelpTopic, Items, ItemsNumber, ButtonsNumber);
 }
 
-int CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+int CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, DWORD Flags, const TCHAR *Title, const TCHAR *Bottom,
 							 const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber)
 {
 	return __super::Menu(ModuleNumber, X, Y, MaxHeight, Flags, Title, Bottom, HelpTopic, BreakKeys, BreakCode, Item, ItemsNumber);
@@ -126,7 +129,7 @@ int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const
 		Items[I].Separator=FALSE;
 	}
 
-	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,uiFlags,Title,Bottom,
+	int Result=StartupInfo.Menu(-1,-1,0,uiFlags,Title,Bottom,
 		HelpTopic,piBreakKeys,nBreakCode,Items,ItemCount);
 
 #ifdef _UNICODE
@@ -162,7 +165,7 @@ int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 	}
 	va_end(List);
 
-	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,Title,Bottom,
+	int Result=StartupInfo.Menu(-1,-1,0,FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,Title,Bottom,
 		HelpTopic,NULL,NULL,Items,ItemCount);
 
 #ifdef _UNICODE
@@ -188,7 +191,7 @@ int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const T
 		Items[I].Separator=FALSE;
 	}
 
-	int Result=StartupInfo.Menu(StartupInfo.ModuleNumber,-1,-1,0,uiFlags,Title,Bottom,
+	int Result=StartupInfo.Menu(-1,-1,0,uiFlags,Title,Bottom,
 		HelpTopic,piBreakKeys,nBreakCode,Items,arrItems.size());
 
 #ifdef _UNICODE

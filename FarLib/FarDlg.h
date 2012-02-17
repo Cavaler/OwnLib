@@ -105,7 +105,12 @@ protected:
 
 	int		Index(int nIndexOrID);
 
+#ifdef FAR3
+	GUID m_GUID;
+	static INT_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, void *Param2);
+#else
 	static LONG_PTR WINAPI s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+#endif
 	LONG_PTR WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	 FARWINDOWPROC m_pWindowProc;
 	CFARWINDOWPROC m_pCWindowProc;

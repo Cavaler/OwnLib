@@ -27,6 +27,7 @@
 #include <plugin3.hpp>
 #include <farcolor3.hpp>
 #define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIRECTORY
+#define FCTL_CLOSEPLUGIN FCTL_CLOSEPANEL
 #else
 #include <plugin2.hpp>
 #include <farkeys2.hpp>
@@ -39,11 +40,6 @@
 #include <farkeys.hpp>
 #include <farcolor.hpp>
 #define FAR_EXPORT(name) name
-#endif
-
-#ifdef FAR3
-#else
-#define PanelControl Control
 #endif
 
 #include <CRegExp.h>
@@ -61,17 +57,17 @@ namespace FarLib {
 class CPluginStartupInfo : public PluginStartupInfo
 {
 public:
-	const wchar_t *GetMsg(int MsgId);
+	const TCHAR *GetMsg(int MsgId);
 	int Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, 	int ItemsNumber, int ButtonsNumber);
 
 #ifdef FAR3
 	GUID	m_GUID;
 	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
 		const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
-	INT_PTR PanelControl(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
+	INT_PTR Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
 	INT_PTR SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 #else
-	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+	int Menu(int X, int Y, int MaxHeight, DWORD Flags, const TCHAR *Title, const TCHAR *Bottom,
 		const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
 #endif
 };

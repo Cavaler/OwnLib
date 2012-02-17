@@ -23,8 +23,6 @@ bool g_bInterrupted;
 const TCHAR *GetMsg(int MsgId) {
 	return const_cast<TCHAR *>(StartupInfo.GetMsg(MsgId));
 }
-#define strccpy(to, from) strncpy(to, from, sizeof(to))
-#define _tcsccpy(to, from) _tcsncpy(to, from, sizeof(to)/sizeof(to[0]))
 
 int WhichRadioButton(struct FarDialogItem *Item,int ItemsNumber) {
 	for (int I=0;I<ItemsNumber;I++) if (Item[I].Selected) return I;
@@ -267,9 +265,10 @@ void SetMode(HANDLE hPlugin, int iViewMode, int iSortMode, int iSortOrder, int O
 	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &iSortMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, &iSortOrder);
 #else
-	StartupInfo.PanelControl(hPlugin, FCTL_SETVIEWMODE, (int)iViewMode, NULL);
-	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTMODE, (int)iSortMode, NULL);
-	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTORDER, (int)iSortOrder, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, (int)iViewMode, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, (int)iSortMode, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, (int)iSortOrder, NULL);
+#endif
 }
 
 tstring FarMaskToRE(const TCHAR *szMask) {
@@ -462,7 +461,7 @@ void CFarPanelMode::SaveReg(HKEY hKey) {
 void CFarPanelMode::Assign(HANDLE hPlugin) {
 	PanelInfo PInfo;
 #ifdef UNICODE
-	if (StartupInfo.PanelControl(hPlugin, FCTL_GETPANELINFO, 0, (LONG_PTR)&PInfo)) Assign(PInfo);
+	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, 0, (LONG_PTR)&PInfo)) Assign(PInfo);
 #else
 	if (StartupInfo.Control(hPlugin, FCTL_GETPANELINFO, &PInfo)) Assign(PInfo);
 #endif
@@ -478,9 +477,9 @@ void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 	if (nOpMode & (OPM_SILENT | OPM_FIND)) return;
 
 #ifdef UNICODE
-	StartupInfo.PanelControl(hPlugin, FCTL_SETVIEWMODE, m_iViewMode, NULL);
-	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTMODE, m_iSortMode, NULL);
-	StartupInfo.PanelControl(hPlugin, FCTL_SETSORTORDER, m_iSortOrder, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, m_iViewMode, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, m_iSortMode, NULL);
+	StartupInfo.Control(hPlugin, FCTL_SETSORTORDER, m_iSortOrder, NULL);
 #else
 	StartupInfo.Control(hPlugin, FCTL_SETVIEWMODE, &m_iViewMode);
 	StartupInfo.Control(hPlugin, FCTL_SETSORTMODE, &m_iSortMode);
@@ -638,10 +637,10 @@ void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &
 	DWORD dwCtl = bSelected ? FCTL_GETSELECTEDPANELITEM : FCTL_GETPANELITEM;
 
 	for (int nItem = 0; nItem < nCount; nItem++) {
-		int nSize = StartupInfo.PanelControl(hPanel, dwCtl, nItem, NULL);
+		int nSize = StartupInfo.Control(hPanel, dwCtl, nItem, NULL);
 
 		vector<BYTE> arrItem(nSize);
-		StartupInfo.PanelControl(hPanel, dwCtl, nItem, (LONG_PTR)&arrItem[0]);
+		StartupInfo.Control(hPanel, dwCtl, nItem, (LONG_PTR)&arrItem[0]);
 
 		memmove(&Item, &arrItem[0], sizeof(PluginPanelItem));
 		arrItems.push_back(Item);
@@ -651,7 +650,7 @@ void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &
 void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnotherPanel)
 {
 	HANDLE hPanel = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
-	StartupInfo.PanelControl(hPanel, FCTL_UPDATEPANEL, bClearSelection, NULL);
+	StartupInfo.Control(hPanel, FCTL_UPDATEPANEL, bClearSelection, NULL);
 
 	if (szCurrentName)
 	{
@@ -659,27 +658,27 @@ void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnother
 		PInfo.GetInfo(bAnotherPanel);
 		PanelRedrawInfo RInfo = {PInfo.Find(szCurrentName), 0};
 
-		StartupInfo.PanelControl(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
+		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
 
 	} else {
-		StartupInfo.PanelControl(hPanel, FCTL_REDRAWPANEL, 0, NULL);
+		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, NULL);
 	}
 }
 
 void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems) {
 	HANDLE hPlugin = bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE;
-	StartupInfo.PanelControl(hPlugin, FCTL_BEGINSELECTION, 0, NULL);
+	StartupInfo.Control(hPlugin, FCTL_BEGINSELECTION, 0, NULL);
 
 	for (size_t nItem = 0; nItem < arrItems.size(); nItem++)
-		StartupInfo.PanelControl(hPlugin, FCTL_SETSELECTION, nItem, (arrItems[nItem].Flags & PPIF_SELECTED) ? 1 : 0);
+		StartupInfo.Control(hPlugin, FCTL_SETSELECTION, nItem, (arrItems[nItem].Flags & PPIF_SELECTED) ? 1 : 0);
 
-	StartupInfo.PanelControl(hPlugin, FCTL_ENDSELECTION, 0, NULL);
+	StartupInfo.Control(hPlugin, FCTL_ENDSELECTION, 0, NULL);
 }
 
 void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw) {
 	SetPanelSelection(bAnotherPanel, Info.PanelItems);
 	if (bRedraw)
-		StartupInfo.PanelControl(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, FCTL_REDRAWPANEL, 0, NULL);
+		StartupInfo.Control(bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, FCTL_REDRAWPANEL, 0, NULL);
 }
 
 bool CPanelInfo::GetInfo(bool bAnotherPanel)
@@ -689,10 +688,10 @@ bool CPanelInfo::GetInfo(bool bAnotherPanel)
 
 bool CPanelInfo::GetInfo(HANDLE hPanel)
 {
-	if (!StartupInfo.PanelControl(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
+	if (!StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
 
 	wchar_t szCurDir[MAX_PATH];
-	StartupInfo.PanelControl(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
+	StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
 	strCurDir = szCurDir;
 	CurDir = strCurDir.c_str();
 

@@ -13,12 +13,12 @@ namespace FarLib {
 
 void ErrorMessage(const TCHAR *Message,const TCHAR *HelpTopic) {
 	const TCHAR *Lines[]={g_pszErrorTitle,Message,g_pszOKButton};
-	StartupInfo.Message(StartupInfo.ModuleNumber,FMSG_WARNING,HelpTopic,Lines,3,1);
+	StartupInfo.Message(FMSG_WARNING,HelpTopic,Lines,3,1);
 }
 
 void ErrorMessage(const TCHAR *Message1,const TCHAR *Message2,const TCHAR *HelpTopic) {
 	const TCHAR *Lines[]={g_pszErrorTitle,Message1,Message2,g_pszOKButton};
-	StartupInfo.Message(StartupInfo.ModuleNumber,FMSG_WARNING,HelpTopic,Lines,4,1);
+	StartupInfo.Message(FMSG_WARNING,HelpTopic,Lines,4,1);
 }
 
 // ***************** INTEGER RANGE VALIDATOR *****************

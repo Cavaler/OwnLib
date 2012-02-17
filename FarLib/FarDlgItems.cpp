@@ -15,7 +15,11 @@ namespace FarLib {
 
 void SetItemText(FarDialogItem *pItem, const TCHAR *szText) {
 #ifdef UNICODE
+#ifdef FAR3
+	pItem->Data = _tcsdup(szText);
+#else
 	pItem->PtrData = _tcsdup(szText);
+#endif
 #else
 	strncpy(pItem->Data, szText, sizeof(pItem->Data));
 #endif
@@ -31,13 +35,16 @@ void CFarDialogItem::CreateItem(FarDialogItem *Item) {
 	Item->Y1=Y1;
 	Item->X2=X2;
 	Item->Y2=Y2;
-	Item->Focus=FALSE;
 	Item->Selected=FALSE;
 	Item->Flags=Flags;
-	Item->DefaultButton=FALSE;
 #ifdef UNICODE
+#ifdef FAR3
+	Item->Data = NULL;
+	Item->MaxLength = 0;
+#else
 	Item->PtrData = NULL;
 	Item->MaxLen = 0;
+#endif
 #endif
 	SetItemText(Item, Text.c_str());
 }
@@ -106,7 +113,12 @@ CFarDialogItem(X,Y,0,0,dwFlags,szText),Default(bDefault) {}
 void CFarButtonItem::CreateItem(FarDialogItem *Item) {
 	Item->Type=DI_BUTTON;
 	CFarDialogItem::CreateItem(Item);
+#ifdef FAR3
+	if (Default)
+		Item->Flags |= DIF_DEFAULTBUTTON;
+#else
 	Item->DefaultButton=Default;
+#endif
 }
 
 tstring *CFarButtonItem::HotkeyText()
@@ -371,12 +383,21 @@ CFarDialogItem(iX1,Y,iX2,0,dwFlags),m_pszHistory(szHistory),m_pStorage(new CFarT
 CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int iType):
 CFarDialogItem(iX1,Y,iX2,0,dwFlags),m_pszHistory(szHistory),m_pStorage(new CFarIntegerStorage(IntStorage)),m_pValidator(pValidator),m_iType(iType) {}
 
-void CFarEditItem::CreateItem(FarDialogItem *Item) {
+void CFarEditItem::CreateItem(FarDialogItem *Item)
+{
+#ifdef FAR3
+	Item->Type = (FARDIALOGITEMTYPES)m_iType;
+#else
 	Item->Type = m_iType;
+#endif
 	CFarDialogItem::CreateItem(Item);
 	if (Item->History = m_pszHistory) Item->Flags|=DIF_HISTORY;
 #ifdef UNICODE
+#ifdef FAR3
+	m_pStorage->Get(Item->Data);
+#else
 	m_pStorage->Get(Item->PtrData);
+#endif
 #else
 	if (Item->Flags & DIF_VAREDIT) {
 		Item->Ptr.PtrFlags = 0;

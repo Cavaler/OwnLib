@@ -79,7 +79,12 @@ void CFarDialog::SetFocus(int Focus, int Shift) {
 	}
 }
 
-LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
+#ifdef FAR3
+INT_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, void *Param2)
+#else
+LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
+#endif
+{
 	static std::map<HANDLE, CFarDialog *> sDlgMap;
 	CFarDialog *pDlg;
 	if (Msg == DN_INITDIALOG) {
@@ -89,7 +94,11 @@ LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_
 		pDlg = sDlgMap[hDlg];
 	}
 
+#ifdef FAR3
+	return pDlg->WindowProc(hDlg, Msg, Param1, (LONG_PTR)Param2);
+#else
 	return pDlg->WindowProc(hDlg, Msg, Param1, Param2);
+#endif
 }
 
 LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2) {
@@ -105,10 +114,18 @@ LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param
 	}
 
 	if (m_pWindowProc) {
+#ifdef FAR3
+		return m_pWindowProc(hDlg, Msg, Param1, (void *)Param2);
+#else
 		return m_pWindowProc(hDlg, Msg, Param1, Param2);
+#endif
 	}
 
+#ifdef FAR3
+	return StartupInfo.DefDlgProc(hDlg, Msg, Param1, (void *)Param2);
+#else
 	return StartupInfo.DefDlgProc(hDlg, Msg, Param1, Param2);
+#endif
 }
 
 void CFarDialog::SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam) {
@@ -141,11 +158,21 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 
 		Items[I]->CreateItem(&DialogItems[I]);
 	}
-	if (Focused < Items.size()) DialogItems[Focused].Focus=TRUE;
+	if (Focused < Items.size())
+#ifdef FAR3
+		DialogItems[Focused].Flags|=DIF_FOCUS;
+#else
+		DialogItems[Focused].Focus=TRUE;
+#endif
 
 #ifdef UNICODE
+#ifdef FAR3
+	HANDLE hDlg = StartupInfo.DialogInit(&StartupInfo.m_GUID, &m_GUID, X1, Y1, X2, Y2,
+		HelpTopic, &DialogItems[0], Items.size(), 0, m_dwFlags, AnyWindowProc() ? s_WindowProc : NULL, this);
+#else
 	HANDLE hDlg = StartupInfo.DialogInit(StartupInfo.ModuleNumber,X1,Y1,X2,Y2,HelpTopic,&DialogItems[0],Items.size(),0,m_dwFlags,
 		AnyWindowProc() ? s_WindowProc : NULL,(long)this);
+#endif
 	for (size_t nItem = 0; nItem < Items.size(); nItem++) {
 		Items[nItem]->m_hDlg = hDlg;
 		Items[nItem]->m_nItem = nItem;
@@ -202,8 +229,13 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 
 		for (size_t I=0;I<Items.size();I++) {
 			if (!Items[I]->Validate(&DialogItems[I])) {
+#ifdef FAR3
+				for (size_t J=0; J<Items.size(); J++) DialogItems[J].Flags &= ~DIF_FOCUS;
+				DialogItems[I].Flags |= DIF_FOCUS;
+#else
 				for (size_t J=0; J<Items.size(); J++) DialogItems[J].Focus=FALSE;
 				DialogItems[I].Focus=TRUE;
+#endif
 				Result=-1;break;
 			}
 		}
@@ -217,7 +249,11 @@ int CFarDialog::Display(int ValidExitCodes,...) {
 	StartupInfo.DialogFree(hDlg);
 
 	for (size_t nItem = 0; nItem < Items.size(); nItem++) {
+#ifdef FAR3
+		if (DialogItems[nItem].Data) free((TCHAR *)DialogItems[nItem].Data);
+#else
 		if (DialogItems[nItem].PtrData) free((TCHAR *)DialogItems[nItem].PtrData);
+#endif
 	}
 #endif
 
@@ -333,7 +369,11 @@ void CFarDialog::Close(int nID)
 
 LRESULT CFarDialog::DefDlgProc(int nMsg, int nParam1, LONG_PTR lParam2)
 {
+#ifdef FAR3
+	return StartupInfo.DefDlgProc(m_hDlg, nMsg, nParam1, (void *)lParam2);
+#else
 	return StartupInfo.DefDlgProc(m_hDlg, nMsg, nParam1, lParam2);
+#endif
 }
 
 tstring CFarDialog::GetDlgItemText(int nID)
