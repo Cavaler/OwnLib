@@ -83,7 +83,16 @@ INT_PTR CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LO
 	case FCTL_GETPANELINFO:
 	case FCTL_UPDATEPANEL:
 	case FCTL_REDRAWPANEL:
+	case FCTL_SETSELECTION:
 		return __super::PanelControl(hPanel, fCommand, Param1, (void *)Param2);
+
+	case FCTL_GETPANELITEM:
+	case FCTL_GETSELECTEDPANELITEM:{
+		FarGetPluginPanelItem GetItem;
+		GetItem.Size = __super::PanelControl(hPanel, fCommand, Param1, NULL);
+		GetItem.Item = (PluginPanelItem *)Param2;
+		return __super::PanelControl(hPanel, fCommand, Param1, (void *)&GetItem);
+								   }
 
 	case FCTL_SETVIEWMODE:
 	case FCTL_SETSORTMODE:
@@ -93,6 +102,8 @@ INT_PTR CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LO
 		return __super::PanelControl(hPanel, fCommand, Param1, NULL);
 	case FCTL_CHECKPANELSEXIST:
 	case FCTL_ISACTIVEPANEL:
+	case FCTL_BEGINSELECTION:
+	case FCTL_ENDSELECTION:
 		return __super::PanelControl(hPanel, fCommand, 0, NULL);
 	default:
 		assert(0);

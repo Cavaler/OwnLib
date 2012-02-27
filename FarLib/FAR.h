@@ -216,14 +216,21 @@ struct CPluginPanelItem : PluginPanelItem {
 };
 typedef vector<CPluginPanelItem> panelitem_vector;
 
-void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems);
-void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &arrItems);
+typedef vector<BYTE> panelbuffer;
+typedef vector<panelbuffer> panelbuffer_vector;
+
+void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems, panelbuffer_vector &arrBuffers);
+void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &arrItems, panelbuffer_vector &arrBuffers);
 void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems);
 
-struct CPanelInfo : PanelInfo {
+struct CPanelInfo : PanelInfo
+{
 	LPCWSTR CurDir;
 	panelitem_vector PanelItems;
 	panelitem_vector SelectedItems;
+
+	panelbuffer_vector PanelBuffers;
+	panelbuffer_vector SelectedBuffers;
 
 	bool GetInfo(bool bAnotherPanel = false);
 	bool GetInfo(HANDLE hPanel);

@@ -624,15 +624,16 @@ CPluginPanelItem::~CPluginPanelItem()
 	if (Owner) free((void *)Owner);
 }
 
-void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems)
+void GetPanelItems(int nCount, bool bSelected, bool bAnotherPanel, panelitem_vector &arrItems, panelbuffer_vector &arrBuffers)
 {
-	GetPanelItems(nCount, bSelected, bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, arrItems);
+	GetPanelItems(nCount, bSelected, bAnotherPanel ? PANEL_PASSIVE : PANEL_ACTIVE, arrItems, arrBuffers);
 }
 
-void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &arrItems)
+void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &arrItems, panelbuffer_vector &arrBuffers)
 {
 	PluginPanelItem Item;
 	arrItems.clear();
+	arrBuffers.clear();
 
 	DWORD dwCtl = bSelected ? FCTL_GETSELECTEDPANELITEM : FCTL_GETPANELITEM;
 
@@ -644,6 +645,7 @@ void GetPanelItems(int nCount, bool bSelected, HANDLE hPanel, panelitem_vector &
 
 		memmove(&Item, &arrItem[0], sizeof(PluginPanelItem));
 		arrItems.push_back(Item);
+		arrBuffers.push_back(arrItem);
 	}
 }
 
@@ -688,6 +690,10 @@ bool CPanelInfo::GetInfo(bool bAnotherPanel)
 
 bool CPanelInfo::GetInfo(HANDLE hPanel)
 {
+#ifdef FAR3
+	StructSize = sizeof(PanelInfo);
+#endif
+
 	if (!StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
 
 	wchar_t szCurDir[MAX_PATH];
@@ -695,11 +701,11 @@ bool CPanelInfo::GetInfo(HANDLE hPanel)
 	strCurDir = szCurDir;
 	CurDir = strCurDir.c_str();
 
-	GetPanelItems(ItemsNumber, false, hPanel, PanelItems);
-	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems);
+	GetPanelItems(ItemsNumber, false, hPanel, PanelItems, PanelBuffers);
+	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems, SelectedBuffers);
 
 #ifdef FAR3
-	Plugin = PluginHandle != NULL;
+	Plugin = PluginHandle != INVALID_HANDLE_VALUE;
 #endif
 
 	return true;
