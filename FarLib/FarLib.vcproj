@@ -733,7 +733,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;FAR3;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="1"
 				StructMemberAlignment="4"
@@ -894,7 +894,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FAR_USE_NAMESPACE;FAR3;PCRE_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				StructMemberAlignment="4"
