@@ -121,11 +121,7 @@ LONG_PTR CFarDialog::WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param
 #endif
 	}
 
-#ifdef FAR3
-	return StartupInfo.DefDlgProc(hDlg, Msg, Param1, (void *)Param2);
-#else
 	return StartupInfo.DefDlgProc(hDlg, Msg, Param1, Param2);
-#endif
 }
 
 void CFarDialog::SetWindowProc(FARWINDOWPROC lpWindowProc,long lParam) {
@@ -369,11 +365,7 @@ void CFarDialog::Close(int nID)
 
 LRESULT CFarDialog::DefDlgProc(int nMsg, int nParam1, LONG_PTR lParam2)
 {
-#ifdef FAR3
-	return StartupInfo.DefDlgProc(m_hDlg, nMsg, nParam1, (void *)lParam2);
-#else
 	return StartupInfo.DefDlgProc(m_hDlg, nMsg, nParam1, lParam2);
-#endif
 }
 
 tstring CFarDialog::GetDlgItemText(int nID)
@@ -394,6 +386,12 @@ void CFarDialog::ShowDlgItem(int nID, bool bShow)
 void CFarDialog::EnableDlgItem(int nID, bool bEnable)
 {
 	FarLib::EnableDlgItem(m_hDlg, Index(nID), bEnable);
+}
+
+void CFarDialog::EnableCheckBox(int nID, bool bEnable, bool bDisabledState)
+{
+	EnableDlgItem(nID, bEnable);
+	if (!bEnable) CheckDlgItem(nID, bDisabledState);
 }
 
 bool CFarDialog::IsDlgItemChecked(int nID)

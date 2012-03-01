@@ -134,6 +134,11 @@ INT_PTR CPluginStartupInfo::SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LON
 	}
 }
 
+LONG_PTR CPluginStartupInfo::DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
+{
+	return __super::DefDlgProc(hDlg, Msg, Param1, (void *)Param2);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 vector<FarKey> ConvertKeys(const int *piBreakKeys)
