@@ -31,11 +31,19 @@ int CPluginStartupInfo::Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR
 {
 	return __super::Message(&m_GUID, NULL, Flags, HelpTopic, Items, ItemsNumber, ButtonsNumber);
 }
-
+/*
 int CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
 		 const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber)
 {
 	return __super::Menu(&m_GUID, NULL, X, Y, MaxHeight, Flags, Title, Bottom, HelpTopic, BreakKeys, BreakCode, Item, ItemsNumber);
+}*/
+
+int CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+		 const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber)
+{
+	vector<FarKey> arrKeys = ConvertKeys(BreakKeys);
+
+	return __super::Menu(&m_GUID, NULL, X, Y, MaxHeight, Flags, Title, Bottom, HelpTopic, &arrKeys[0], BreakCode, Item, ItemsNumber);
 }
 
 INT_PTR CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2)
@@ -139,6 +147,30 @@ LONG_PTR CPluginStartupInfo::DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_P
 	return __super::DefDlgProc(hDlg, Msg, Param1, (void *)Param2);
 }
 
+int CPluginStartupInfo::EditorControl(int Command, void *Param)
+{
+	EDITOR_CONTROL_COMMANDS fCommand = (EDITOR_CONTROL_COMMANDS)Command;
+
+	switch (Command)
+	{
+	default:
+		assert(0);
+		return __super::EditorControl(-1, fCommand, 0, Param);
+	}
+}
+
+int CPluginStartupInfo::ViewerControl(int Command, void *Param)
+{
+	VIEWER_CONTROL_COMMANDS fCommand = (VIEWER_CONTROL_COMMANDS)Command;
+
+	switch (Command)
+	{
+	default:
+		assert(0);
+		return __super::ViewerControl(-1, fCommand, 0, Param);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 vector<FarKey> ConvertKeys(const int *piBreakKeys)
@@ -146,8 +178,11 @@ vector<FarKey> ConvertKeys(const int *piBreakKeys)
 	vector<FarKey> arrKeys;
 	do {
 		FarKey Key;
-		Key.VirtualKeyCode = *piBreakKeys;
+		Key.VirtualKeyCode = (*piBreakKeys) & 0xFFFF;
 		Key.ControlKeyState = 0;
+		if ((*piBreakKeys) & (PKF_SHIFT  <<16)) Key.ControlKeyState |= SHIFT_PRESSED;
+		if ((*piBreakKeys) & (PKF_CONTROL<<16)) Key.ControlKeyState |= LEFT_CTRL_PRESSED;
+		if ((*piBreakKeys) & (PKF_ALT    <<16)) Key.ControlKeyState |= LEFT_ALT_PRESSED;
 		arrKeys.push_back(Key);
 	} while (*(piBreakKeys++));
 
@@ -168,10 +203,8 @@ int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const
 		arrItems[I].Text = _wcsdup(ppszItems[I]);
 	}
 
-	vector<FarKey> arrKeys = ConvertKeys(piBreakKeys);
-
 	return StartupInfo.Menu(-1, -1, 0, uiFlags, Title, Bottom,
-		HelpTopic, &arrKeys[0], nBreakCode, &arrItems[0], arrItems.size());
+		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size());
 }
 
 int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...)
@@ -205,10 +238,8 @@ int  ChooseMenu(std::vector<std::tstring> &arrText, const TCHAR *Title, const TC
 		arrItems[I].Text = _wcsdup(arrText[I].c_str());
 	}
 
-	vector<FarKey> arrKeys = ConvertKeys(piBreakKeys);
-
 	return StartupInfo.Menu(-1, -1, 0, uiFlags, Title, Bottom,
-		HelpTopic, &arrKeys[0], nBreakCode, &arrItems[0], arrItems.size());
+		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size());
 }
 
 #endif

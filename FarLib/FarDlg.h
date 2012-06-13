@@ -62,6 +62,7 @@ public:
 
 	void Close(int nID);
 	LRESULT DefDlgProc(int nMsg, int nParam1, LONG_PTR lParam2);
+	LRESULT SendDlgMessage(int nMsg, int nParam1, LONG_PTR lParam2);
 
 	//	Generic
 	tstring GetDlgItemText(int nID);

@@ -30,6 +30,14 @@
 #pragma pack(pop)
 #define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIRECTORY
 #define FCTL_CLOSEPLUGIN FCTL_CLOSEPANEL
+#define FMENU_USEEXT 0
+#define FCTL_SETPANELDIR FCTL_SETPANELDIRECTORY
+enum FAR_PKF_FLAGS
+{
+	PKF_CONTROL     = 0x00000001,
+	PKF_ALT         = 0x00000002,
+	PKF_SHIFT       = 0x00000004,
+};
 #else
 #include <plugin2.hpp>
 #include <farkeys2.hpp>
@@ -67,11 +75,15 @@ public:
 	wchar_t RootKey[MAX_PATH];
 	void operator =(const PluginStartupInfo &Info);
 
+//	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+//		const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
 	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
-		const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
+		const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
 	INT_PTR Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
 	INT_PTR SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	LONG_PTR DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+	int EditorControl(int Command, void *Param);
+	int ViewerControl(int Command, void *Param);
 #else
 	void operator =(const PluginStartupInfo &Info);
 	int Menu(int X, int Y, int MaxHeight, DWORD Flags, const TCHAR *Title, const TCHAR *Bottom,
@@ -185,12 +197,19 @@ public:
 	void operator=(const  FarMenuItem &Item);
 #endif
 
+	bool Checked() const;
+	void Check(bool bCheck = true);
+	bool Selected() const;
+	void Select(bool bSelect = true);
+
 	~CFarMenuItemEx();
 protected:
 	void SetText(const TCHAR *szTitle);
 };
 
-#ifndef FAR3
+#ifdef FAR3
+vector<FarKey> ConvertKeys(const int *piBreakKeys);
+#else
 void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuItemEx> &arrDst);
 #endif
 

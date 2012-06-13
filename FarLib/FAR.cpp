@@ -150,6 +150,32 @@ void CFarMenuItemEx::operator=(const FarMenuItem &Item) {
 
 #endif
 
+bool CFarMenuItemEx::Checked() const
+{
+	return (Flags & MIF_CHECKED) != 0;
+}
+
+void CFarMenuItemEx::Check(bool bCheck)
+{
+	if (bCheck)
+		Flags |=  MIF_CHECKED;
+	else
+		Flags &= ~MIF_CHECKED;
+}
+
+bool CFarMenuItemEx::Selected() const
+{
+	return (Flags & MIF_SELECTED) != 0;
+}
+
+void CFarMenuItemEx::Select(bool bSelect)
+{
+	if (bSelect)
+		Flags |=  MIF_SELECTED;
+	else
+		Flags &= ~MIF_SELECTED;
+}
+
 CFarMenuItemEx::~CFarMenuItemEx() {
 #ifdef UNICODE
 	if (Text) free((void *)Text);

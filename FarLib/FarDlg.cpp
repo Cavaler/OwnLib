@@ -368,6 +368,11 @@ LRESULT CFarDialog::DefDlgProc(int nMsg, int nParam1, LONG_PTR lParam2)
 	return StartupInfo.DefDlgProc(m_hDlg, nMsg, nParam1, lParam2);
 }
 
+LRESULT CFarDialog::SendDlgMessage(int nMsg, int nParam1, LONG_PTR lParam2)
+{
+	return StartupInfo.SendDlgMessage(m_hDlg, nMsg, nParam1, lParam2);
+}
+
 tstring CFarDialog::GetDlgItemText(int nID)
 {
 	return FarLib::GetDlgItemText(m_hDlg, Index(nID));
