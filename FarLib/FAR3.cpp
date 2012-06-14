@@ -153,6 +153,14 @@ int CPluginStartupInfo::EditorControl(int Command, void *Param)
 
 	switch (Command)
 	{
+	case ECTL_GETINFO:
+	case ECTL_GETFILENAME:
+	case ECTL_GETSTRING:
+	case ECTL_SETSTRING:
+	case ECTL_SETPOSITION:
+	case ECTL_SELECT:
+	case ECTL_REALTOTAB:
+		return __super::EditorControl(-1, fCommand, 0, Param);
 	default:
 		assert(0);
 		return __super::EditorControl(-1, fCommand, 0, Param);
@@ -173,9 +181,33 @@ int CPluginStartupInfo::ViewerControl(int Command, void *Param)
 
 //////////////////////////////////////////////////////////////////////////
 
+WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item)
+{
+	WIN32_FIND_DATA fd;
+
+	fd.dwFileAttributes = Item.FileAttributes;
+	fd.ftCreationTime   = Item.CreationTime;
+	fd.ftLastAccessTime = Item.LastAccessTime;
+	fd.ftLastWriteTime  = Item.LastWriteTime;
+	fd.nFileSizeHigh    = (DWORD)(Item.FileSize >> 32);
+	fd.nFileSizeLow     = Item.FileSize && 0xFFFFFFFF;
+	wcscpy_s(fd.cFileName, MAX_PATH, Item.FileName);
+	wcscpy_s(fd.cAlternateFileName, 14, Item.AlternateFileName);
+
+	return fd;
+}
+
 vector<FarKey> ConvertKeys(const int *piBreakKeys)
 {
 	vector<FarKey> arrKeys;
+	if (piBreakKeys == NULL) {
+		FarKey Key;
+		Key.VirtualKeyCode = 0;
+		Key.ControlKeyState = 0;
+		arrKeys.push_back(Key);
+		return arrKeys;
+	}
+
 	do {
 		FarKey Key;
 		Key.VirtualKeyCode = (*piBreakKeys) & 0xFFFF;

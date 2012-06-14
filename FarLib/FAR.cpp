@@ -513,6 +513,14 @@ void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 #endif
 }
 
+CEditorSetString::CEditorSetString(int nNumber, LPCTSTR szText, LPCTSTR szEOL, int nLength)
+{
+	StringNumber = nNumber;
+	StringText = szText;
+	StringEOL = szEOL;
+	StringLength = nLength;
+}
+
 CFarSplitString::CFarSplitString(int nMax) : m_arrLines(nMax) {
 }
 

@@ -32,6 +32,7 @@
 #define FCTL_CLOSEPLUGIN FCTL_CLOSEPANEL
 #define FMENU_USEEXT 0
 #define FCTL_SETPANELDIR FCTL_SETPANELDIRECTORY
+#define NO_PANEL_HANDLE NULL
 enum FAR_PKF_FLAGS
 {
 	PKF_CONTROL     = 0x00000001,
@@ -43,6 +44,7 @@ enum FAR_PKF_FLAGS
 #include <farkeys2.hpp>
 #include <farcolor2.hpp>
 #define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIR
+#define NO_PANEL_HANDLE INVALID_HANDLE_VALUE
 #endif
 #define FAR_EXPORT(name) name##W
 #else
@@ -50,6 +52,7 @@ enum FAR_PKF_FLAGS
 #include <farkeys.hpp>
 #include <farcolor.hpp>
 #define FAR_EXPORT(name) name
+#define NO_PANEL_HANDLE INVALID_HANDLE_VALUE
 #endif
 
 #include <CRegExp.h>
@@ -158,6 +161,12 @@ protected:
 	vector<tstring> m_arrLines;
 };
 
+//	Different order in FAR3 requires this
+struct CEditorSetString : public EditorSetString
+{
+	CEditorSetString(int nNumber, LPCTSTR szText, LPCTSTR szEOL, int nLength = -1);
+};
+
 #ifdef FAR3
 #define FarMenuItemEx FarMenuItem
 #else
@@ -217,11 +226,15 @@ void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuIt
 
 #ifdef FAR3
 #define FarPanelFileName(pi) (pi).FileName
+#define FarPanelAttr(pi) (pi).FileAttributes
 typedef WIN32_FIND_DATA WF_FIND_DATA;
+WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item);
 #else
 #define FarFileName(fd) (fd).lpwszFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
+#define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
+#define PanelToWFD(Item) FFDtoWFD(Item.FindData)
 typedef FAR_FIND_DATA WF_FIND_DATA;
 #endif
 
@@ -266,7 +279,9 @@ struct CPanelInfo : PanelInfo
 
 #define FarFileName(fd) (fd).cFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
+#define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
 #define FFDtoWFD(Data) (Data)
+#define PanelToWFD(Item) Item.FindData
 typedef WIN32_FIND_DATA WF_FIND_DATA;
 
 struct CPanelInfo : PanelInfo {
