@@ -42,3 +42,4 @@
 #undef LIB_UNICODE
 #undef LIB_SPEC
 #undef LIB_NAME
+#undef LIB_APPEND
