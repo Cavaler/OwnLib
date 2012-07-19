@@ -3,8 +3,7 @@
 #include <stdarg.h>
 #include <windows.h>
 
-#include <vector>
-#include <string>
+#include <set>
 using namespace std;
 
 #include "StringEx.h"
@@ -19,7 +18,8 @@ const void *memechr(const void *buf, int c, size_t count) {
 	return sz ? sz : (char *)buf+count;
 }
 
-const char *NextWord(const char *&szLine, int &nLength, int &nCount) {
+const char *NextWord(const char *&szLine, int &nLength, int &nCount)
+{
 	if (nLength == -1) nLength = strlen(szLine);
 	while (nLength && isspace(szLine[0])) {szLine++;nLength--;}
 	if (!nLength) {if (&nCount) nCount = 0;return szLine;}
@@ -47,7 +47,8 @@ const char *NextWord(const char *&szLine, int &nLength, int &nCount) {
 	return szStart;
 }
 
-const wchar_t *NextWord(const wchar_t *&szLine, int &nLength, int &nCount) {
+const wchar_t *NextWord(const wchar_t *&szLine, int &nLength, int &nCount)
+{
 	if (nLength == -1) nLength = wcslen(szLine);
 	while (nLength && isspace(szLine[0])) {szLine++;nLength--;}
 	if (!nLength) {if (&nCount) nCount = 0;return szLine;}
@@ -75,31 +76,6 @@ const wchar_t *NextWord(const wchar_t *&szLine, int &nLength, int &nCount) {
 	return szStart;
 }
 
-int GetWord(char *Line,char *Word,int RetWhat) {
-	int I=0,J=0;
-	char EC1,EC2;
-	while (((Line[I]==' ')||(Line[I]=='\t'))&&(Line[I])) I++;
-	switch (Line[I]) {
-	case '"':EC1=EC2='"';I++;break;
-	case '\'':EC1=EC2='\'';I++;break;
-	case '`':EC1=EC2='`';I++;break;
-	default:EC1=' ';EC2='\t';
-	}
-	while ((Line[I]!=EC1)&&(Line[I]!=EC2)&&(Line[I])) {
-		if (Word) Word[J++]=Line[I++]; else {I++;J++;}
-	}
-	if (Word) Word[J]=0;
-	if (Line[I]==EC1) I++;
-
-	while (((Line[I]==' ')||(Line[I]=='\t'))&&(Line[I])) I++;
-	return (RetWhat==GW_WORDLEN)?J:I;
-}
-
-int GetStripWord(char *Line,char *Word) {
-	int I=GetWord(Line, Word, GW_SKIPLEN);
-	strcpy(Line, Line+I);
-	return I;
-}
 
 template<class CHAR>
 int  GetWord(basic_string<CHAR> strLine, basic_string<CHAR> &strWord, int iRetWhat) {
@@ -158,19 +134,6 @@ wstring FormatStrW(const wchar_t *szFormat, ...) {
 	va_end(List);
 	return &strBuffer[0];
 }
-
-char *FormatSz(const char *szFormat, ...) {
-	va_list List;
-	va_start(List, szFormat);
-	vector<char> strBuffer(1024);
-	while (_vsnprintf(&strBuffer[0], strBuffer.size(), szFormat, List) == -1) {
-		strBuffer.resize(strBuffer.size()*2);
-	}
-	va_end(List);
-	return _strdup(&strBuffer[0]);
-}
-
-void ParseWordsTo(string Line,vector<string> &Coll);
 
 int  IsWildcard(char *WildCard,char *Name) {
 	if (*WildCard==0) return *Name==0;
@@ -239,13 +202,13 @@ bool DefCharFromUnicode() {
 	return g_bUsedDefaultChar != 0;
 }
 
-tstring URLEncode(const TCHAR *szString)
+string URLEncode(const char *szString)
 {
-	tstring strResult;
+	string strResult;
 
 	while (szString[0]) {
 		BYTE c = (BYTE)szString[0];
-		
+
 		if (
 			((c >= 'a') && (c <= 'z')) ||
 			((c >= 'A') && (c <= 'Z')) ||
@@ -255,7 +218,7 @@ tstring URLEncode(const TCHAR *szString)
 		{
 			strResult += szString[0];
 		} else {
-			strResult += FormatStr(_T("%%%02X"), c);
+			strResult += FormatStrA("%%%02X", c);
 		}
 		szString++;
 	}
