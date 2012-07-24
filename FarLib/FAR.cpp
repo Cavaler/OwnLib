@@ -739,7 +739,7 @@ bool CPanelInfo::GetInfo(HANDLE hPanel)
 	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems, SelectedBuffers);
 
 #ifdef FAR3
-	Plugin = PluginHandle != INVALID_HANDLE_VALUE;
+	Plugin = PluginHandle != NO_PANEL_HANDLE;
 #endif
 
 	return true;
