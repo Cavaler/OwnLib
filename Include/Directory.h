@@ -6,6 +6,7 @@ TCHAR *AddSlash(TCHAR *Path);				// Returns same pointer
 TCHAR *DelSlash(TCHAR *Path);				// Returns same pointer or NULL in case 'D:\' or '\'
 BOOL CreateDirectories(const TCHAR *DirName);
 BOOL CreateDirectoriesForFile(const TCHAR *FileName);
+LPCTSTR GetNameOnly(LPCTSTR szPath);
 
 __if_exists(std::string) {
 #include "tstring.h"

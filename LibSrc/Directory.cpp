@@ -44,6 +44,12 @@ TCHAR *DelSlash(TCHAR *Path) {
 	return Path;
 }
 
+LPCTSTR GetNameOnly(LPCTSTR szPath)
+{
+	const TCHAR *szNameOnly = _tcsrchr(szPath, '\\');
+	return (szNameOnly) ? szNameOnly+1 : szPath;
+}
+
 BOOL CreateDirectories(const TCHAR *DirName) {
 	TCHAR FullName[MAX_PATH];
 	if (DirName[0]==0) return TRUE;
