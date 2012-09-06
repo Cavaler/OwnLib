@@ -39,14 +39,26 @@ pcre_extra * pcre_study(const pcre *external_re, int options, const wchar_t **er
 //	We must store them for get_substring
 vector<int> g_origOffsets;
 
+template<class Vector> void resize_vector(Vector &vec, size_t nLength)
+{
+	if ((vec.size() < nLength) || (vec.size() > nLength*16))
+		vec.resize(nLength);
+}
+
 int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 			  const wchar_t *subject, int length, int start_offset, int options, int *offsets,
-			  int offsetcount) {
+			  int offsetcount)
+{
+	static std::vector<size_t> utf2char_;
+	static std::vector<size_t> char2utf_;
 
 	string szSubject = UTF8FromUnicode(wstring(subject, length));
 
-	std::map<size_t, size_t> utf2char;
-	std::map<size_t, size_t> char2utf;
+	resize_vector(utf2char_, szSubject.length()*4+2);
+	resize_vector(char2utf_, szSubject.length()+2);
+	size_t *utf2char = &utf2char_[1];
+	size_t *char2utf = &char2utf_[1];
+
 	utf2char[-1] = -1;	// For nonexistent matches
 	size_t nByte = 0, nChar = 0;
 	for (; nByte < szSubject.length(); ) {
