@@ -126,12 +126,14 @@ INT_PTR CPluginStartupInfo::SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LON
 	{
 	case DM_LISTGETCURPOS:{
 		FarListPos Pos;
+		Pos.StructSize = sizeof(FarListPos);
 		__super::SendDlgMessage(hDlg, Msg, Param1, &Pos);
 		return Pos.SelectPos;
 						  }
 
 	case DM_LISTSETCURPOS:{
 		FarListPos Pos;
+		Pos.StructSize = sizeof(FarListPos);
 		Pos.SelectPos = Param2;
 		Pos.TopPos    = Param2;
 		return __super::SendDlgMessage(hDlg, Msg, Param1, &Pos);
@@ -160,6 +162,7 @@ int CPluginStartupInfo::EditorControl(int Command, void *Param)
 	case ECTL_SETPOSITION:
 	case ECTL_SELECT:
 	case ECTL_REALTOTAB:
+	case ECTL_REDRAW:
 		return __super::EditorControl(-1, fCommand, 0, Param);
 	default:
 		assert(0);
