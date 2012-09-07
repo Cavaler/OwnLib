@@ -835,6 +835,114 @@ void StdFreeFindData(PluginPanelItem *PanelItems, int ItemsNumber)
 	free(PanelItems);
 }
 
+#ifdef FAR3
+CFarSettingsKey::CFarSettingsKey()
+: m_Key(0)
+, m_pHandle(NULL)
+{
+}
+
+CFarSettingsKey::CFarSettingsKey(const CFarSettingsKey &Key)
+{
+	*this = Key;
+}
+
+void CFarSettingsKey::operator =(const CFarSettingsKey &Key)
+{
+	m_Key = Key.m_Key;
+	m_pHandle = Key.m_pHandle;
+	m_pHandle->m_dwRef++;
+}
+
+CFarSettingsKey::~CFarSettingsKey()
+{
+	Close();
+}
+
+bool CFarSettingsKey::OpenRoot(LPCTSTR szRootKey)
+{
+	Close();
+
+	FarSettingsCreate Fsc;
+	Fsc.StructSize = sizeof(FarSettingsCreate);
+	Fsc.Guid = StartupInfo.m_GUID;
+
+	if (!StartupInfo.SettingsControl(INVALID_HANDLE_VALUE, SCTL_CREATE, PSL_ROAMING, &Fsc)) return false;
+
+	m_pHandle = new sHandle;
+	m_pHandle->m_Handle = Fsc.Handle;
+	m_pHandle->m_dwRef  = 1;
+	m_Key = 0;
+
+	return true;
+}
+
+bool CFarSettingsKey::Open(CFarSettingsKey &Key, LPCTSTR szSubKey, bool bCreate)
+{
+	Close();
+
+	FarSettingsValue Fsv;
+	Fsv.Root  = Key.m_Key;
+	Fsv.Value = szSubKey;
+
+	m_Key = StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, bCreate ? SCTL_CREATESUBKEY : SCTL_OPENSUBKEY, 0, &Fsv);
+	if (m_Key == 0) return false;
+
+	m_pHandle = Key.m_pHandle;
+	m_pHandle->m_dwRef++;
+
+	return true;
+}
+
+void CFarSettingsKey::Close()
+{
+	if (m_pHandle) {
+		if (--m_pHandle->m_dwRef == 0) {
+			StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_FREE, 0, 0);
+			delete m_pHandle;
+		}
+		m_pHandle = NULL;
+	}
+}
+#else
+CFarSettingsKey::CFarSettingsKey()
+{
+}
+
+CFarSettingsKey::~CFarSettingsKey()
+{
+	Close();
+}
+
+bool CFarSettingsKey::OpenRoot(LPCTSTR szRootKey)
+{
+	TCHAR szCurrentKey[512];
+	_tcscat(_tcscat(_tcscpy(szCurrentKey, StartupInfo.RootKey), _T("\\")), szRootKey);
+
+	if (bCreate) {
+		m_Key = RegCreateSubkey(HKEY_CURRENT_USER, szCurrentKey);
+	} else {
+		m_Key = RegOpenSubkey(HKEY_CURRENT_USER, szCurrentKey);
+	}
+
+	return m_Key;
+}
+
+bool CFarSettingsKey::Open(CFarSettingsKey &Key, LPCTSTR szSubKey, bool bCreate)
+{
+	if (bCreate) {
+		m_Key = RegCreateSubkey(Key, szSubKey);
+	} else {
+		m_Key = RegOpenSubkey(Key, szSubKey);
+	}
+}
+
+void CFarSettingsKey::Close()
+{
+	m_Key.Close();
+}
+#endif
+
 tstring GetDlgItemText(HANDLE hDlg, int nItem) {
 #ifdef UNICODE
 	return (const wchar_t *)StartupInfo.SendDlgMessage(hDlg, DM_GETCONSTTEXTPTR, nItem, 0);

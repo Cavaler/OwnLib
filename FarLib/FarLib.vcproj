@@ -1533,6 +1533,10 @@
 				RelativePath=".\FarDlg.h"
 				>
 			</File>
+			<File
+				RelativePath=".\PersistVariablesFar3.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Far Header files"

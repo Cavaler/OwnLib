@@ -278,6 +278,93 @@ int  ChooseMenu(std::vector<std::tstring> &arrText, const TCHAR *Title, const TC
 		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size());
 }
 
+void QuerySettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std::tstring &strBuffer, const TCHAR *pszDefault)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = Key.m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_STRING;
+	if (!StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_GET, 0, &Fsi)) {
+		strBuffer = pszDefault;
+		return;
+	}
+	strBuffer = Fsi.String;
+}
+
+void QuerySettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, int *nValue,  int nDefault, int nMin, int nMax)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = Key.m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_QWORD;
+	if (!StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_GET, 0, &Fsi)) {
+		*nValue = nDefault;
+		return;
+	}
+
+	if ((Fsi.Number < nMin) || (Fsi.Number > nMax)) {
+		*nValue = nDefault;
+	} else {
+		*nValue = Fsi.Number;
+	}
+}
+
+void QuerySettingsBoolValue  (CFarSettingsKey &Key, const TCHAR *pszKeyName, bool *bValue, bool bDefault)
+{
+	int nValue;
+	QuerySettingsIntValue(Key, pszKeyName, &nValue, bDefault ? 1 : 0, 0, 1);
+	*bValue = (nValue != 0);
+}
+
+void QuerySettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std::vector<BYTE> &arrData)
+{
+	arrData.clear();
+
+	FarSettingsItem Fsi;
+	Fsi.Root = Key.m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_DATA;
+	if (!StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_GET, 0, &Fsi))
+		return;
+
+	if (Fsi.Data.Size == 0)
+		return;
+
+	arrData.resize(Fsi.Data.Size);
+	memmove(&arrData[0], Fsi.Data.Data, Fsi.Data.Size);
+}
+
+void SetSettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const std::tstring &strBuffer)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = Key.m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_STRING;
+	Fsi.String = strBuffer.c_str();
+	StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+}
+
+void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, int nValue)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = Key.m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_QWORD;
+	Fsi.Number = nValue;
+	StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+}
+
+void SetSettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const void *pData, int nLength)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = Key.m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_DATA;
+	Fsi.Data.Data = pData;
+	Fsi.Data.Size = nLength;
+	StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+}
+
 #endif
 
 #ifndef FAR_NO_NAMESPACE
