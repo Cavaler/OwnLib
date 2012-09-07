@@ -14,7 +14,7 @@
 	#define PERSIST_STRING_VARIABLE(Name, Default) EXTERN tstring Name;
 	#define PERSIST_TYPED_VARIABLE(Type, Name, Default, Min, Max) EXTERN Type Name VALUE(Default);
 	#define PERSIST_FILETIME_VARIABLE(Name) EXTERN FILETIME Name;
-	
+
 	#define PERSIST_BOOL_VARIABLE_(Name, Key, Default) EXTERN BOOL Name VALUE(Default);
 	#define PERSIST_bool_VARIABLE_(Name, Key, Default) EXTERN bool Name VALUE(Default);
 	#define PERSIST_STRING_VARIABLE_(Name, Key, Default) EXTERN tstring Name;

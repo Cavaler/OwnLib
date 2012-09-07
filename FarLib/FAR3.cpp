@@ -291,28 +291,23 @@ void QuerySettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std
 	strBuffer = Fsi.String;
 }
 
-void QuerySettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, int *nValue,  int nDefault, int nMin, int nMax)
+__int64 QuerySettingsInt64Value   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int64 nDefault)
 {
 	FarSettingsItem Fsi;
 	Fsi.Root = Key.m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_QWORD;
 	if (!StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_GET, 0, &Fsi)) {
-		*nValue = nDefault;
-		return;
+		return nDefault;
 	}
 
-	if ((Fsi.Number < nMin) || (Fsi.Number > nMax)) {
-		*nValue = nDefault;
-	} else {
-		*nValue = Fsi.Number;
-	}
+	return Fsi.Number;
 }
 
 void QuerySettingsBoolValue  (CFarSettingsKey &Key, const TCHAR *pszKeyName, bool *bValue, bool bDefault)
 {
 	int nValue;
-	QuerySettingsIntValue(Key, pszKeyName, &nValue, bDefault ? 1 : 0, 0, 1);
+	QuerySettingsIntValue(Key, pszKeyName, &nValue, bDefault ? 1 : 0);
 	*bValue = (nValue != 0);
 }
 
@@ -344,7 +339,7 @@ void SetSettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const
 	StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
 }
 
-void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, int nValue)
+void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int64 nValue)
 {
 	FarSettingsItem Fsi;
 	Fsi.Root = Key.m_Key;

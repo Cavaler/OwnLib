@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include "tstring.h"
+#include "handles.h"
 
 #define _FAR_USE_WIN32_FIND_DATA
 
@@ -251,11 +252,38 @@ protected:
 
 #ifdef FAR3
 void QuerySettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std::tstring &strBuffer, const TCHAR *pszDefault);
-void QuerySettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, int *nValue,  int nDefault, int nMin, int nMax);
+__int64 QuerySettingsInt64Value   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int64 nDefault);
 void QuerySettingsBoolValue  (CFarSettingsKey &Key, const TCHAR *pszKeyName, bool *bValue, bool bDefault);
 void QuerySettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std::vector<BYTE> &arrData);
+
+template<typename IntType>
+void QuerySettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, IntType *nValue, IntType nDefault)
+{
+	*nValue = (IntType)QuerySettingsInt64Value(Key, pszKeyName, nDefault);
+}
+
+template<typename IntType>
+void QuerySettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, IntType *nValue, IntType nDefault, IntType nMin)
+{
+	*nValue = (IntType)QuerySettingsInt64Value(Key, pszKeyName, nDefault);
+
+	if (*nValue < nMin) {
+		*nValue = nDefault;
+	}
+}
+
+template<typename IntType>
+void QuerySettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, IntType *nValue, IntType nDefault, IntType nMin, IntType nMax)
+{
+	*nValue = (IntType)QuerySettingsInt64Value(Key, pszKeyName, nDefault);
+
+	if ((*nValue < nMin) || (*nValue > nMax)) {
+		*nValue = nDefault;
+	}
+}
+
 void SetSettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const std::tstring &strBuffer);
-void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, int nValue);
+void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int64 nValue);
 void SetSettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const void *pData, int nLength);
 #endif
 

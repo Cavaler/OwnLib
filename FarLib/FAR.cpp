@@ -919,11 +919,7 @@ bool CFarSettingsKey::OpenRoot(LPCTSTR szRootKey)
 	TCHAR szCurrentKey[512];
 	_tcscat(_tcscat(_tcscpy(szCurrentKey, StartupInfo.RootKey), _T("\\")), szRootKey);
 
-	if (bCreate) {
-		m_Key = RegCreateSubkey(HKEY_CURRENT_USER, szCurrentKey);
-	} else {
-		m_Key = RegOpenSubkey(HKEY_CURRENT_USER, szCurrentKey);
-	}
+	m_Key = RegCreateSubkey(HKEY_CURRENT_USER, szCurrentKey);
 
 	return m_Key;
 }
@@ -935,6 +931,8 @@ bool CFarSettingsKey::Open(CFarSettingsKey &Key, LPCTSTR szSubKey, bool bCreate)
 	} else {
 		m_Key = RegOpenSubkey(Key, szSubKey);
 	}
+
+	return m_Key;
 }
 
 void CFarSettingsKey::Close()
