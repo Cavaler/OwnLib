@@ -177,6 +177,8 @@ int CPluginStartupInfo::ViewerControl(int Command, void *Param)
 
 	switch (Command)
 	{
+	case VCTL_QUIT:
+		return __super::ViewerControl(-1, fCommand, 0, 0);
 	default:
 		assert(0);
 		return __super::ViewerControl(-1, fCommand, 0, Param);
@@ -278,6 +280,168 @@ int  ChooseMenu(std::vector<std::tstring> &arrText, const TCHAR *Title, const TC
 		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size());
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+CFarSettingsKey::CFarSettingsKey()
+: m_Key(0)
+, m_pHandle(NULL)
+{
+}
+
+CFarSettingsKey::CFarSettingsKey(const CFarSettingsKey &Key)
+{
+	*this = Key;
+}
+
+void CFarSettingsKey::operator =(const CFarSettingsKey &Key)
+{
+	m_Key = Key.m_Key;
+	m_pHandle = Key.m_pHandle;
+	m_pHandle->m_dwRef++;
+}
+
+CFarSettingsKey::~CFarSettingsKey()
+{
+	Close();
+}
+
+bool CFarSettingsKey::OpenRoot(LPCTSTR szRootKey)
+{
+	Close();
+
+	FarSettingsCreate Fsc;
+	Fsc.StructSize = sizeof(FarSettingsCreate);
+	Fsc.Guid = StartupInfo.m_GUID;
+
+	if (!StartupInfo.SettingsControl(INVALID_HANDLE_VALUE, SCTL_CREATE, PSL_ROAMING, &Fsc)) return false;
+
+	m_pHandle = new sHandle(Fsc.Handle);
+	m_Key = 0;
+
+	return true;
+}
+
+bool CFarSettingsKey::Open(CFarSettingsKey &Key, LPCTSTR szSubKey, bool bCreate)
+{
+	Close();
+
+	FarSettingsValue Fsv;
+	Fsv.Root  = Key.m_Key;
+	Fsv.Value = szSubKey;
+
+	m_Key = StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, bCreate ? SCTL_CREATESUBKEY : SCTL_OPENSUBKEY, 0, &Fsv);
+	if (m_Key == 0) return false;
+
+	m_pHandle = Key.m_pHandle;
+	m_pHandle->m_dwRef++;
+
+	return true;
+}
+
+bool CFarSettingsKey::Valid() const
+{
+	return m_pHandle != NULL;
+}
+
+CFarSettingsKey CFarSettingsKey::Open(LPCTSTR szSubKey, bool bCreate)
+{
+	CFarSettingsKey Key;
+	Key.Open(*this, szSubKey, bCreate);
+	return Key;
+}
+
+void CFarSettingsKey::Close()
+{
+	if (m_pHandle) {
+		if (--m_pHandle->m_dwRef == 0) {
+			StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_FREE, 0, 0);
+			delete m_pHandle;
+		}
+		m_pHandle = NULL;
+	}
+}
+
+void CFarSettingsKey::SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_STRING;
+	Fsi.String = szValue;
+	StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+}
+
+void CFarSettingsKey::SetIntValue(LPCTSTR pszKeyName, __int64 nValue)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_QWORD;
+	Fsi.Number = nValue;
+	StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+}
+
+void CFarSettingsKey::StartEnumKeys()
+{
+	m_Enum.Root = m_Key;
+	StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_ENUM, 0, &m_Enum);
+	m_nEnum = 0;
+	m_bKeys = true;
+}
+
+void CFarSettingsKey::StartEnumValues()
+{
+	m_Enum.Root = m_Key;
+	StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_ENUM, 0, &m_Enum);
+	m_nEnum = 0;
+	m_bKeys = false;
+}
+
+tstring CFarSettingsKey::GetNextEnum()
+{
+	do {
+		if (m_nEnum >= m_Enum.Count) return L"";
+		if (m_bKeys == (m_Enum.Items[m_nEnum].Type == FST_SUBKEY))
+			return m_Enum.Items[m_nEnum].Name;
+		m_nEnum++;
+	} while (true);
+}
+
+bool CFarSettingsKey::DeleteKey(LPCTSTR szSubKey)
+{
+	CFarSettingsKey hKey = Open(szSubKey, false);
+	if (!hKey.Valid()) return false;
+	return hKey.DeleteValue(NULL);
+}
+
+bool CFarSettingsKey::DeleteValue(LPCTSTR szSubKey)
+{
+	FarSettingsValue Fsv;
+	Fsv.Root = m_Key;
+	Fsv.Value = szSubKey;
+	return StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_DELETE, 0, &Fsv) != 0;
+}
+
+void CFarSettingsKey::DeleteAllKeys()
+{
+	do {
+		StartEnumKeys();
+		tstring strName = GetNextEnum();
+		if (strName.empty()) return;
+		DeleteKey(strName.c_str());
+	} while (true);
+}
+
+void CFarSettingsKey::DeleteAllValues()
+{
+	do {
+		StartEnumValues();
+		tstring strName = GetNextEnum();
+		if (strName.empty()) return;
+		DeleteValue(strName.c_str());
+	} while (true);
+}
+
 void QuerySettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std::tstring &strBuffer, const TCHAR *pszDefault)
 {
 	FarSettingsItem Fsi;
@@ -331,22 +495,12 @@ void QuerySettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std
 
 void SetSettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const std::tstring &strBuffer)
 {
-	FarSettingsItem Fsi;
-	Fsi.Root = Key.m_Key;
-	Fsi.Name = pszKeyName;
-	Fsi.Type = FST_STRING;
-	Fsi.String = strBuffer.c_str();
-	StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+	Key.SetStringValue(pszKeyName, strBuffer);
 }
 
 void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int64 nValue)
 {
-	FarSettingsItem Fsi;
-	Fsi.Root = Key.m_Key;
-	Fsi.Name = pszKeyName;
-	Fsi.Type = FST_QWORD;
-	Fsi.Number = nValue;
-	StartupInfo.SettingsControl(Key.m_pHandle->m_Handle, SCTL_SET, 0, &Fsi);
+	Key.SetIntValue(pszKeyName, nValue);
 }
 
 void SetSettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const void *pData, int nLength)

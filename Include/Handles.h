@@ -21,8 +21,10 @@ public:
 
 	HandleType *operator &() {return &m_hHandle;}
 	operator HandleType &() {return m_hHandle;}
-	operator bool() {return m_hHandle != (HandleType)Null;}
-	bool operator!() {return m_hHandle == (HandleType)Null;}
+
+	bool Valid() const     {return m_hHandle != (HandleType)Null;}
+	operator bool() const  {return m_hHandle != (HandleType)Null;}
+	bool operator!() const {return m_hHandle == (HandleType)Null;}
 protected:
 	typedef void (WINAPI * CloseFunc)(HandleType _h);
 	HandleType m_hHandle;

@@ -206,6 +206,120 @@ int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const T
 	return Result;
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+CFarSettingsKey::CFarSettingsKey()
+: m_pHandle(NULL)
+{
+}
+
+CFarSettingsKey::CFarSettingsKey(const CFarSettingsKey &Key)
+{
+	*this = Key;
+}
+
+void CFarSettingsKey::operator =(const CFarSettingsKey &Key)
+{
+	m_pHandle = Key.m_pHandle;
+	m_pHandle->m_dwRef++;
+}
+
+CFarSettingsKey::~CFarSettingsKey()
+{
+	Close();
+}
+
+bool CFarSettingsKey::OpenRoot(LPCTSTR szRootKey)
+{
+	Close();
+
+	TCHAR szCurrentKey[512];
+	_tcscat(_tcscat(_tcscpy(szCurrentKey, StartupInfo.RootKey), _T("\\")), szRootKey);
+
+	HKEY hKey = RegCreateSubkey(HKEY_CURRENT_USER, szCurrentKey);
+	if (hKey == NULL) return false;
+
+	m_pHandle = new sHandle(hKey);
+	return true;
+}
+
+bool CFarSettingsKey::Open(CFarSettingsKey &Key, LPCTSTR szSubKey, bool bCreate)
+{
+	Close();
+
+	HKEY hKey = (bCreate) ? RegCreateSubkey(Key, szSubKey) : RegOpenSubkey(Key, szSubKey);
+	if (hKey == NULL) return false;
+
+	m_pHandle = new sHandle(hKey);
+	return true;
+}
+
+bool CFarSettingsKey::Valid() const
+{
+	return (m_pHandle != NULL) && (m_pHandle->m_Key.Valid());
+}
+
+CFarSettingsKey CFarSettingsKey::Open(LPCTSTR szSubKey, bool bCreate)
+{
+	CFarSettingsKey Key;
+	Key.Open(*this, szSubKey, bCreate);
+	return Key;
+}
+
+void CFarSettingsKey::Close()
+{
+	if (m_pHandle) {
+		if (--m_pHandle->m_dwRef == 0) {
+			m_pHandle->m_Key.Close();
+			delete m_pHandle;
+		}
+		m_pHandle = NULL;
+	}
+}
+
+void CFarSettingsKey::SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue)
+{
+	SetRegStringValue(m_pHandle->m_Key, pszKeyName, szValue);
+}
+
+void CFarSettingsKey::SetIntValue(LPCTSTR pszKeyName, __int64 nValue)
+{
+	SetRegIntValue(m_pHandle->m_Key, pszKeyName, (int)nValue);
+}
+/*
+void CFarSettingsKey::StartEnumKeys()
+{
+}
+
+void CFarSettingsKey::StartEnumValues()
+{
+}
+
+tstring CFarSettingsKey::GetNextEnum()
+{
+	return L"";
+}*/
+
+bool CFarSettingsKey::DeleteKey(LPCTSTR szSubKey)
+{
+	return RegDeleteKey(m_pHandle->m_Key, szSubKey) == ERROR_SUCCESS;
+}
+
+bool CFarSettingsKey::DeleteValue(LPCTSTR szSubKey)
+{
+	return RegDeleteValue(m_pHandle->m_Key, szSubKey) == ERROR_SUCCESS;
+}
+
+void CFarSettingsKey::DeleteAllKeys()
+{
+	RegDeleteAllSubkeys(m_pHandle->m_Key);
+}
+
+void CFarSettingsKey::DeleteAllValues()
+{
+	RegDeleteAllValues(m_pHandle->m_Key);
+}
+
 #endif
 
 #ifndef FAR_NO_NAMESPACE
