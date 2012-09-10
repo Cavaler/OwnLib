@@ -221,7 +221,7 @@ CFarSettingsKey::CFarSettingsKey(const CFarSettingsKey &Key)
 void CFarSettingsKey::operator =(const CFarSettingsKey &Key)
 {
 	m_pHandle = Key.m_pHandle;
-	m_pHandle->m_dwRef++;
+	if (m_pHandle) m_pHandle->m_dwRef++;
 }
 
 CFarSettingsKey::~CFarSettingsKey()
@@ -277,6 +277,39 @@ void CFarSettingsKey::Close()
 	}
 }
 
+bool CFarSettingsKey::QueryStringValue(LPCTSTR pszKeyName, tstring &strValue)
+{
+	LPTSTR szText = NULL;
+	AllocAndQueryRegStringValue(m_pHandle->m_Key, pszKeyName, &szText, NULL, NULL);
+	if (szText == NULL) return false;
+
+	strValue = szText;
+	free(szText);
+	return true;
+}
+
+bool CFarSettingsKey::QueryInt32Value (LPCTSTR pszKeyName, int &nValue)
+{
+	DWORD dwBufSize = sizeof(int);
+	DWORD dwType;
+	DWORD dwResult;
+
+	LONG lRes = RegQueryValueEx(m_pHandle->m_Key, pszKeyName, NULL, &dwType, (LPBYTE)&dwResult, &dwBufSize);
+
+	if ((lRes!=ERROR_SUCCESS) || (dwType!=REG_DWORD)) return false;
+
+	nValue = dwResult;
+	return true;
+}
+
+bool CFarSettingsKey::QueryBoolValue  (LPCTSTR pszKeyName, bool &bValue)
+{
+	int nValue32;
+	if (!QueryInt32Value(pszKeyName, nValue32)) return false;
+	bValue = (nValue32 != 0);
+	return true;
+}
+
 void CFarSettingsKey::SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue)
 {
 	SetRegStringValue(m_pHandle->m_Key, pszKeyName, szValue);
@@ -286,19 +319,35 @@ void CFarSettingsKey::SetIntValue(LPCTSTR pszKeyName, __int64 nValue)
 {
 	SetRegIntValue(m_pHandle->m_Key, pszKeyName, (int)nValue);
 }
-/*
+
 void CFarSettingsKey::StartEnumKeys()
 {
+	m_dwIndex = 0;
+	m_bKeys   = true;
 }
 
 void CFarSettingsKey::StartEnumValues()
 {
+	m_dwIndex = 0;
+	m_bKeys   = false;
 }
 
-tstring CFarSettingsKey::GetNextEnum()
+bool CFarSettingsKey::GetNextEnum(tstring &strName)
 {
-	return L"";
-}*/
+	TCHAR szKeyName[1024];
+	DWORD dwNameSize = sizeof(szKeyName)/sizeof(szKeyName[0]);
+
+	if (m_bKeys) {
+		FILETIME ftTime;
+		if (RegEnumKeyEx(m_pHandle->m_Key, m_dwIndex, szKeyName, &dwNameSize, NULL, NULL, NULL, &ftTime) != ERROR_SUCCESS) return false;
+	} else {
+		if (RegEnumValue(m_pHandle->m_Key, m_dwIndex, szKeyName, &dwNameSize, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) return false;
+	}
+
+	m_dwIndex++;
+	strName = szKeyName;
+	return true;
+}
 
 bool CFarSettingsKey::DeleteKey(LPCTSTR szSubKey)
 {

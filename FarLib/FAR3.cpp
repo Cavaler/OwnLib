@@ -297,7 +297,7 @@ void CFarSettingsKey::operator =(const CFarSettingsKey &Key)
 {
 	m_Key = Key.m_Key;
 	m_pHandle = Key.m_pHandle;
-	m_pHandle->m_dwRef++;
+	if (m_pHandle) m_pHandle->m_dwRef++;
 }
 
 CFarSettingsKey::~CFarSettingsKey()
@@ -361,6 +361,38 @@ void CFarSettingsKey::Close()
 	}
 }
 
+bool CFarSettingsKey::QueryStringValue(LPCTSTR pszKeyName, tstring &strValue)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_STRING;
+	if (!StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_GET, 0, &Fsi)) return false;
+
+	strValue = Fsi.String;
+	return true;
+}
+
+bool CFarSettingsKey::QueryInt64Value(LPCTSTR pszKeyName, __int64 &nValue)
+{
+	FarSettingsItem Fsi;
+	Fsi.Root = m_Key;
+	Fsi.Name = pszKeyName;
+	Fsi.Type = FST_QWORD;
+	if (!StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_GET, 0, &Fsi)) return false;
+
+	nValue = Fsi.Number;
+	return true;
+}
+
+bool CFarSettingsKey::QueryBoolValue(LPCTSTR pszKeyName, bool &bValue)
+{
+	__int64 nValue64;
+	if (!QueryInt64Value(pszKeyName, nValue64)) return false;
+	bValue = (nValue64 != 0);
+	return true;
+}
+
 void CFarSettingsKey::SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue)
 {
 	FarSettingsItem Fsi;
@@ -397,12 +429,15 @@ void CFarSettingsKey::StartEnumValues()
 	m_bKeys = false;
 }
 
-tstring CFarSettingsKey::GetNextEnum()
+bool CFarSettingsKey::GetNextEnum(tstring &strName)
 {
 	do {
-		if (m_nEnum >= m_Enum.Count) return L"";
-		if (m_bKeys == (m_Enum.Items[m_nEnum].Type == FST_SUBKEY))
-			return m_Enum.Items[m_nEnum].Name;
+		if (m_nEnum >= m_Enum.Count) return false;
+		if (m_bKeys == (m_Enum.Items[m_nEnum].Type == FST_SUBKEY)) {
+			strName = m_Enum.Items[m_nEnum].Name;
+			m_nEnum++;
+			return true;
+		}
 		m_nEnum++;
 	} while (true);
 }
@@ -426,8 +461,8 @@ void CFarSettingsKey::DeleteAllKeys()
 {
 	do {
 		StartEnumKeys();
-		tstring strName = GetNextEnum();
-		if (strName.empty()) return;
+		tstring strName;
+		if (!GetNextEnum(strName)) return;
 		DeleteKey(strName.c_str());
 	} while (true);
 }
@@ -436,8 +471,8 @@ void CFarSettingsKey::DeleteAllValues()
 {
 	do {
 		StartEnumValues();
-		tstring strName = GetNextEnum();
-		if (strName.empty()) return;
+		tstring strName;
+		if (!GetNextEnum(strName)) return;
 		DeleteValue(strName.c_str());
 	} while (true);
 }

@@ -13,6 +13,9 @@ public:
 	bool Valid() const;
 	CFarSettingsKey Open(LPCTSTR szSubKey, bool bCreate = true);
 
+	bool QueryStringValue(LPCTSTR pszKeyName, tstring &strValue);
+	bool QueryBoolValue  (LPCTSTR pszKeyName, bool &bValue);
+
 	void SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue);
 	void SetStringValue(LPCTSTR pszKeyName, const tstring &strValue) { return SetStringValue(pszKeyName, strValue.c_str()); }
 	void SetIntValue   (LPCTSTR pszKeyName, __int64 nValue);
@@ -20,7 +23,7 @@ public:
 
 	void StartEnumKeys();
 	void StartEnumValues();
-	tstring GetNextEnum();
+	bool GetNextEnum(tstring &strName);
 
 	bool DeleteKey(LPCTSTR szSubKey);
 	bool DeleteValue(LPCTSTR szSubKey);
@@ -30,6 +33,15 @@ public:
 	void Close();
 #ifdef FAR3
 public:
+	bool QueryInt64Value (LPCTSTR pszKeyName, __int64 &nValue);
+	template<typename IntType>bool QueryIntValue (LPCTSTR pszKeyName, IntType &nValue)
+	{
+		__int64 nValue64;
+		if (!QueryInt64Value(pszKeyName, nValue64)) return false;
+		nValue = (IntType)nValue64;
+		return true;
+	}
+
 	size_t	m_Key;
 	struct sHandle {
 		sHandle(HANDLE hHandle) : m_Handle(hHandle), m_dwRef(1) {}
@@ -43,6 +55,16 @@ public:
 	bool			m_bKeys;
 #else
 	operator HKEY() { return m_pHandle->m_Key; }
+
+	bool QueryInt32Value (LPCTSTR pszKeyName, int &nValue);
+	template<typename IntType>bool QueryIntValue (LPCTSTR pszKeyName, IntType &nValue)
+	{
+		int nValue32;
+		if (!QueryInt32Value(pszKeyName, nValue32)) return false;
+		nValue = (IntType)nValue32;
+		return true;
+	}
+
 protected:
 	struct sHandle {
 		sHandle(HKEY hKey) : m_Key(hKey), m_dwRef(1) {}
@@ -50,6 +72,9 @@ protected:
 		DWORD	m_dwRef;
 	};
 	sHandle	*m_pHandle;
+
+	DWORD			m_dwIndex;
+	bool			m_bKeys;
 #endif
 };
 
