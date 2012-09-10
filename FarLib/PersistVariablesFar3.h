@@ -31,7 +31,7 @@
 	#define PERSIST_BOOL_VARIABLE_(Name, Key, Default) QuerySettingsIntValue(DECLARE_PERSIST_LOAD, Key, &Name, Default, 0, 1);
 	#define PERSIST_bool_VARIABLE_(Name, Key, Default) QuerySettingsBoolValue(DECLARE_PERSIST_LOAD, Key, &Name, Default);
 	#define PERSIST_STRING_VARIABLE_(Name, Key, Default) QuerySettingsStringValue(DECLARE_PERSIST_LOAD, Key, Name, Default);
-	#define PERSIST_TYPED_VARIABLE_(Type, Name, Key, Default, Min, Max) QuerySettingsIntValue(DECLARE_PERSIST_LOAD, Key, (int *)&Name, Default, Min, Max);
+	#define PERSIST_TYPED_VARIABLE_(Type, Name, Key, Default, Min, Max) QuerySettingsIntValue<Type>(DECLARE_PERSIST_LOAD, Key, (int *)&Name, Default, Min, Max);
 	#define PERSIST_FILETIME_VARIABLE_(Name, Key) QuerySettingsIntValue<DWORD>(DECLARE_PERSIST_LOAD, Key _T("Lo"), &Name.dwLowDateTime, 0xE1D58000); QuerySettingsIntValue<DWORD>(DECLARE_PERSIST_LOAD, Key _T("Hi"), &Name.dwHighDateTime, 0x01A8E79F);
 
 #elif defined DECLARE_PERSIST_SAVE

@@ -25,6 +25,8 @@ public:
 	bool Valid() const     {return m_hHandle != (HandleType)Null;}
 	operator bool() const  {return m_hHandle != (HandleType)Null;}
 	bool operator!() const {return m_hHandle == (HandleType)Null;}
+
+	bool operator == (int null) { return m_hHandle == (HandleType)null; }
 protected:
 	typedef void (WINAPI * CloseFunc)(HandleType _h);
 	HandleType m_hHandle;
