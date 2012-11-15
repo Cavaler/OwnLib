@@ -73,24 +73,23 @@ class CPluginStartupInfo : public PluginStartupInfo
 {
 public:
 	const TCHAR *GetMsg(int MsgId);
-	int Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, 	int ItemsNumber, int ButtonsNumber);
 
 #ifdef FAR3
 	GUID	m_GUID;
 	wchar_t RootKey[MAX_PATH];
 	void operator =(const PluginStartupInfo &Info);
 
-//	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
-//		const TCHAR *HelpTopic, const FarKey *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
-	int Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
-		const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
-	INT_PTR Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
-	INT_PTR SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
-	LONG_PTR DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
-	int EditorControl(int Command, void *Param);
-	int ViewerControl(int Command, void *Param);
+	intptr_t Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, 	intptr_t ItemsNumber, intptr_t ButtonsNumber);
+	intptr_t Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+		const TCHAR *HelpTopic, const int *piBreakKeys, int *pBreakCode, const FarMenuItem *Item, size_t ItemsNumber);
+	intptr_t Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2);
+	intptr_t SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+	intptr_t DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
+	intptr_t EditorControl(int Command, void *Param);
+	intptr_t ViewerControl(int Command, void *Param);
 #else
 	void operator =(const PluginStartupInfo &Info);
+	int Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, int ItemsNumber, int ButtonsNumber);
 	int Menu(int X, int Y, int MaxHeight, DWORD Flags, const TCHAR *Title, const TCHAR *Bottom,
 		const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber);
 #endif
@@ -242,13 +241,21 @@ WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 typedef FAR_FIND_DATA WF_FIND_DATA;
 #endif
 
-struct CPluginPanelItem : PluginPanelItem {
+struct CPluginPanelItem : PluginPanelItem
+{
 	CPluginPanelItem();
 	CPluginPanelItem(const CPluginPanelItem &item);
 	CPluginPanelItem(const  PluginPanelItem &item);
 	void operator = (const  PluginPanelItem &item);
 	void operator = (const CPluginPanelItem &item);
 	void SetFindData(const WIN32_FIND_DATA &fd);
+
+#ifdef FAR3
+	DWORD &UData() { return *((DWORD *)&UserData.Data); }
+#else
+	DWORD_PTR &UData() { return UserData; }
+#endif
+
 	~CPluginPanelItem();
 };
 typedef vector<CPluginPanelItem> panelitem_vector;
@@ -294,7 +301,13 @@ struct CPanelInfo : PanelInfo {
 	int Find(LPCTSTR szFileName);
 };
 
-typedef PluginPanelItem CPluginPanelItem;
+struct CPluginPanelItem : PluginPanelItem
+{
+	CPluginPanelItem() {}
+	CPluginPanelItem(const  PluginPanelItem &item) : PluginPanelItem(item) {}
+
+	DWORD_PTR &UData() { return UserData; }
+};
 typedef vector<CPluginPanelItem> panelitem_vector;
 
 #endif	// UNICODE

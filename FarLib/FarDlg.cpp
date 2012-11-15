@@ -80,7 +80,7 @@ void CFarDialog::SetFocus(int Focus, int Shift) {
 }
 
 #ifdef FAR3
-INT_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, void *Param2)
+intptr_t WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, intptr_t Msg, intptr_t Param1, void *Param2)
 #else
 LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
 #endif
@@ -440,7 +440,8 @@ CFarDialog::~CFarDialog() {
 
 // *********************** HELPERS ***********************
 
-void SetListItemText(FarListItem &Item, const TCHAR *szText) {
+void SetListItemText(FarListItem &Item, const TCHAR *szText)
+{
 	Item.Flags = 0;
 	memset(Item.Reserved, 0, sizeof(Item.Reserved));
 #ifdef UNICODE
@@ -450,14 +451,22 @@ void SetListItemText(FarListItem &Item, const TCHAR *szText) {
 #endif
 }
 
-CFarListData::CFarListData() : m_bFree(true), m_pList (new FarList) {
+CFarListData::CFarListData() : m_bFree(true), m_pList(new FarList)
+{
+#ifdef FAR3
+	m_pList->StructSize = sizeof(FarList);
+#endif
 	m_pList->Items = NULL;
 	m_pList->ItemsNumber = 0;
 }
 
-CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy) {
+CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy)
+{
 	if (bCopy) {
 		m_pList = new FarList;
+#ifdef FAR3
+		m_pList->StructSize = sizeof(FarList);
+#endif
 		m_pList->Items = new FarListItem[m_pList->ItemsNumber = pList->ItemsNumber];
 		for (int nIndex = 0; nIndex < pList->ItemsNumber; nIndex++)
 			m_pList->Items[nIndex] = pList->Items[nIndex];
@@ -466,30 +475,40 @@ CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy) {
 	}
 }
 
-CFarListData::CFarListData(const TCHAR **ppszItems,int iItemCount) : m_bFree(true) {
+CFarListData::CFarListData(const TCHAR **ppszItems,int iItemCount) : m_bFree(true)
+{
 	m_pList = new FarList;
+#ifdef FAR3
+	m_pList->StructSize = sizeof(FarList);
+#endif
 	m_pList->Items = (FarListItem *)malloc((m_pList->ItemsNumber = iItemCount) * sizeof(FarListItem));
 	for (int nIndex = 0; nIndex < iItemCount; nIndex++) {
 		SetListItemText(m_pList->Items[nIndex], ppszItems[nIndex]);
 	}
 }
 
-CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true) {
+CFarListData::CFarListData(const vector<CFarText> arrItems) : m_bFree(true)
+{
 	m_pList = new FarList;
+#ifdef FAR3
+	m_pList->StructSize = sizeof(FarList);
+#endif
 	m_pList->Items = (FarListItem *)malloc((m_pList->ItemsNumber = arrItems.size()) * sizeof(FarListItem));
 	for (int nIndex = 0; nIndex < (int)arrItems.size(); nIndex++) {
 		SetListItemText(m_pList->Items[nIndex], arrItems[nIndex]);
 	}
 }
 
-int CFarListData::Append(const TCHAR *szItem) {
+int CFarListData::Append(const TCHAR *szItem)
+{
 	if (!m_bFree) return -1;
 	m_pList->Items = (FarListItem *)realloc(m_pList->Items, (m_pList->ItemsNumber + 1) * sizeof(FarListItem));
 	SetListItemText(m_pList->Items[m_pList->ItemsNumber], szItem);
 	return m_pList->ItemsNumber++;
 }
 
-CFarListData::~CFarListData() {
+CFarListData::~CFarListData()
+{
 	if (m_bFree) {
 #ifdef UNICODE
 		for (int nItem = 0; nItem < m_pList->ItemsNumber; nItem++)

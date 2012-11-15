@@ -41,11 +41,13 @@ void CFarMenuItemEx::SetText(const TCHAR *szTitle) {
 
 CFarMenuItemEx::CFarMenuItemEx()
 {
-	Flags = Reserved = UserData = 0;
+	Flags = UserData = 0;
 #ifdef FAR3
+	Reserved[0] = Reserved[1] = 0;
 	AccelKey.VirtualKeyCode = 0;
 	AccelKey.ControlKeyState = 0;
 #else
+	Reserved = 0;
 	AccelKey = 0;
 #endif
 	SetText(_T(""));
@@ -54,11 +56,13 @@ CFarMenuItemEx::CFarMenuItemEx()
 CFarMenuItemEx::CFarMenuItemEx(const TCHAR *szTitle, DWORD dwFlags)
 {
 	Flags = dwFlags;
-	Reserved = UserData = 0;
+	UserData = 0;
 #ifdef FAR3
+	Reserved[0] = Reserved[1] = 0;
 	AccelKey.VirtualKeyCode = 0;
 	AccelKey.ControlKeyState = 0;
 #else
+	Reserved = 0;
 	AccelKey = 0;
 #endif
 	SetText(szTitle);
@@ -67,11 +71,13 @@ CFarMenuItemEx::CFarMenuItemEx(const TCHAR *szTitle, DWORD dwFlags)
 CFarMenuItemEx::CFarMenuItemEx(const tstring &strTitle, DWORD dwFlags)
 {
 	Flags = dwFlags;
-	Reserved = UserData = 0;
+	UserData = 0;
 #ifdef FAR3
+	Reserved[0] = Reserved[1] = 0;
 	AccelKey.VirtualKeyCode = 0;
 	AccelKey.ControlKeyState = 0;
 #else
+	Reserved = 0;
 	AccelKey = 0;
 #endif
 	SetText(strTitle.c_str());
@@ -80,11 +86,13 @@ CFarMenuItemEx::CFarMenuItemEx(const tstring &strTitle, DWORD dwFlags)
 CFarMenuItemEx::CFarMenuItemEx(int nMsgID, DWORD dwFlags)
 {
 	Flags = dwFlags;
-	Reserved = UserData = 0;
+	UserData = 0;
 #ifdef FAR3
+	Reserved[0] = Reserved[1] = 0;
 	AccelKey.VirtualKeyCode = 0;
 	AccelKey.ControlKeyState = 0;
 #else
+	Reserved = 0;
 	AccelKey = 0;
 #endif
 	SetText(GetMsg(nMsgID));
@@ -93,11 +101,13 @@ CFarMenuItemEx::CFarMenuItemEx(int nMsgID, DWORD dwFlags)
 CFarMenuItemEx::CFarMenuItemEx(bool bSeparator)
 {
 	Flags = bSeparator ? MIF_SEPARATOR : 0;
-	Reserved = UserData = 0;
+	UserData = 0;
 #ifdef FAR3
+	Reserved[0] = Reserved[1] = 0;
 	AccelKey.VirtualKeyCode = 0;
 	AccelKey.ControlKeyState = 0;
 #else
+	Reserved = 0;
 	AccelKey = 0;
 #endif
 	SetText(_T(""));
@@ -114,11 +124,17 @@ CFarMenuItemEx::CFarMenuItemEx(const FarMenuItemEx &Item) {
 void CFarMenuItemEx::operator=(const FarMenuItemEx &Item) {
 	Flags = Item.Flags;
 	AccelKey = Item.AccelKey;
-	Reserved = Item.Reserved;
 	UserData = Item.UserData;
 #ifdef UNICODE
+#ifdef FAR3
+	Reserved[0] = Item.Reserved[0];
+	Reserved[1] = Item.Reserved[1];
+#else
+	Reserved = Item.Reserved;
+#endif
 	SetText(Item.Text);
 #else
+	Reserved = Item.Reserved;
 	SetText(Item.Text.Text);
 #endif
 }
@@ -585,6 +601,7 @@ CPluginPanelItem::CPluginPanelItem()
 #ifdef FAR3
 	FileName = NULL;
 	AlternateFileName = NULL;
+	UserData.FreeData = NULL;
 #else
 	FindData.lpwszFileName = NULL;
 	FindData.lpwszAlternateFileName = NULL;
@@ -692,7 +709,11 @@ void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnother
 	{
 		CPanelInfo PInfo;
 		PInfo.GetInfo(bAnotherPanel);
+#ifdef FAR3
+		PanelRedrawInfo RInfo = {sizeof(PanelRedrawInfo), PInfo.Find(szCurrentName), 0};
+#else
 		PanelRedrawInfo RInfo = {PInfo.Find(szCurrentName), 0};
+#endif
 
 		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
 

@@ -27,7 +27,7 @@ const wchar_t *CPluginStartupInfo::GetMsg(int MsgId)
 	return __super::GetMsg(&m_GUID, MsgId);
 }
 
-int CPluginStartupInfo::Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, 	int ItemsNumber, int ButtonsNumber)
+intptr_t CPluginStartupInfo::Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, 	intptr_t ItemsNumber, intptr_t ButtonsNumber)
 {
 	return __super::Message(&m_GUID, NULL, Flags, HelpTopic, Items, ItemsNumber, ButtonsNumber);
 }
@@ -38,15 +38,18 @@ int CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, co
 	return __super::Menu(&m_GUID, NULL, X, Y, MaxHeight, Flags, Title, Bottom, HelpTopic, BreakKeys, BreakCode, Item, ItemsNumber);
 }*/
 
-int CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
-		 const TCHAR *HelpTopic, const int *BreakKeys, int *BreakCode, const FarMenuItem *Item, size_t ItemsNumber)
+intptr_t CPluginStartupInfo::Menu(int X, int Y, int MaxHeight, FARMENUFLAGS Flags, const TCHAR *Title, const TCHAR *Bottom,
+		 const TCHAR *HelpTopic, const int *piBreakKeys, int *pBreakCode, const FarMenuItem *Item, size_t ItemsNumber)
 {
-	vector<FarKey> arrKeys = ConvertKeys(BreakKeys);
+	vector<FarKey> arrKeys = ConvertKeys(piBreakKeys);
 
-	return __super::Menu(&m_GUID, NULL, X, Y, MaxHeight, Flags, Title, Bottom, HelpTopic, &arrKeys[0], BreakCode, Item, ItemsNumber);
+	intptr_t nCode;
+	intptr_t nResult = __super::Menu(&m_GUID, NULL, X, Y, MaxHeight, Flags, Title, Bottom, HelpTopic, &arrKeys[0], &nCode, Item, ItemsNumber);
+	if (pBreakCode) *pBreakCode = nCode;
+	return nResult;
 }
 
-INT_PTR CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2)
+intptr_t CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LONG_PTR Param2)
 {
 	FILE_CONTROL_COMMANDS fCommand = (FILE_CONTROL_COMMANDS)Command;
 
@@ -97,6 +100,7 @@ INT_PTR CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LO
 	case FCTL_GETPANELITEM:
 	case FCTL_GETSELECTEDPANELITEM:{
 		FarGetPluginPanelItem GetItem;
+		GetItem.StructSize = sizeof(FarGetPluginPanelItem);
 		GetItem.Size = __super::PanelControl(hPanel, fCommand, Param1, NULL);
 		GetItem.Item = (PluginPanelItem *)Param2;
 		return __super::PanelControl(hPanel, fCommand, Param1, (void *)&GetItem);
@@ -120,7 +124,7 @@ INT_PTR CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, LO
 	return __super::PanelControl(hPanel, (FILE_CONTROL_COMMANDS)Command, Param1, (void *)Param2);
 }
 
-INT_PTR CPluginStartupInfo::SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
+intptr_t CPluginStartupInfo::SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
 {
 	switch (Msg)
 	{
@@ -144,12 +148,12 @@ INT_PTR CPluginStartupInfo::SendDlgMessage(HANDLE hDlg, int Msg, int Param1, LON
 	}
 }
 
-LONG_PTR CPluginStartupInfo::DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
+intptr_t CPluginStartupInfo::DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
 {
 	return __super::DefDlgProc(hDlg, Msg, Param1, (void *)Param2);
 }
 
-int CPluginStartupInfo::EditorControl(int Command, void *Param)
+intptr_t CPluginStartupInfo::EditorControl(int Command, void *Param)
 {
 	EDITOR_CONTROL_COMMANDS fCommand = (EDITOR_CONTROL_COMMANDS)Command;
 
@@ -171,12 +175,14 @@ int CPluginStartupInfo::EditorControl(int Command, void *Param)
 	}
 }
 
-int CPluginStartupInfo::ViewerControl(int Command, void *Param)
+intptr_t CPluginStartupInfo::ViewerControl(int Command, void *Param)
 {
 	VIEWER_CONTROL_COMMANDS fCommand = (VIEWER_CONTROL_COMMANDS)Command;
 
 	switch (Command)
 	{
+	case VCTL_GETFILENAME:
+		return __super::ViewerControl(-1, fCommand, MAX_PATH, Param);
 	case VCTL_QUIT:
 		return __super::ViewerControl(-1, fCommand, 0, 0);
 	default:
@@ -326,6 +332,7 @@ bool CFarSettingsKey::Open(CFarSettingsKey &Key, LPCTSTR szSubKey, bool bCreate)
 	Close();
 
 	FarSettingsValue Fsv;
+	Fsv.StructSize = sizeof(FarSettingsValue);
 	Fsv.Root  = Key.m_Key;
 	Fsv.Value = szSubKey;
 
@@ -415,6 +422,7 @@ void CFarSettingsKey::SetIntValue(LPCTSTR pszKeyName, __int64 nValue)
 
 void CFarSettingsKey::StartEnumKeys()
 {
+	m_Enum.StructSize = sizeof(FarSettingsEnum);
 	m_Enum.Root = m_Key;
 	StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_ENUM, 0, &m_Enum);
 	m_nEnum = 0;
@@ -423,6 +431,7 @@ void CFarSettingsKey::StartEnumKeys()
 
 void CFarSettingsKey::StartEnumValues()
 {
+	m_Enum.StructSize = sizeof(FarSettingsEnum);
 	m_Enum.Root = m_Key;
 	StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_ENUM, 0, &m_Enum);
 	m_nEnum = 0;
@@ -452,6 +461,7 @@ bool CFarSettingsKey::DeleteKey(LPCTSTR szSubKey)
 bool CFarSettingsKey::DeleteValue(LPCTSTR szSubKey)
 {
 	FarSettingsValue Fsv;
+	Fsv.StructSize = sizeof(FarSettingsValue);
 	Fsv.Root = m_Key;
 	Fsv.Value = szSubKey;
 	return StartupInfo.SettingsControl(m_pHandle->m_Handle, SCTL_DELETE, 0, &Fsv) != 0;
