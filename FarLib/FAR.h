@@ -23,6 +23,14 @@
 
 #define _FAR_USE_WIN32_FIND_DATA
 
+#ifdef FAR3
+#define INIT_SS(Struct) = { sizeof(Struct) }
+#define ITEM_SS(Struct) sizeof(Struct),
+#else
+#define INIT_SS(Struct)
+#define ITEM_SS(Struct)
+#endif
+
 #ifdef UNICODE
 #ifdef FAR3
 #pragma pack(push,8)
@@ -165,7 +173,7 @@ protected:
 //	Different order in FAR3 requires this
 struct CEditorSetString : public EditorSetString
 {
-	CEditorSetString(int nNumber, LPCTSTR szText, LPCTSTR szEOL, int nLength = -1);
+	CEditorSetString(int nNumber = -1, LPCTSTR szText = NULL, LPCTSTR szEOL = NULL, int nLength = -1);
 };
 
 #ifdef FAR3

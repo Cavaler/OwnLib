@@ -531,6 +531,9 @@ void CFarPanelMode::Apply(HANDLE hPlugin, int nOpMode) {
 
 CEditorSetString::CEditorSetString(int nNumber, LPCTSTR szText, LPCTSTR szEOL, int nLength)
 {
+#ifdef FAR3
+	StructSize = sizeof(EditorSetString);
+#endif
 	StringNumber = nNumber;
 	StringText = szText;
 	StringEOL = szEOL;
@@ -709,11 +712,7 @@ void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnother
 	{
 		CPanelInfo PInfo;
 		PInfo.GetInfo(bAnotherPanel);
-#ifdef FAR3
-		PanelRedrawInfo RInfo = {sizeof(PanelRedrawInfo), PInfo.Find(szCurrentName), 0};
-#else
-		PanelRedrawInfo RInfo = {PInfo.Find(szCurrentName), 0};
-#endif
+		PanelRedrawInfo RInfo = {ITEM_SS(PanelRedrawInfo) PInfo.Find(szCurrentName), 0};
 
 		StartupInfo.Control(hPanel, FCTL_REDRAWPANEL, 0, (LONG_PTR)&RInfo);
 
