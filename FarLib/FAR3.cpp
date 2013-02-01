@@ -185,6 +185,12 @@ intptr_t CPluginStartupInfo::ViewerControl(int Command, void *Param)
 		return __super::ViewerControl(-1, fCommand, MAX_PATH, Param);
 	case VCTL_QUIT:
 		return __super::ViewerControl(-1, fCommand, 0, 0);
+	case VCTL_GETINFO:
+		return __super::ViewerControl(-1, fCommand, 0, Param);
+	case VCTL_SETPOSITION:
+		return __super::ViewerControl(-1, fCommand, 0, Param);
+	case VCTL_SELECT:
+		return __super::ViewerControl(-1, fCommand, 0, Param);
 	default:
 		assert(0);
 		return __super::ViewerControl(-1, fCommand, 0, Param);

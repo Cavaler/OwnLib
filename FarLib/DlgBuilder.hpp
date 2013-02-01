@@ -9,7 +9,7 @@
 /*
   DlgBuilder.hpp
 
-  Dynamic construction of dialogs for FAR Manager 3.0 build 2466
+  Dynamic construction of dialogs for FAR Manager 3.0 build 3132
 */
 
 /*
@@ -178,7 +178,7 @@ class DialogBuilderBase
 		int ColumnBreakIndex;
 		int ColumnStartY;
 		int ColumnEndY;
-		int ColumnMinWidth;
+		intptr_t ColumnMinWidth;
 
 		static const int SECOND_COLUMN = -2;
 
@@ -230,7 +230,7 @@ class DialogBuilderBase
 			Item->Y1 = Item->Y2 = NextY++;
 		}
 
-		int ItemWidth(const T &Item)
+		intptr_t ItemWidth(const T &Item)
 		{
 			switch(Item.Type)
 			{
@@ -247,7 +247,7 @@ class DialogBuilderBase
 			case DI_COMBOBOX:
 			case DI_PSWEDIT:
 				{
-					int Width = Item.X2 - Item.X1 + 1;
+					intptr_t Width = Item.X2 - Item.X1 + 1;
 					// стрелка history занимает дополнительное место, но раньше она рисовалась поверх рамки???
 					if (Item.Flags & DIF_HISTORY)
 						Width++;
@@ -287,20 +287,20 @@ class DialogBuilderBase
 			Indent = 0;
 		}
 
-		int MaxTextWidth()
+		intptr_t MaxTextWidth()
 		{
-			int MaxWidth = 0;
+			intptr_t MaxWidth = 0;
 			for(int i=1; i<DialogItemsCount; i++)
 			{
 				if (DialogItems [i].X1 == SECOND_COLUMN) continue;
-				int Width = ItemWidth(DialogItems [i]);
-				int Indent = DialogItems [i].X1 - 5;
+				intptr_t Width = ItemWidth(DialogItems [i]);
+				intptr_t Indent = DialogItems [i].X1 - 5;
 				Width += Indent;
 
 				if (MaxWidth < Width)
 					MaxWidth = Width;
 			}
-			int ColumnsWidth = 2*ColumnMinWidth+1;
+			intptr_t ColumnsWidth = 2*ColumnMinWidth+1;
 			if (MaxWidth < ColumnsWidth)
 				return ColumnsWidth;
 			return MaxWidth;
@@ -308,12 +308,12 @@ class DialogBuilderBase
 
 		void UpdateSecondColumnPosition()
 		{
-			int SecondColumnX1 = 6 + (DialogItems [0].X2 - DialogItems [0].X1 - 1)/2;
+			intptr_t SecondColumnX1 = 6 + (DialogItems [0].X2 - DialogItems [0].X1 - 1)/2;
 			for(int i=0; i<DialogItemsCount; i++)
 			{
 				if (DialogItems [i].X1 == SECOND_COLUMN)
 				{
-					int Width = DialogItems [i].X2 - DialogItems [i].X1;
+					intptr_t Width = DialogItems [i].X2 - DialogItems [i].X1;
 					DialogItems [i].X1 = SecondColumnX1;
 					DialogItems [i].X2 = DialogItems [i].X1 + Width;
 				}
@@ -370,7 +370,7 @@ class DialogBuilderBase
 			return nullptr;
 		}
 
-		virtual int DoShowDialog()
+		virtual intptr_t DoShowDialog()
 		{
 			return -1;
 		}
@@ -386,8 +386,9 @@ class DialogBuilderBase
 		}
 
 		DialogBuilderBase()
-			: DialogItems(nullptr), DialogItemsCount(0), DialogItemsAllocated(0), NextY(2), Indent(0), SingleBoxIndex(-1),
-			  ColumnStartIndex(-1), ColumnBreakIndex(-1), ColumnMinWidth(0)
+			: DialogItems(nullptr), Bindings(nullptr), DialogItemsCount(0), DialogItemsAllocated(0), NextY(2), Indent(0), SingleBoxIndex(-1),
+			  OKButtonID(-1),
+			  ColumnStartIndex(-1), ColumnBreakIndex(-1), ColumnStartY(-1), ColumnEndY(-1), ColumnMinWidth(0)
 		{
 		}
 
@@ -475,7 +476,7 @@ class DialogBuilderBase
 			Item->X1 = 5 + Indent;
 			Item->X2 = Item->X1 + ItemWidth(*Item) - 1;
 
-			int RelativeToWidth = RelativeTo->X2 - RelativeTo->X1;
+			intptr_t RelativeToWidth = RelativeTo->X2 - RelativeTo->X1;
 			RelativeTo->X1 = Item->X2 + 2;
 			RelativeTo->X2 = RelativeTo->X1 + RelativeToWidth;
 
@@ -539,7 +540,7 @@ class DialogBuilderBase
 		{
 			for(int i=ColumnStartIndex; i<DialogItemsCount; i++)
 			{
-				int Width = ItemWidth(DialogItems [i]);
+				intptr_t Width = ItemWidth(DialogItems [i]);
 				if (Width > ColumnMinWidth)
 					ColumnMinWidth = Width;
 				if (i >= ColumnBreakIndex)
@@ -584,14 +585,19 @@ class DialogBuilderBase
 		// Добавляет сепаратор.
 		void AddSeparator(int MessageId=-1)
 		{
-			T *Separator = AddDialogItem(DI_TEXT, MessageId == -1 ? L"" : GetLangString(MessageId));
+			return AddSeparator(MessageId == -1 ? L"" : GetLangString(MessageId));
+		}
+
+		void AddSeparator(const wchar_t* Text)
+		{
+			T *Separator = AddDialogItem(DI_TEXT, Text);
 			Separator->Flags = DIF_SEPARATOR;
-			Separator->X1 = 3;
+			Separator->X1 = -1;
 			Separator->Y1 = Separator->Y2 = NextY++;
 		}
 
 		// Добавляет сепаратор, кнопки OK и Cancel.
-		void AddOKCancel(int OKMessageId, int CancelMessageId, bool Separator=true)
+		void AddOKCancel(int OKMessageId, int CancelMessageId, int ExtraMessageId = -1, bool Separator=true)
 		{
 			if (Separator)
 				AddSeparator();
@@ -607,20 +613,37 @@ class DialogBuilderBase
 				CancelButton->Flags = DIF_CENTERGROUP;
 				CancelButton->Y1 = CancelButton->Y2 = OKButton->Y1;
 			}
+
+			if(ExtraMessageId != -1)
+			{
+				T *ExtraButton = AddDialogItem(DI_BUTTON, GetLangString(ExtraMessageId));
+				ExtraButton->Flags = DIF_CENTERGROUP;
+				ExtraButton->Y1 = ExtraButton->Y2 = OKButton->Y1;
+			}
+		}
+
+		intptr_t ShowDialogEx()
+		{
+			UpdateBorderSize();
+			UpdateSecondColumnPosition();
+			intptr_t Result = DoShowDialog();
+			if (Result == OKButtonID)
+			{
+				SaveValues();
+			}
+
+			if(Result >= OKButtonID)
+			{
+				Result -= OKButtonID;
+			}
+			return Result;
 		}
 
 		bool ShowDialog()
 		{
-			UpdateBorderSize();
-			UpdateSecondColumnPosition();
-			int Result = DoShowDialog();
-			if (Result == OKButtonID)
-			{
-				SaveValues();
-				return true;
-			}
-			return false;
+			return ShowDialogEx() == 0;
 		}
+
 };
 
 class PluginDialogBuilder;
@@ -717,11 +740,13 @@ public:
 		: DialogAPIBinding(aInfo, aHandle, aID),
 		  Value(aValue)
 	{
+		memset(Buffer, 0, sizeof(Buffer));
 		aInfo.FSF->sprintf(Buffer, L"%u", *aValue);
 		int MaskWidth = Width < 31 ? Width : 31;
-		for(int i=0; i<MaskWidth; i++)
-			Mask[i] = '9';
-		Mask[MaskWidth] = '\0';
+		for(int i=1; i<MaskWidth; i++)
+			Mask[i] = L'9';
+		Mask[0] = L'#';
+		Mask[MaskWidth] = L'\0';
 	}
 
 	virtual void SaveValue(FarDialogItem *Item, int RadioGroupIndex)
@@ -771,10 +796,10 @@ class PluginDialogBuilder: public DialogBuilderBase<FarDialogItem>
 			return Info.GetMsg(&PluginId, MessageID);
 		}
 
-		virtual int DoShowDialog()
+		virtual intptr_t DoShowDialog()
 		{
-			int Width = DialogItems [0].X2+4;
-			int Height = DialogItems [0].Y2+2;
+			intptr_t Width = DialogItems [0].X2+4;
+			intptr_t Height = DialogItems [0].Y2+2;
 			DialogHandle = Info.DialogInit(&PluginId, &Id, -1, -1, Width, Height, HelpTopic, DialogItems, DialogItemsCount, 0, 0, DlgProc, UserParam);
 			return Info.DialogRun(DialogHandle);
 		}
@@ -791,13 +816,13 @@ class PluginDialogBuilder: public DialogBuilderBase<FarDialogItem>
 
 public:
 		PluginDialogBuilder(const PluginStartupInfo &aInfo, const GUID &aPluginId, const GUID &aId, int TitleMessageID, const wchar_t *aHelpTopic, FARWINDOWPROC aDlgProc=nullptr, void* aUserParam=nullptr)
-			: Info(aInfo), HelpTopic(aHelpTopic), PluginId(aPluginId), Id(aId), DlgProc(aDlgProc), UserParam(aUserParam)
+			: Info(aInfo), DialogHandle(0), HelpTopic(aHelpTopic), PluginId(aPluginId), Id(aId), DlgProc(aDlgProc), UserParam(aUserParam)
 		{
 			AddBorder(GetLangString(TitleMessageID));
 		}
 
 		PluginDialogBuilder(const PluginStartupInfo &aInfo, const GUID &aPluginId, const GUID &aId, const wchar_t *TitleMessage, const wchar_t *aHelpTopic, FARWINDOWPROC aDlgProc=nullptr, void* aUserParam=nullptr)
-			: Info(aInfo), HelpTopic(aHelpTopic), PluginId(aPluginId), Id(aId), DlgProc(aDlgProc), UserParam(aUserParam)
+			: Info(aInfo), DialogHandle(0), HelpTopic(aHelpTopic), PluginId(aPluginId), Id(aId), DlgProc(aDlgProc), UserParam(aUserParam)
 		{
 			AddBorder(TitleMessage);
 		}
