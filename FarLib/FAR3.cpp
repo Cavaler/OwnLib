@@ -377,6 +377,7 @@ void CFarSettingsKey::Close()
 bool CFarSettingsKey::QueryStringValue(LPCTSTR pszKeyName, tstring &strValue)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_STRING;
@@ -389,6 +390,7 @@ bool CFarSettingsKey::QueryStringValue(LPCTSTR pszKeyName, tstring &strValue)
 bool CFarSettingsKey::QueryInt64Value(LPCTSTR pszKeyName, __int64 &nValue)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_QWORD;
@@ -409,6 +411,7 @@ bool CFarSettingsKey::QueryBoolValue(LPCTSTR pszKeyName, bool &bValue)
 void CFarSettingsKey::SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_STRING;
@@ -419,6 +422,7 @@ void CFarSettingsKey::SetStringValue(LPCTSTR pszKeyName, LPCTSTR szValue)
 void CFarSettingsKey::SetIntValue(LPCTSTR pszKeyName, __int64 nValue)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_QWORD;
@@ -496,6 +500,7 @@ void CFarSettingsKey::DeleteAllValues()
 void QuerySettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std::tstring &strBuffer, const TCHAR *pszDefault)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = Key.m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_STRING;
@@ -509,6 +514,7 @@ void QuerySettingsStringValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std
 __int64 QuerySettingsInt64Value   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int64 nDefault)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = Key.m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_QWORD;
@@ -531,6 +537,7 @@ void QuerySettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, std
 	arrData.clear();
 
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = Key.m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_DATA;
@@ -557,6 +564,7 @@ void SetSettingsIntValue   (CFarSettingsKey &Key, const TCHAR *pszKeyName, __int
 void SetSettingsBinaryValue(CFarSettingsKey &Key, const TCHAR *pszKeyName, const void *pData, int nLength)
 {
 	FarSettingsItem Fsi;
+	Fsi.StructSize = sizeof(FarSettingsItem);
 	Fsi.Root = Key.m_Key;
 	Fsi.Name = pszKeyName;
 	Fsi.Type = FST_DATA;
