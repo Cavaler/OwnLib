@@ -8,8 +8,13 @@
 #include "GenLibName.h"
 
 #ifndef _WIN64
+#ifdef FAR3
+#pragma pack(4)
+#else
 #pragma pack(2)
 #endif
+#endif
+
 #ifndef _WINDOWS_
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
