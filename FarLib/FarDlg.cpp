@@ -312,7 +312,7 @@ void CFarDialog::UpdateHotkey(tstring &strText)
 
 	for (size_t nChar = 0; nChar < strText.size(); nChar++) {
 		TCHAR cKey = OEMUpper(strText[nChar]);
-		if ((cKey <= 32) || isspace(cKey)) continue;
+		if ((cKey <= 32) || iswspace(cKey)) continue;
 		if (m_setHotkeys.find(cKey) == m_setHotkeys.end()) {
 			strText.insert(nChar, 1, '&');
 			m_setHotkeys.insert(cKey);
