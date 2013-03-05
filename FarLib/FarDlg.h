@@ -43,6 +43,7 @@ public:
 
 	//	Management
 	void SetFocus(int Focus, int Shift = 0);
+	int  GetFocus();
 	int  Display(int ValidExitCodes,...);
 
 	static bool AutoHotkeys;
@@ -106,6 +107,7 @@ protected:
 	void UpdateHotkey(tstring &strText);
 
 	int		Index(int nIndexOrID);
+	int		ID(int nIndexOrID);
 
 #ifdef FAR3
 	GUID m_GUID;

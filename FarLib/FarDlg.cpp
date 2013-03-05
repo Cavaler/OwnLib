@@ -79,6 +79,11 @@ void CFarDialog::SetFocus(int Focus, int Shift) {
 	}
 }
 
+int  CFarDialog::GetFocus()
+{
+	return ID(StartupInfo.SendDlgMessage(m_hDlg, DM_GETFOCUS, 0, NULL));
+}
+
 #ifdef FAR3
 intptr_t WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, intptr_t Msg, intptr_t Param1, void *Param2)
 #else
@@ -356,6 +361,11 @@ void CFarDialog::SetCancelID(int nCancelID)
 int CFarDialog::Index(int nIndexOrID)
 {
 	return (m_bUseID) ? GetIndex(nIndexOrID) : nIndexOrID;
+}
+
+int CFarDialog::ID(int nIndexOrID)
+{
+	return (m_bUseID) ? GetID(nIndexOrID) : nIndexOrID;
 }
 
 void CFarDialog::Close(int nID)
