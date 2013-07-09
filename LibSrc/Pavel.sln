@@ -6,7 +6,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcre", "pcre\pcre.vcproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gd", "gd-2.0.35\windows\gd.vcproj", "{476CC849-F90C-465E-8EE5-5999C9B40363}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jpeglib", "jpeg-8c\windows\jpeglib.vcproj", "{83012B45-1B33-4A4D-B082-B0923EAF5EB8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jpeglib", "jpeg-8d\windows\jpeglib.vcproj", "{83012B45-1B33-4A4D-B082-B0923EAF5EB8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "libpng-1.5.1\projects\visualc71\libpng.vcproj", "{7726D510-74E3-4E66-82A7-E81299305184}"
 EndProject
