@@ -224,7 +224,7 @@ int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iButtonsNumber, std::ve
 }
 
 void ShowMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
-	const TCHAR *ppszItems[] = {pszTitle, pszMessage1, pszMessage2, GetMsg(0)};
+	const TCHAR *ppszItems[] = {pszTitle, pszMessage1, pszMessage2, g_pszOKButton};
 	if (pszMessage2) {
 		StartupInfo.Message(0, _T(""), ppszItems, 4, 1);
 	} else {
@@ -234,7 +234,7 @@ void ShowMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *p
 }
 
 void ShowError(const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
-	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage1, pszMessage2, GetMsg(0)};
+	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage1, pszMessage2, g_pszOKButton};
 	if (pszMessage2) {
 		StartupInfo.Message(FMSG_WARNING, g_pszErrorTopic, ppszItems, 4, 1);
 	} else {
@@ -244,7 +244,7 @@ void ShowError(const TCHAR *pszMessage1, const TCHAR *pszMessage2) {
 }
 
 void ShowLastError(const TCHAR *pszMessage, const TCHAR *pszFileName) {
-	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage, pszFileName, GetMsg(0)};
+	const TCHAR *ppszItems[] = {g_pszErrorTitle, pszMessage, pszFileName, g_pszOKButton};
 	if (pszFileName) {
 		StartupInfo.Message(FMSG_WARNING|FMSG_ERRORTYPE, g_pszLastErrorTopic, ppszItems, 4, 1);
 	} else {
@@ -279,11 +279,8 @@ bool Interrupted() {
 		if (!dwRead) return FALSE;
 		if (!ReadConsoleInput(hInput,&rcInput,1,&dwRead)) return false;
 		if ((rcInput.EventType==KEY_EVENT) && (rcInput.Event.KeyEvent.bKeyDown)
-#ifdef _WIN64
-			&& (rcInput.Event.KeyEvent.wVirtualKeyCode==VK_ESCAPE))
-#else
-			&& (rcInput.Event.KeyEvent.wVirtualScanCode==VK_ESCAPE))
-#endif
+			&& ((rcInput.Event.KeyEvent.wVirtualKeyCode==VK_ESCAPE) ||
+				(rcInput.Event.KeyEvent.wVirtualScanCode==VK_ESCAPE)))
 			return g_bInterrupted=true;
 	} while (dwRead);
 	return false;

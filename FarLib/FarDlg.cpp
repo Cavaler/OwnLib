@@ -272,10 +272,10 @@ TCHAR OEMUpper(TCHAR cKey)
 {
 #ifndef UNICODE
 	OemToCharBuffA(&cKey, &cKey, 1);
-	cKey = (int)CharUpperA((LPSTR)cKey);
+	cKey = (int)CharUpperA((LPSTR)(BYTE)cKey);
 	CharToOemBuffA(&cKey, &cKey, 1);
 #else
-	cKey = (int)CharUpper((LPWSTR)cKey);
+	cKey = (int)CharUpper((LPWSTR)(WORD)cKey);
 #endif
 	return cKey;
 }
@@ -317,7 +317,7 @@ void CFarDialog::UpdateHotkey(tstring &strText)
 
 	for (size_t nChar = 0; nChar < strText.size(); nChar++) {
 		TCHAR cKey = OEMUpper(strText[nChar]);
-		if ((cKey <= 32) || iswspace(cKey)) continue;
+		if (((WORD)cKey <= 32) || iswspace(cKey)) continue;
 		if (m_setHotkeys.find(cKey) == m_setHotkeys.end()) {
 			strText.insert(nChar, 1, '&');
 			m_setHotkeys.insert(cKey);
@@ -398,9 +398,9 @@ void CFarDialog::ShowDlgItem(int nID, bool bShow)
 	FarLib::ShowDlgItem(m_hDlg, Index(nID), bShow);
 }
 
-void CFarDialog::EnableDlgItem(int nID, bool bEnable)
+void CFarDialog::EnableDlgItem(int nID, bool bEnable, int nOffset)
 {
-	FarLib::EnableDlgItem(m_hDlg, Index(nID), bEnable);
+	FarLib::EnableDlgItem(m_hDlg, Index(nID)+nOffset, bEnable);
 }
 
 void CFarDialog::EnableCheckBox(int nID, bool bEnable, bool bDisabledState)

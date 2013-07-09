@@ -100,6 +100,7 @@ public:
 	intptr_t DefDlgProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2);
 	intptr_t EditorControl(int Command, void *Param);
 	intptr_t ViewerControl(int Command, void *Param);
+	intptr_t MacroControl(int Command, intptr_t Param1, void* Param2);
 #else
 	void operator =(const PluginStartupInfo &Info);
 	int Message(DWORD Flags, const TCHAR *HelpTopic, const TCHAR ** Items, int ItemsNumber, int ButtonsNumber);

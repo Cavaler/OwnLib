@@ -168,6 +168,7 @@ intptr_t CPluginStartupInfo::EditorControl(int Command, void *Param)
 	case ECTL_REALTOTAB:
 	case ECTL_REDRAW:
 	case ECTL_UNDOREDO:
+	case ECTL_DELETESTRING:
 		return __super::EditorControl(-1, fCommand, 0, Param);
 	default:
 		assert(0);
@@ -195,6 +196,11 @@ intptr_t CPluginStartupInfo::ViewerControl(int Command, void *Param)
 		assert(0);
 		return __super::ViewerControl(-1, fCommand, 0, Param);
 	}
+}
+
+intptr_t CPluginStartupInfo::MacroControl(int Command, intptr_t Param1, void* Param2)
+{
+	return __super::MacroControl(&m_GUID, (FAR_MACRO_CONTROL_COMMANDS)Command, Param1, Param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -298,6 +304,12 @@ CFarSettingsKey::CFarSettingsKey()
 : m_Key(0)
 , m_pHandle(NULL)
 {
+}
+
+CFarSettingsKey::CFarSettingsKey(LPCTSTR szRootKey)
+: m_pHandle(NULL)
+{
+	OpenRoot(szRootKey);
 }
 
 CFarSettingsKey::CFarSettingsKey(const CFarSettingsKey &Key)

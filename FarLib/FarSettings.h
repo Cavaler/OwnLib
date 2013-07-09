@@ -4,6 +4,7 @@ class CFarSettingsKey
 {
 public:
 	CFarSettingsKey();
+	CFarSettingsKey(LPCTSTR szRootKey);
 	CFarSettingsKey(const CFarSettingsKey &Key);
 	void operator =(const CFarSettingsKey &Key);
 	~CFarSettingsKey();

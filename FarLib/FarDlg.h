@@ -69,7 +69,7 @@ public:
 	tstring GetDlgItemText(int nID);
 	void SetDlgItemText(int nID, const TCHAR *szText);
 	void ShowDlgItem(int nID, bool bShow);
-	void EnableDlgItem(int nID, bool bEnable);
+	void EnableDlgItem(int nID, bool bEnable, int nOffset = 0);
 	void EnableCheckBox(int nID, bool bEnable, bool bDisabledState = false);
 
 	//	Check / Radio buttons

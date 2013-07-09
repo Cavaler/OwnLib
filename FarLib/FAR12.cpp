@@ -213,6 +213,12 @@ CFarSettingsKey::CFarSettingsKey()
 {
 }
 
+CFarSettingsKey::CFarSettingsKey(LPCTSTR szRootKey)
+: m_pHandle(NULL)
+{
+	OpenRoot(szRootKey);
+}
+
 CFarSettingsKey::CFarSettingsKey(const CFarSettingsKey &Key)
 {
 	*this = Key;
