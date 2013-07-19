@@ -25,7 +25,7 @@ void SetItemText(FarDialogItem *pItem, const TCHAR *szText) {
 #endif
 }
 
-CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,DWORD dwFlags, const CFarText &szText):
+CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText):
 	X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Flags(dwFlags),Text(szText),m_nOwnID(szText.ID())
 {
 }
@@ -71,7 +71,7 @@ CFarDialogItem::~CFarDialogItem() {
 
 // ********************** CUSTOM************************
 
-CFarCustomItem::CFarCustomItem(int iX1,int iY1,int iX2,int iY2,int iSelected,DWORD dwFlags, const CFarText &szText):
+CFarCustomItem::CFarCustomItem(int iX1,int iY1,int iX2,int iY2,int iSelected,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText):
 CFarDialogItem(iX1,iY1,iX2,iY2,dwFlags,szText),Selected(iSelected) {}
 
 void CFarCustomItem::CreateItem(FarDialogItem *Item) {
@@ -82,7 +82,7 @@ void CFarCustomItem::CreateItem(FarDialogItem *Item) {
 
 // ************************ BOX ************************
 
-CFarBoxItem::CFarBoxItem(BOOL bDouble,int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,const CFarText &szText):
+CFarBoxItem::CFarBoxItem(BOOL bDouble,int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText):
 CFarDialogItem(iX1,iY1,iX2,iY2,dwFlags,szText),Double(bDouble) {}
 
 void CFarBoxItem::CreateItem(FarDialogItem *Item) {
@@ -92,7 +92,7 @@ void CFarBoxItem::CreateItem(FarDialogItem *Item) {
 
 // *********************** TEXT ************************
 
-CFarTextItem::CFarTextItem(int X,int Y,DWORD dwFlags, const CFarText &szText):
+CFarTextItem::CFarTextItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText):
 CFarDialogItem(X,Y,0,0,dwFlags,szText) {}
 
 void CFarTextItem::CreateItem(FarDialogItem *Item) {
@@ -102,12 +102,12 @@ void CFarTextItem::CreateItem(FarDialogItem *Item) {
 
 tstring *CFarTextItem::HotkeyText()
 {
-	return (Flags & DIF_SEPARATOR|DIF_SEPARATOR2|DIF_SHOWAMPERSAND) ? NULL : &Text;
+	return (Flags & (DIF_SEPARATOR|DIF_SEPARATOR2|DIF_SHOWAMPERSAND|DIF_NOAUTOHOTKEY)) ? NULL : &Text;
 }
 
 // ********************** BUTTON ***********************
 
-CFarButtonItem::CFarButtonItem(int X,int Y,DWORD dwFlags,BOOL bDefault, const CFarText &szText):
+CFarButtonItem::CFarButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags,BOOL bDefault, const CFarText &szText):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),Default(bDefault) {}
 
 void CFarButtonItem::CreateItem(FarDialogItem *Item) {
@@ -123,24 +123,24 @@ void CFarButtonItem::CreateItem(FarDialogItem *Item) {
 
 tstring *CFarButtonItem::HotkeyText()
 {
-	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
+	return (Flags & (DIF_SHOWAMPERSAND|DIF_NOAUTOHOTKEY)) ? NULL : &Text;
 }
 
 // ********************* CHECKBOX **********************
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool *pbVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool *pbVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(0),m_pbVariable(pbVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool &pbVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool &pbVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(0),m_pbVariable(&pbVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL *pBVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL *pBVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(1),m_pBVariable(pBVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL &pBVariable):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL &pBVariable):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(1),m_pBVariable(&pBVariable) {}
 
-CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iMaskValue):
+CFarCheckBoxItem::CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iMaskValue):
 CFarDialogItem(X,Y,0,0,dwFlags,szText),m_nMethod(2),m_piStorage(new CFarIntegerStorage(piStorage)),m_iValue(iMaskValue) {}
 
 void CFarCheckBoxItem::CreateItem(FarDialogItem *Item) {
@@ -184,7 +184,7 @@ void CFarCheckBoxItem::StoreData(FarDialogItem *Item) {
 
 tstring *CFarCheckBoxItem::HotkeyText()
 {
-	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
+	return (Flags & (DIF_SHOWAMPERSAND|DIF_NOAUTOHOTKEY)) ? NULL : &Text;
 }
 
 CFarCheckBoxItem::~CFarCheckBoxItem() {
@@ -196,10 +196,10 @@ CFarCheckBoxItem::~CFarCheckBoxItem() {
 
 // ********************* CHECKBOX3 **********************
 
-CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage):
+CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage):
 CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(1),m_piStorage(new CFarIntegerStorage(piStorage)) {}
 
-CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue):
+CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue):
 CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(1),m_pdwCleared(pdwCleared),m_pdwSet(pdwSet),m_dwMaskValue(dwMaskValue) {}
 
 void CFarCheckBox3Item::CreateItem(FarDialogItem *Item) {
@@ -250,7 +250,7 @@ void CFarCheckBox3Item::StoreData(FarDialogItem *Item) {
 
 tstring *CFarCheckBox3Item::HotkeyText()
 {
-	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
+	return (Flags & (DIF_SHOWAMPERSAND|DIF_NOAUTOHOTKEY)) ? NULL : &Text;
 }
 
 CFarCheckBox3Item::~CFarCheckBox3Item() {
@@ -262,19 +262,19 @@ CFarCheckBox3Item::~CFarCheckBox3Item() {
 
 // ******************** RADIOBUTTON ********************
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool *pbVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool *pbVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,pbVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool &pbVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool &pbVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,&pbVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL *pBVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL *pBVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,pBVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL &pBVariable):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL &pBVariable):
 CFarCheckBoxItem(X,Y,dwFlags,szText,&pBVariable) {}
 
-CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iValue):
+CFarRadioButtonItem::CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iValue):
 CFarCheckBoxItem(X,Y,dwFlags,szText,piStorage,iValue) {}
 
 void CFarRadioButtonItem::CreateItem(FarDialogItem *Item) {
@@ -315,21 +315,21 @@ void CFarRadioButtonItem::StoreData(FarDialogItem *Item) {
 
 tstring *CFarRadioButtonItem::HotkeyText()
 {
-	return (Flags & DIF_SHOWAMPERSAND) ? NULL : &Text;
+	return (Flags & (DIF_SHOWAMPERSAND|DIF_NOAUTOHOTKEY)) ? NULL : &Text;
 }
 
 // ************************ LIST BOX ***********************
 
-CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,int *piVariable):
+CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,int *piVariable):
 CFarDialogItem(X1,Y1,X2,Y2,dwFlags),m_pData(pData),m_piVariable(piVariable) {}
 
-CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,CFarStorage *pStorage):
+CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarStorage *pStorage):
 CFarDialogItem(X1,Y1,X2,Y2,dwFlags),m_pData(pData),m_piVariable(NULL),m_pStorage(pStorage) {}
 
-CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage):
+CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarTextStorage TextStorage):
 CFarDialogItem(X1,Y1,X2,Y2,dwFlags),m_pData(pData),m_piVariable(NULL),m_pStorage(new CFarTextStorage(TextStorage)) {}
 
-CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage):
+CFarListBoxItem::CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage):
 CFarDialogItem(X1,Y1,X2,Y2,dwFlags),m_pData(pData),m_piVariable(NULL),m_pStorage(new CFarIntegerStorage(IntStorage)) {}
 
 void CFarListBoxItem::CreateItem(FarDialogItem *Item) {
@@ -374,13 +374,13 @@ CFarListBoxItem::~CFarListBoxItem() {
 
 // ************************ EDIT ***********************
 
-CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarStorage *pStorage,CFarValidator *pValidator,int iType):
+CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,const TCHAR *szHistory,CFarStorage *pStorage,CFarValidator *pValidator,int iType):
 CFarDialogItem(iX1,Y,iX2,0,dwFlags),m_pszHistory(szHistory),m_pStorage(pStorage),m_pValidator(pValidator),m_iType(iType) {}
 
-CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarTextStorage TextStorage,CFarValidator *pValidator,int iType):
+CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,const TCHAR *szHistory,CFarTextStorage TextStorage,CFarValidator *pValidator,int iType):
 CFarDialogItem(iX1,Y,iX2,0,dwFlags),m_pszHistory(szHistory),m_pStorage(new CFarTextStorage(TextStorage)),m_pValidator(pValidator),m_iType(iType) {}
 
-CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int iType):
+CFarEditItem::CFarEditItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,const TCHAR *szHistory,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int iType):
 CFarDialogItem(iX1,Y,iX2,0,dwFlags),m_pszHistory(szHistory),m_pStorage(new CFarIntegerStorage(IntStorage)),m_pValidator(pValidator),m_iType(iType) {}
 
 void CFarEditItem::CreateItem(FarDialogItem *Item)
@@ -451,13 +451,13 @@ CFarEditItem::~CFarEditItem() {
 
 // ************************ COMBO BOX ***********************
 
-CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarStorage *pStorage,CFarValidator *pValidator):
+CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarStorage *pStorage,CFarValidator *pValidator):
 CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,pStorage,pValidator,DI_COMBOBOX),m_pData(pData) {}
 
-CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator):
+CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator):
 CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,TextStorage,pValidator,DI_COMBOBOX),m_pData(pData) {}
 
-CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int nOffset):
+CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int nOffset):
 CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,IntStorage,pValidator,DI_COMBOBOX),m_pData(pData),m_nOffset(nOffset) {}
 
 tstring CFarComboBoxItem::NoAmpText(tstring strText)

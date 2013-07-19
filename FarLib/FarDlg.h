@@ -17,6 +17,14 @@ namespace FarLib {
 class CFarDialog;
 class CFarDialogItem;
 
+#ifdef FAR3
+static const FARDIALOGITEMFLAGS DIF_NOAUTOHOTKEY = 0x0100000000000000ULL;
+#else
+typedef DWORD FARDIALOGITEMFLAGS;
+typedef DWORD FARDIALOGFLAGS;
+static const FARDIALOGITEMFLAGS DIF_NOAUTOHOTKEY = 0x08000000UL;
+#endif
+
 // *********************** GENERAL ***********************
 
 typedef LONG_PTR(WINAPI *CFARWINDOWPROC)(
@@ -29,8 +37,8 @@ typedef LONG_PTR(WINAPI *CFARWINDOWPROC)(
 class CFarDialog {
 public:
 	//	Building
-	CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,DWORD dwFlags=0);
-	CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,DWORD dwFlags=0);
+	CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags=0);
+	CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags=0);
 	int  AddFrame(const TCHAR *Title);
 	int  AddFrame(int TitleId);
 	int  AddFrame();
@@ -96,7 +104,7 @@ protected:
 	map<int, size_t>			m_mapCodes;
 
 	long	m_lParam;
-	DWORD	m_dwFlags;
+	FARDIALOGFLAGS	m_dwFlags;
 
 	bool	m_bUseID;
 	int		m_nCancelID;
@@ -316,7 +324,7 @@ protected:
 
 class CFarDialogItem {
 public:
-	CFarDialogItem(int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,const CFarText &szText=CFarText());
+	CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText=CFarText());
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item) {return true;};
 	virtual void StoreData(FarDialogItem *Item) {};
@@ -324,7 +332,7 @@ public:
 	virtual ~CFarDialogItem();
 protected:
 	int X1,Y1,X2,Y2;
-	DWORD Flags;
+	FARDIALOGITEMFLAGS Flags;
 	tstring Text;
 #ifdef UNICODE
 public:
@@ -340,7 +348,7 @@ public:
 
 class CFarCustomItem:public CFarDialogItem {
 public:
-	CFarCustomItem(int iX1,int iY1,int iX2,int iY2,int iSelected,DWORD dwFlags,const CFarText &szText=CFarText());
+	CFarCustomItem(int iX1,int iY1,int iX2,int iY2,int iSelected,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText=CFarText());
 	virtual void CreateItem(FarDialogItem *Item);
 protected:
 	int Selected;
@@ -348,7 +356,7 @@ protected:
 
 class CFarBoxItem:public CFarDialogItem {
 public:
-	CFarBoxItem(BOOL bDouble,int iX1,int iY1,int iX2,int iY2,DWORD dwFlags,const CFarText &szText=CFarText());
+	CFarBoxItem(BOOL bDouble,int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText=CFarText());
 	virtual void CreateItem(FarDialogItem *Item);
 protected:
 	BOOL Double;
@@ -356,7 +364,7 @@ protected:
 
 class CFarTextItem:public CFarDialogItem {
 public:
-	CFarTextItem(int X,int Y,DWORD dwFlags, const CFarText &szText=CFarText());
+	CFarTextItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText=CFarText());
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual tstring *HotkeyText();
 protected:
@@ -365,7 +373,7 @@ protected:
 
 class CFarButtonItem:public CFarDialogItem {
 public:
-	CFarButtonItem(int X,int Y,DWORD dwFlags,BOOL bDefault,const CFarText &szText);
+	CFarButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags,BOOL bDefault,const CFarText &szText);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual tstring *HotkeyText();
 protected:
@@ -374,11 +382,11 @@ protected:
 
 class CFarCheckBoxItem:public CFarDialogItem {
 public:
-	CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool *pbVariable);
-	CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool &pbVariable);
-	CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL *pBVariable);
-	CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL &pBVariable);
-	CFarCheckBoxItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iMaskValue);
+	CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool *pbVariable);
+	CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool &pbVariable);
+	CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL *pBVariable);
+	CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL &pBVariable);
+	CFarCheckBoxItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iMaskValue);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual tstring *HotkeyText();
@@ -397,8 +405,8 @@ protected:
 
 class CFarCheckBox3Item:public CFarDialogItem {
 public:
-	CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage);
-	CFarCheckBox3Item(int X,int Y,DWORD dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue);
+	CFarCheckBox3Item(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage);
+	CFarCheckBox3Item(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual tstring *HotkeyText();
@@ -417,11 +425,11 @@ protected:
 
 class CFarRadioButtonItem : public CFarCheckBoxItem {
 public:
-	CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool *pbVariable);
-	CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,bool &pbVariable);
-	CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL *pBVariable);
-	CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,BOOL &pBVariable);
-	CFarRadioButtonItem(int X,int Y,DWORD dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iValue);
+	CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool *pbVariable);
+	CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,bool &pbVariable);
+	CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL *pBVariable);
+	CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,BOOL &pBVariable);
+	CFarRadioButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage,int iValue);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual tstring *HotkeyText();
@@ -429,10 +437,10 @@ public:
 
 class CFarListBoxItem:public CFarDialogItem {
 public:
-	CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,int *piVariable);
-	CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,CFarStorage *pStorage);
-	CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage);
-	CFarListBoxItem(int X1,int Y1,int X2,int Y2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage);
+	CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,int *piVariable);
+	CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarStorage *pStorage);
+	CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarTextStorage TextStorage);
+	CFarListBoxItem(int X1,int Y1,int X2,int Y2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
 	virtual ~CFarListBoxItem();
@@ -446,9 +454,9 @@ class CFarValidator;
 
 class CFarEditItem:public CFarDialogItem {
 public:
-	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarStorage *pStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
-	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
-	CFarEditItem(int iX1,int Y,int iX2,DWORD dwFlags,const TCHAR *szHistory,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
+	CFarEditItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,const TCHAR *szHistory,CFarStorage *pStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
+	CFarEditItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,const TCHAR *szHistory,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
+	CFarEditItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,const TCHAR *szHistory,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int iType=DI_EDIT);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
@@ -462,9 +470,9 @@ protected:
 
 class CFarComboBoxItem:public CFarEditItem {
 public:
-	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarStorage *pStorage,CFarValidator *pValidator=NULL);
-	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL);
-	CFarComboBoxItem(int iX1,int Y,int iX2,DWORD dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int nOffset=0);
+	CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarStorage *pStorage,CFarValidator *pValidator=NULL);
+	CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator=NULL);
+	CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarIntegerStorage TextStorage,CFarValidator *pValidator=NULL,int nOffset=0);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item);
 	virtual void StoreData(FarDialogItem *Item);
