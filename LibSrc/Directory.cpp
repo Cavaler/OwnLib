@@ -110,6 +110,17 @@ tstring GetFileName(const tstring &strPath) {
 	return (nPos == tstring::npos) ? strPath : strPath.substr(nPos + 1);
 }
 
+tstring GetPath(const tstring &strPath)
+{
+	int nPosS = strPath.rfind('\\');
+	int nPosC = strPath.rfind(':');
+	int nPos = (nPosS == tstring::npos) ? nPosC :
+		(nPosC == tstring::npos) ? nPosS :
+		(nPosS > nPosC) ? nPosS : nPosC;
+
+	return (nPos == tstring::npos) ? tstring() : strPath.substr(0, nPos);
+}
+
 tstring GetFullFileName(const tstring &strPath)
 {
 	wstring wstrPath = StrToUnicode(strPath, CP_OEMCP);
