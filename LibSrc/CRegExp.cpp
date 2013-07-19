@@ -190,7 +190,8 @@ bool CRegExpT<CHAR>::Compile(cstring strPattern, int iCompileFlags) {
 	if (!m_pPattern) return false;
 	m_pPatternExtra = pcre_study(m_pPattern, 0, &m_pszErrPtr);
 
-	m_iRefCount= pcre_info(m_pPattern, NULL, NULL) + 1;
+	pcre_fullinfo(m_pPattern, m_pPatternExtra, PCRE_INFO_CAPTURECOUNT, &m_iRefCount);
+	m_iRefCount++;
 	m_piRefs = new int[m_iRefCount*3];
 
 	return true;
