@@ -632,50 +632,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;for;f90"
 			>
 			<File
-				RelativePath="..\CRegExp.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Unicode|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Unicode|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\pcre_byte_order.c"
 				>
 			</File>
@@ -777,10 +733,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Include\CRegExp.h"
-				>
-			</File>
-			<File
 				RelativePath=".\pcre.h"
 				>
 			</File>
@@ -789,23 +741,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\pcre_scanner.h"
-				>
-			</File>
-			<File
 				RelativePath=".\pcreposix.h"
 				>
 			</File>
 			<File
 				RelativePath=".\ucp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ucpinternal.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ucptable.h"
 				>
 			</File>
 		</Filter>
@@ -1614,6 +1554,58 @@
 			</File>
 			<File
 				RelativePath=".\pcre32_xclass.c"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="CRegExp Files"
+			>
+			<File
+				RelativePath="..\CRegExp.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						PreprocessorDefinitions=""
+						BrowseInformation="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						PreprocessorDefinitions=""
+						BrowseInformation="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						PreprocessorDefinitions=""
+						BrowseInformation="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Unicode|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						PreprocessorDefinitions=""
+						BrowseInformation="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\Include\CRegExp.h"
 				>
 			</File>
 		</Filter>
