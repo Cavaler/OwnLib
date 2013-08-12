@@ -16,7 +16,12 @@ using namespace std;
 #define PCRE_SPLIT_STRIPLEADING			0x80000000
 #define PCRE_SPLIT_NOSTRIPTRAILING		0x40000000
 
-#define PCRE_FREE(p) if (p) { pcre_free(p); p = NULL; }
+template<typename s>
+inline void PCRE_FREE(s *&p) { if (p) { pcre_free(p); p = NULL; } }
+
+template<> inline void PCRE_FREE(pcre_extra   *&p) { if (p) { pcre_free_study(p);   p = NULL; } }
+template<> inline void PCRE_FREE(pcre16_extra *&p) { if (p) { pcre16_free_study(p); p = NULL; } }
+template<> inline void PCRE_FREE(pcre32_extra *&p) { if (p) { pcre32_free_study(p); p = NULL; } }
 
 #ifdef UNICODE
 
