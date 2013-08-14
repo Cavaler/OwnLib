@@ -290,7 +290,7 @@ bool CFarSettingsKey::QueryStringValue(LPCTSTR pszKeyName, tstring &strValue)
 	if (dwType == REG_DWORD) {
 		int nValue;
 		QueryRegIntValue(m_pHandle->m_Key, pszKeyName, &nValue);
-		strValue = FormatStr(L"%d", nValue);
+		strValue = FormatStr(_T("%d"), nValue);
 		return true;
 	}
 
