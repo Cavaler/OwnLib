@@ -58,7 +58,8 @@ public:
 	void EnableAutoHotkeys(bool bEnable);
 
 	void SetUseID(bool bUseID);
-	int  GetID(int nIndex);
+	int  GetID (int nIndex);
+	int  MakeID(int nID, int nOffset = 0);
 	int  GetIndex(int nID);
 	bool HasItem(int nID);
 
@@ -208,6 +209,7 @@ public:
 
 class CFarStorage {
 public:
+	virtual ~CFarStorage() {}
 	virtual void Get(TCHAR *pszBuffer, int nSize) const = 0;
 	virtual void Get(const TCHAR *&ppszBuffer) const;
 	virtual void Put(const TCHAR *pszBuffer) = 0;

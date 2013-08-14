@@ -2,11 +2,13 @@
 #define __EASYREG_H
 
 void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, TCHAR *pszBuffer, DWORD dwBufSize, const TCHAR *pszDefault = NULL);
-void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, TCHAR **ppszBuffer, DWORD *pwdBufSize = NULL, const TCHAR *pszDefault = NULL);
+bool AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, TCHAR **ppszBuffer, DWORD *pwdBufSize = NULL, const TCHAR *pszDefault = NULL);
 #ifndef _UNICODE
 void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t *pwszBuffer, DWORD dwBufSize, const wchar_t *pwszDefault = NULL);
-void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize = NULL, const wchar_t *pwszDefault = NULL);
+bool AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize = NULL, const wchar_t *pwszDefault = NULL);
 #endif
+
+DWORD QueryRegSizeType(HKEY hKey, const TCHAR *pszKeyName, DWORD *pdwType = NULL);
 
 template<class IntType>
 void QueryRegIntValue(HKEY hKey, const TCHAR *pszKeyName, IntType *piBuffer, int iDefault = 0) {

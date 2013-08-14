@@ -452,10 +452,10 @@ CFarEditItem::~CFarEditItem() {
 // ************************ COMBO BOX ***********************
 
 CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarStorage *pStorage,CFarValidator *pValidator):
-CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,pStorage,pValidator,DI_COMBOBOX),m_pData(pData) {}
+CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,pStorage,pValidator,DI_COMBOBOX),m_pData(pData),m_nOffset(0) {}
 
 CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarTextStorage TextStorage,CFarValidator *pValidator):
-CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,TextStorage,pValidator,DI_COMBOBOX),m_pData(pData) {}
+CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,TextStorage,pValidator,DI_COMBOBOX),m_pData(pData),m_nOffset(0) {}
 
 CFarComboBoxItem::CFarComboBoxItem(int iX1,int Y,int iX2,FARDIALOGITEMFLAGS dwFlags,CFarListData *pData,CFarIntegerStorage IntStorage,CFarValidator *pValidator,int nOffset):
 CFarEditItem(iX1,Y,iX2,dwFlags|DIF_DROPDOWNLIST,NULL,IntStorage,pValidator,DI_COMBOBOX),m_pData(pData),m_nOffset(nOffset) {}

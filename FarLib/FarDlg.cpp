@@ -339,12 +339,25 @@ void CFarDialog::SetUseID(bool bUseID)
 int  CFarDialog::GetID(int nIndex)
 {
 	if ((nIndex < 0) || (nIndex >= (int)Items.size())) return 0;
-	return Items[nIndex]->m_nOwnID;
+
+	int nOffset = 0;
+	while (nIndex >= 0) {
+		if (Items[nIndex]->m_nOwnID != 0) return MakeID(Items[nIndex]->m_nOwnID, nOffset);
+		nIndex--;
+		nOffset++;
+	}
+
+	return 0;
+}
+
+int  CFarDialog::MakeID(int nID, int nOffset)
+{
+	return nID + (nOffset << 16);
 }
 
 int  CFarDialog::GetIndex(int nID)
 {
-	return m_mapCodes[nID];
+	return m_mapCodes[nID & 0xFFFF] + (nID >> 16);
 }
 
 bool CFarDialog::HasItem(int nID)

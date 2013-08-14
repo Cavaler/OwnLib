@@ -194,11 +194,10 @@ public:
 	CFarMenuItem(bool bSeparator);
 	CFarMenuItem(const CFarMenuItem &Item);
 	CFarMenuItem(const FarMenuItem &Item);
+	void SetText(const TCHAR *szTitle);
 	void operator=(const  FarMenuItem &Item);
 	void operator=(const CFarMenuItem &Item);
 	~CFarMenuItem();
-protected:
-	void SetText(const TCHAR *szTitle);
 };
 #endif
 
@@ -221,14 +220,13 @@ public:
 	void operator=(const  FarMenuItem &Item);
 #endif
 
+	void SetText(const TCHAR *szTitle);
 	bool Checked() const;
 	void Check(bool bCheck = true);
 	bool Selected() const;
 	void Select(bool bSelect = true);
 
 	~CFarMenuItemEx();
-protected:
-	void SetText(const TCHAR *szTitle);
 };
 
 #ifdef FAR3

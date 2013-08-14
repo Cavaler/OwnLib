@@ -285,6 +285,15 @@ void CFarSettingsKey::Close()
 
 bool CFarSettingsKey::QueryStringValue(LPCTSTR pszKeyName, tstring &strValue)
 {
+	DWORD dwType;
+	DWORD dwSize = QueryRegSizeType(m_pHandle->m_Key, pszKeyName, &dwType);
+	if (dwType == REG_DWORD) {
+		int nValue;
+		QueryRegIntValue(m_pHandle->m_Key, pszKeyName, &nValue);
+		strValue = FormatStr(L"%d", nValue);
+		return true;
+	}
+
 	LPTSTR szText = NULL;
 	AllocAndQueryRegStringValue(m_pHandle->m_Key, pszKeyName, &szText, NULL, NULL);
 	if (szText == NULL) return false;

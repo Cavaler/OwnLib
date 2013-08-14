@@ -21,7 +21,7 @@ void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR *pszBuffer,DWO
 	}
 }
 
-DWORD QueryRegSizeType(HKEY hKey, const TCHAR *pszKeyName, DWORD *pdwType = NULL) {
+DWORD QueryRegSizeType(HKEY hKey, const TCHAR *pszKeyName, DWORD *pdwType) {
 	DWORD Type;
 	DWORD Size;
 	LONG Res = RegQueryValueEx(hKey,pszKeyName,NULL,&Type,NULL,&Size);
@@ -38,7 +38,8 @@ bool IsStringType(DWORD dwType) {
 	return (dwType == REG_SZ) || (dwType == REG_MULTI_SZ) || (dwType == REG_EXPAND_SZ) || (dwType == REG_BINARY);
 }
 
-void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR **ppszBuffer,DWORD *BufSize,const TCHAR *pszDefault) {
+bool AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR **ppszBuffer,DWORD *BufSize,const TCHAR *pszDefault)
+{
 	DWORD Type;
 	DWORD Size = QueryRegSizeType(hKey, pszKeyName, &Type);
 	if (!IsStringType(Type)) {
@@ -49,7 +50,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR **ppsz
 			*ppszBuffer=NULL;
 			if (BufSize) *BufSize=0;
 		}
-		return;
+		return false;
 	}
 
 	if (Type == REG_BINARY) {
@@ -62,6 +63,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName,TCHAR **ppsz
 		RegQueryValueEx(hKey,pszKeyName,NULL,&Type,(BYTE *)*ppszBuffer,&Size);
 		if (BufSize) *BufSize=Size;
 	}
+	return true;
 }
 
 #ifndef _UNICODE
@@ -106,7 +108,7 @@ void QueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t *pwszBuffer
 	}
 }
 
-void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize, const wchar_t *pwszDefault) {
+bool AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **ppwszBuffer, DWORD *pdwBufSize, const wchar_t *pwszDefault) {
 	if (GetVersion() < 0x80000000) {	// Windows NT/2K/XP
 		LoadProcs();
 		DWORD Type;
@@ -120,7 +122,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **p
 				*ppwszBuffer=NULL;
 				if (pdwBufSize) *pdwBufSize=0;
 			}
-			return;
+			return false;
 		}
 
 		if (Type == REG_BINARY) {
@@ -145,7 +147,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **p
 				*ppwszBuffer=NULL;
 				if (pdwBufSize) *pdwBufSize=0;
 			}
-			return;
+			return false;
 		}
 
 		if (Type == REG_BINARY) {
@@ -159,6 +161,7 @@ void AllocAndQueryRegStringValue(HKEY hKey, const TCHAR *pszKeyName, wchar_t **p
 			if (pdwBufSize) *pdwBufSize=Size;
 		}
 	}
+	return true;
 }
 
 #endif
