@@ -31,9 +31,11 @@
 #ifdef FAR3
 #define INIT_SS(Struct) = { sizeof(Struct) }
 #define ITEM_SS(Struct) sizeof(Struct),
+#define DLG_SETCOLOR(color) 0
 #else
 #define INIT_SS(Struct)
 #define ITEM_SS(Struct)
+#define DLG_SETCOLOR(color) DIF_SETCOLOR|color
 #endif
 
 #ifdef UNICODE

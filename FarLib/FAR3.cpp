@@ -168,6 +168,7 @@ intptr_t CPluginStartupInfo::EditorControl(int Command, void *Param)
 	case ECTL_REALTOTAB:
 	case ECTL_REDRAW:
 	case ECTL_UNDOREDO:
+	case ECTL_INSERTSTRING:
 	case ECTL_DELETESTRING:
 		return __super::EditorControl(-1, fCommand, 0, Param);
 	default:
