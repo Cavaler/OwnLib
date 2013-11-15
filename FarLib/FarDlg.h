@@ -84,6 +84,7 @@ public:
 	//	Check / Radio buttons
 	bool IsDlgItemChecked(int nID);
 	void CheckDlgItem(int nID, bool bCheck);
+	void EnableCheckDlgItem(int nID, bool bEnable);
 
 	//	Edit boxes
 	int  GetCursorPos(int nID);

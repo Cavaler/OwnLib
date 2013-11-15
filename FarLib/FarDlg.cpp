@@ -432,6 +432,12 @@ void CFarDialog::CheckDlgItem(int nID, bool bCheck)
 	FarLib::CheckDlgItem(m_hDlg, Index(nID), bCheck);
 }
 
+void CFarDialog::EnableCheckDlgItem(int nID, bool bEnable)
+{
+	FarLib::EnableDlgItem(m_hDlg, Index(nID), bEnable);
+	if (!bEnable) FarLib::CheckDlgItem(m_hDlg, Index(nID), false);
+}
+
 int  CFarDialog::GetCursorPos(int nID)
 {
 	COORD coord;
