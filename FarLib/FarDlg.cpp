@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #undef _FAR_NO_NAMELESS_UNIONS
 #include <FarDlg.h>
+#include <StringEx.h>
 
 #ifndef FAR_NO_NAMESPACE
 namespace FarLib {
@@ -144,13 +145,16 @@ bool CFarDialog::AnyWindowProc()
 	return m_pWindowProc || m_pCWindowProc;
 }
 
-int CFarDialog::Display(int ValidExitCodes,...) {
+int CFarDialog::Display(int ValidExitCodes,...)
+{
 	vector<FarDialogItem> DialogItems(Items.size());
 	int Result;
 
+	m_setHotkeys.clear();
+
 	for (size_t I=0; I<Items.size(); I++) {
 		tstring *pstrText = Items[I]->HotkeyText();
-		if (pstrText) CheckHotkey(*pstrText);
+		if (pstrText) CheckHotkey(*pstrText, true);
 	}
 
 	for (size_t I=0; I<Items.size(); I++) {
@@ -280,7 +284,7 @@ TCHAR OEMUpper(TCHAR cKey)
 	return cKey;
 }
 
-bool CFarDialog::CheckHotkey(tstring &strText)
+bool CFarDialog::CheckHotkey(tstring &strText, bool bFirstRun)
 {
 	if (!m_bAutoHotkeys) return true;
 	if (strText.empty()) return true;
@@ -304,6 +308,11 @@ bool CFarDialog::CheckHotkey(tstring &strText)
 	}
 
 	if (cKey != 0) {
+#ifdef _DEBUG
+		if (bFirstRun && (m_setHotkeys.find(OEMUpper(cKey)) != m_setHotkeys.end())) {
+			Message(FMSG_WARNING, NULL, 2, 1, FormatStr(_T("Duplicate explicit hotkey: '%c'"), cKey).c_str(), g_pszOKButton);
+		}
+#endif
 		m_setHotkeys.insert(OEMUpper(cKey));
 		return true;
 	}
@@ -313,7 +322,7 @@ bool CFarDialog::CheckHotkey(tstring &strText)
 
 void CFarDialog::UpdateHotkey(tstring &strText)
 {
-	if (CheckHotkey(strText)) return;
+	if (CheckHotkey(strText, false)) return;
 
 	for (size_t nChar = 0; nChar < strText.size(); nChar++) {
 		TCHAR cKey = OEMUpper(strText[nChar]);

@@ -113,7 +113,7 @@ protected:
 
 	bool	m_bAutoHotkeys;
 	set<TCHAR>	m_setHotkeys;
-	bool CheckHotkey(tstring &strText);
+	bool CheckHotkey(tstring &strText, bool bFirstRun);
 	void UpdateHotkey(tstring &strText);
 
 	int		Index(int nIndexOrID);
