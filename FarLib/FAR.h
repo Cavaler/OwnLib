@@ -50,6 +50,7 @@
 #define FCTL_SETPANELDIR FCTL_SETPANELDIRECTORY
 #define NO_PANEL_HANDLE NULL
 #define CP_AUTODETECT CP_DEFAULT
+typedef OpenPanelInfo OpenPluginInfo;
 enum FAR_PKF_FLAGS
 {
 	PKF_CONTROL     = 0x00000001,
@@ -242,17 +243,38 @@ void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuIt
 #ifdef UNICODE
 
 #ifdef FAR3
+
 #define FarPanelFileName(pi) (pi).FileName
 #define FarPanelAttr(pi) (pi).FileAttributes
+#define FarPanelUserData(pi) (pi).UserData.Data
+#define SetFarPanelUserData(pi, value) { (pi).UserData.Data = (void *)value; (pi).UserData.FreeData = NULL; }
 typedef WIN32_FIND_DATA WF_FIND_DATA;
 WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item);
+#define FarPanelSize(pi) (pi).FileSize
+#define FarPanelCTime(pi) (pi).CreationTime
+#define FarPanelATime(pi) (pi).LastAccessTime
+#define FarPanelWTime(pi) (pi).LastWriteTime
+
 #else
+
 #define FarFileName(fd) (fd).lpwszFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
 #define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
+#define FarPanelUserData(pi) (pi).UserData
+#define SetFarPanelUserData(pi, value) (pi).UserData.Data = (DWORD)value
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 #define PanelToWFD(Item) FFDtoWFD(Item.FindData)
 typedef FAR_FIND_DATA WF_FIND_DATA;
+#define FarPanelCTime(pi) (pi).FindData.ftCreationTime
+#define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
+#define FarPanelWTime(pi) (pi).FindData.ftLastWriteTime
+
+#ifdef UNICODE
+#define FarPanelSize(pi) (pi).FindData.nFileSize
+#else
+#define FarPanelSize(pi) (pi).FindData.nFileSizeLow
+#endif
+
 #endif
 
 struct CPluginPanelItem : PluginPanelItem
