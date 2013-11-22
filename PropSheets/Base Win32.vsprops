@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Base Win32"
+	InheritedPropertySheets=".\Base.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		EnableEnhancedInstructionSet="2"
+	/>
+	<Tool
+		Name="VCMIDLTool"
+		TargetEnvironment="1"
+	/>
+</VisualStudioPropertySheet>

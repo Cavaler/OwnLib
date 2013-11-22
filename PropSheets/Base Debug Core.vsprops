@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Base Debug Core"
+	InheritedPropertySheets=".\Base.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		Optimization="0"
+		PreprocessorDefinitions="_DEBUG"
+		RuntimeLibrary="3"
+		EnableFunctionLevelLinking="true"
+		BrowseInformation="1"
+		DebugInformationFormat="4"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="2"
+	/>
+	<Tool
+		Name="VCMIDLTool"
+		PreprocessorDefinitions="_DEBUG"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		PreprocessorDefinitions="_DEBUG"
+	/>
+</VisualStudioPropertySheet>

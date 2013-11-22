@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Base"
+	OutputDirectory="$(ConfigurationName)\$(PlatformName)"
+	IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		PreprocessorDefinitions="WIN32;FAR_USE_NAMESPACE;PCRE_STATIC;HAVE_CONFIG_H;NONDLL;_CRT_SECURE_NO_WARNINGS"
+		StringPooling="true"
+		UsePrecompiledHeader="2"
+		WarningLevel="3"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		IgnoreImportLibrary="true"
+		GenerateDebugInformation="true"
+		SubSystem="2"
+		OptimizeForWindows98="1"
+	/>
+</VisualStudioPropertySheet>
