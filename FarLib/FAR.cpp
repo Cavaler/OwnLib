@@ -485,16 +485,32 @@ CFarPanelMode::CFarPanelMode(int iViewMode, int iSortMode, int iSortOrder)
 {
 }
 
-void CFarPanelMode::LoadReg(HKEY hKey) {
+void CFarPanelMode::LoadReg(HKEY hKey)
+{
 	QueryRegIntValue(hKey, _T("ViewMode"), &m_iViewMode, m_iViewMode, 0, 9);
 	QueryRegIntValue(hKey, _T("SortMode"), &m_iSortMode, m_iSortMode, 0, 11);
 	QueryRegIntValue(hKey, _T("SortOrder"), &m_iSortOrder, m_iSortOrder, 0, 1);
 }
 
-void CFarPanelMode::SaveReg(HKEY hKey) {
+void CFarPanelMode::SaveReg(HKEY hKey)
+{
 	SetRegIntValue(hKey, _T("ViewMode"), m_iViewMode);
 	SetRegIntValue(hKey, _T("SortMode"), m_iSortMode);
 	SetRegIntValue(hKey, _T("SortOrder"), m_iSortOrder);
+}
+
+void CFarPanelMode::LoadReg(CFarSettingsKey &hKey)
+{
+	hKey.QueryIntValue(_T("ViewMode"),  m_iViewMode);
+	hKey.QueryIntValue(_T("SortMode"),  m_iSortMode);
+	hKey.QueryIntValue(_T("SortOrder"), m_iSortOrder);
+}
+
+void CFarPanelMode::SaveReg(CFarSettingsKey &hKey)
+{
+	hKey.SetIntValue(_T("ViewMode"),  m_iViewMode);
+	hKey.SetIntValue(_T("SortMode"),  m_iSortMode);
+	hKey.SetIntValue(_T("SortOrder"), m_iSortOrder);
 }
 
 void CFarPanelMode::Assign(HANDLE hPlugin) {

@@ -149,12 +149,16 @@ protected:
 	std::vector<TCHAR> m_strTitle;
 };
 
+class CFarSettingsKey;
+
 class CFarPanelMode {
 public:
 	CFarPanelMode();
 	CFarPanelMode(int iViewMode, int iSortMode, int iSortOrder);
 	void LoadReg(HKEY hKey);
 	void SaveReg(HKEY hKey);
+	void LoadReg(CFarSettingsKey &hKey);
+	void SaveReg(CFarSettingsKey &hKey);
 
 	void Assign(HANDLE hPlugin);
 	void Assign(PanelInfo &PInfo);
