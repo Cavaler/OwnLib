@@ -259,27 +259,22 @@ WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item);
 #define FarPanelATime(pi) (pi).LastAccessTime
 #define FarPanelWTime(pi) (pi).LastWriteTime
 
-#else
+#else	// FAR3
 
 #define FarFileName(fd) (fd).lpwszFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
 #define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
 #define FarPanelUserData(pi) (pi).UserData
-#define SetFarPanelUserData(pi, value) (pi).UserData.Data = (DWORD)value
+#define SetFarPanelUserData(pi, value) (pi).UserData = (DWORD)value
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 #define PanelToWFD(Item) FFDtoWFD(Item.FindData)
 typedef FAR_FIND_DATA WF_FIND_DATA;
+#define FarPanelSize(pi) (pi).FindData.nFileSize
 #define FarPanelCTime(pi) (pi).FindData.ftCreationTime
 #define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
 #define FarPanelWTime(pi) (pi).FindData.ftLastWriteTime
 
-#ifdef UNICODE
-#define FarPanelSize(pi) (pi).FindData.nFileSize
-#else
-#define FarPanelSize(pi) (pi).FindData.nFileSizeLow
-#endif
-
-#endif
+#endif	// FAR3
 
 struct CPluginPanelItem : PluginPanelItem
 {
@@ -326,14 +321,20 @@ struct CPanelInfo : PanelInfo
 #endif
 };
 
-#else
+#else		//	UNICODE
 
 #define FarFileName(fd) (fd).cFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
 #define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
+#define FarPanelUserData(pi) (pi).UserData
+#define SetFarPanelUserData(pi, value) (pi).UserData = (DWORD)value
 #define FFDtoWFD(Data) (Data)
 #define PanelToWFD(Item) Item.FindData
 typedef WIN32_FIND_DATA WF_FIND_DATA;
+#define FarPanelSize(pi) (pi).FindData.nFileSizeLow
+#define FarPanelCTime(pi) (pi).FindData.ftCreationTime
+#define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
+#define FarPanelWTime(pi) (pi).FindData.ftLastWriteTime
 
 struct CPanelInfo : PanelInfo {
 	bool GetInfo(bool bAnotherPanel = false);
