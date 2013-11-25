@@ -5,4 +5,12 @@
 	Name="Base Release Unicode"
 	InheritedPropertySheets=".\Base Unicode.vsprops;.\Base Release Core.vsprops"
 	>
+	<UserMacro
+		Name="LibSuffix"
+		Value="MT8U"
+	/>
+	<UserMacro
+		Name="LibAppend"
+		Value=""
+	/>
 </VisualStudioPropertySheet>

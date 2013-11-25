@@ -9,4 +9,8 @@
 		Name="VCMIDLTool"
 		TargetEnvironment="3"
 	/>
+	<UserMacro
+		Name="LibPlatform"
+		Value="x64"
+	/>
 </VisualStudioPropertySheet>

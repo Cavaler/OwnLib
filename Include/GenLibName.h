@@ -32,6 +32,11 @@
 	#define LIB_APPEND ""
 #endif
 
+//	Corresponding user macros:
+//	$(LibSuffix)   LIB_RUNTIME LIB_DEBUG LIB_COMPILER LIB_UNICODE
+//	$(LibPlatform) LIB_PLATFORM
+//	$(LibAppend)   LIB_APPEND
+
 #define LIB_SPEC LIB_RUNTIME LIB_DEBUG LIB_COMPILER LIB_UNICODE LIB_PLATFORM LIB_APPEND
 #pragma comment(lib, LIB_NAME LIB_SPEC ".lib")
 

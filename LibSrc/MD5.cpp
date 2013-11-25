@@ -306,9 +306,8 @@ void CMD5::Update(const wchar_t *szString, int nCP)
 	Ends an MD5 message-digest operation, writing 
 	the message digest and zeroizing the context.
 ----------------------------------------------------------*/
-void CMD5::Final(
-	BYTE Digest[ 16 ] )	// message digest
-	{
+void CMD5::Final(BYTE Digest[ 16 ] )	// message digest
+{
 	BYTE Bits[ 8 ];
 
 	// Save number of bits
@@ -326,16 +325,18 @@ void CMD5::Final(
 
 	// Zeroize sensitive information.
 	memset( this, 0, sizeof( *this ) );
-	}
+}
 
-void CMD5::FinalHex(char *Buffer) {
+void CMD5::FinalHex(char *Buffer)
+{
 	BYTE Digest[16];
 	Final(Digest);
 	for (int c = 0; c < 16; c++)
 		sprintf(Buffer+c*2, "%02x", Digest[c]);
 }
 
-void CMD5::FinalHex(wchar_t *Buffer) {
+void CMD5::FinalHex(wchar_t *Buffer)
+{
 	BYTE Digest[16];
 	Final(Digest);
 	for (int c = 0; c < 16; c++)

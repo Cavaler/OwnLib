@@ -5,4 +5,12 @@
 	Name="Base Debug"
 	InheritedPropertySheets=".\Base ANSI.vsprops;.\Base Debug Core.vsprops"
 	>
+	<UserMacro
+		Name="LibSuffix"
+		Value="MDd8"
+	/>
+	<UserMacro
+		Name="LibAppend"
+		Value=""
+	/>
 </VisualStudioPropertySheet>

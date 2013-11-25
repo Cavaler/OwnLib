@@ -5,4 +5,12 @@
 	Name="Base Release"
 	InheritedPropertySheets=".\Base ANSI.vsprops;.\Base Release Core.vsprops"
 	>
+	<UserMacro
+		Name="LibSuffix"
+		Value="MT8"
+	/>
+	<UserMacro
+		Name="LibAppend"
+		Value=""
+	/>
 </VisualStudioPropertySheet>

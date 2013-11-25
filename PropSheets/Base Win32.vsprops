@@ -13,4 +13,8 @@
 		Name="VCMIDLTool"
 		TargetEnvironment="1"
 	/>
+	<UserMacro
+		Name="LibPlatform"
+		Value=""
+	/>
 </VisualStudioPropertySheet>

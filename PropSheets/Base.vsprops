@@ -8,10 +8,14 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="WIN32;FAR_USE_NAMESPACE;PCRE_STATIC;HAVE_CONFIG_H;NONDLL;_CRT_SECURE_NO_WARNINGS"
+		PreprocessorDefinitions="WIN32;FAR_USE_NAMESPACE;PCRE_STATIC;HAVE_CONFIG_H;NONDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS"
 		StringPooling="true"
 		UsePrecompiledHeader="2"
 		WarningLevel="3"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		OutputFile="$(OWN_LIB_PATH)\Lib\$(ProjectName)$(LibSuffix)$(LibPlatform)$(LibAppend).lib"
 	/>
 	<Tool
 		Name="VCLinkerTool"
