@@ -6,6 +6,10 @@
 	InheritedPropertySheets=".\Base.vsprops"
 	>
 	<Tool
+		Name="VCCLCompilerTool"
+		StructMemberAlignment="4"
+	/>
+	<Tool
 		Name="VCMIDLTool"
 		TargetEnvironment="3"
 	/>
