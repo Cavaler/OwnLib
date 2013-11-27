@@ -15,6 +15,14 @@ namespace FarLib {
 
 #ifdef FAR3
 
+DWORD FarKeyState(DWORD dwWinKeyState)
+{
+	return 
+		((dwWinKeyState & (LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED)) ? PKF_ALT : 0) |
+		((dwWinKeyState & (LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED)) ? PKF_CONTROL : 0) |
+		((dwWinKeyState & SHIFT_PRESSED) ? PKF_SHIFT : 0);
+}
+
 void CPluginStartupInfo::operator =(const PluginStartupInfo &Info)
 {
 	(PluginStartupInfo &)(*this) = Info;

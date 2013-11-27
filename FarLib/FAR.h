@@ -85,6 +85,10 @@ enum FAR_PKF_FLAGS
 namespace FarLib {
 #endif
 
+#ifdef FAR3
+DWORD FarKeyState(DWORD dwWinKeyState);
+#endif
+
 class CPluginStartupInfo : public PluginStartupInfo
 {
 public:
