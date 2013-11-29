@@ -7,14 +7,6 @@
 #define LIB_NAME "FarLib"
 #include "GenLibName.h"
 
-#ifndef _WIN64
-#ifdef FAR3
-#pragma pack(4)
-#else
-#pragma pack(2)
-#endif
-#endif
-
 #ifndef _WINDOWS_
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -23,10 +15,20 @@
 
 #include <vector>
 #include <string>
-#include "tstring.h"
-#include "handles.h"
+#include <CRegExp.h>
+#include <tstring.h>
+#include <handles.h>
 
-#define _FAR_USE_WIN32_FIND_DATA
+// This forces us to use pack(2), which violates MS guidelines
+// #define _FAR_USE_WIN32_FIND_DATA
+
+#ifndef _WIN64
+#ifdef FAR3
+#pragma pack(push, 4)
+#else
+#pragma pack(push, 2)
+#endif
+#endif
 
 #ifdef FAR3
 #define INIT_SS(Struct) = { sizeof(Struct) }
@@ -72,8 +74,6 @@ enum FAR_PKF_FLAGS
 #define FAR_EXPORT(name) name
 #define NO_PANEL_HANDLE INVALID_HANDLE_VALUE
 #endif
-
-#include <CRegExp.h>
 
 #define PSI140SIZE	312
 #define PSI150SIZE	324
@@ -332,9 +332,15 @@ struct CPanelInfo : PanelInfo
 #define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
 #define FarPanelUserData(pi) (pi).UserData
 #define SetFarPanelUserData(pi, value) (pi).UserData = (DWORD)value
+#ifdef _FAR_USE_WIN32_FIND_DATA
 #define FFDtoWFD(Data) (Data)
 #define PanelToWFD(Item) Item.FindData
 typedef WIN32_FIND_DATA WF_FIND_DATA;
+#else
+WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
+#define PanelToWFD(Item) FFDtoWFD(Item.FindData)
+typedef FAR_FIND_DATA WF_FIND_DATA;
+#endif
 #define FarPanelSize(pi) (pi).FindData.nFileSizeLow
 #define FarPanelCTime(pi) (pi).FindData.ftCreationTime
 #define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
@@ -350,6 +356,7 @@ struct CPluginPanelItem : PluginPanelItem
 {
 	CPluginPanelItem() {}
 	CPluginPanelItem(const  PluginPanelItem &item) : PluginPanelItem(item) {}
+	void SetFindData(const WIN32_FIND_DATA &fd);
 
 	DWORD_PTR &UData() { return UserData; }
 };
@@ -402,6 +409,10 @@ void SetDlgListPos(HANDLE hDlg, int nID, int nPos);
 void InitLanguageFiles();
 void FreeLanguageFiles();
 const TCHAR *GetMsgEx(int MsgId, const TCHAR *Module=NULL);
+
+#ifndef _WIN64
+#pragma pack(pop)
+#endif
 
 #ifndef FAR_NO_NAMESPACE
 };

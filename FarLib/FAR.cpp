@@ -792,6 +792,46 @@ bool CPanelInfo::GetInfo(HANDLE hPanel)
 	return StartupInfo.Control(hPanel, FCTL_GETPANELINFO, (PanelInfo *)this) != 0;
 }
 
+#ifndef _FAR_USE_WIN32_FIND_DATA
+
+WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data)
+{
+	WIN32_FIND_DATA fd;
+
+	fd.dwFileAttributes = Data.dwFileAttributes;
+	fd.ftCreationTime = Data.ftCreationTime;
+	fd.ftLastAccessTime = Data.ftLastAccessTime;
+	fd.ftLastWriteTime = Data.ftLastWriteTime;
+	fd.nFileSizeLow = Data.nFileSizeLow;
+	fd.nFileSizeHigh = Data.nFileSizeHigh;
+	fd.dwReserved0 = Data.dwReserved0;
+	fd.dwReserved1 = Data.dwReserved1;
+	strcpy(fd.cFileName, Data.cFileName);
+	strcpy(fd.cAlternateFileName, Data.cAlternateFileName);
+
+	return fd;
+}
+
+#endif
+
+void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
+{
+#ifdef _FAR_USE_WIN32_FIND_DATA
+	FindData = fd;
+#else
+	FindData.dwFileAttributes = fd.dwFileAttributes;
+	FindData.ftCreationTime = fd.ftCreationTime;
+	FindData.ftLastAccessTime = fd.ftLastAccessTime;
+	FindData.ftLastWriteTime = fd.ftLastWriteTime;
+	FindData.nFileSizeLow = fd.nFileSizeLow;
+	FindData.nFileSizeHigh = fd.nFileSizeHigh;
+	FindData.dwReserved0 = fd.dwReserved0;
+	FindData.dwReserved1 = fd.dwReserved1;
+	strcpy(FindData.cFileName, fd.cFileName);
+	strcpy(FindData.cAlternateFileName, fd.cAlternateFileName);
+#endif
+}
+
 void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnotherPanel)
 {
 	StartupInfo.Control(INVALID_HANDLE_VALUE,
