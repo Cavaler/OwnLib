@@ -115,7 +115,8 @@ protected:
 
 	bool	m_bAutoHotkeys;
 	set<TCHAR>	m_setHotkeys;
-	bool CheckHotkey(tstring &strText, bool bFirstRun);
+	bool CheckHotkey(const tstring &strText, bool bFirstRun);
+	void UpdatePrefHotkey(tstring &strText);
 	void UpdateHotkey(tstring &strText);
 
 	int		Index(int nIndexOrID);

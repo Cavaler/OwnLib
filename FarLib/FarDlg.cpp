@@ -152,9 +152,14 @@ int CFarDialog::Display(int ValidExitCodes,...)
 
 	m_setHotkeys.clear();
 
-	for (size_t I=0; I<Items.size(); I++) {
-		tstring *pstrText = Items[I]->HotkeyText();
+	for each (CFarDialogItem *pItem in Items) {
+		tstring *pstrText = pItem->HotkeyText();
 		if (pstrText) CheckHotkey(*pstrText, true);
+	}
+
+	for each (CFarDialogItem *pItem in Items) {
+		tstring *pstrText = pItem->HotkeyText();
+		if (pstrText) UpdatePrefHotkey(*pstrText);
 	}
 
 	for (size_t I=0; I<Items.size(); I++) {
@@ -163,6 +168,7 @@ int CFarDialog::Display(int ValidExitCodes,...)
 
 		Items[I]->CreateItem(&DialogItems[I]);
 	}
+
 	if (Focused < Items.size())
 #ifdef FAR3
 		DialogItems[Focused].Flags|=DIF_FOCUS;
@@ -284,7 +290,7 @@ TCHAR OEMUpper(TCHAR cKey)
 	return cKey;
 }
 
-bool CFarDialog::CheckHotkey(tstring &strText, bool bFirstRun)
+bool CFarDialog::CheckHotkey(const tstring &strText, bool bFirstRun)
 {
 	if (!m_bAutoHotkeys) return true;
 	if (strText.empty()) return true;
@@ -318,6 +324,25 @@ bool CFarDialog::CheckHotkey(tstring &strText, bool bFirstRun)
 	}
 
 	return false;
+}
+
+void CFarDialog::UpdatePrefHotkey(tstring &strText)
+{
+	size_t nPref = strText.find('$');
+	if ((nPref == string::npos) || (nPref >= strText.length()-1)) return;
+
+	if (!m_bAutoHotkeys) {
+		strText.erase(nPref, 1);
+		return;
+	}
+
+	TCHAR cKey = OEMUpper(strText[nPref+1]);
+	if (((WORD)cKey > 32) && !iswspace(cKey) && (m_setHotkeys.find(cKey) == m_setHotkeys.end())) {
+		strText[nPref] = '&';
+		m_setHotkeys.insert(cKey);
+	} else {
+		strText.erase(nPref, 1);
+	}
 }
 
 void CFarDialog::UpdateHotkey(tstring &strText)
