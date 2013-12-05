@@ -52,7 +52,7 @@ public:
 	//	Management
 	void SetFocus(int Focus, int Shift = 0);
 	int  GetFocus();
-	int  Display(int ValidExitCodes,...);
+	int  Display(int ValidExitCodes = -1, ...);
 
 	static bool AutoHotkeys;
 	void EnableAutoHotkeys(bool bEnable);
@@ -64,6 +64,7 @@ public:
 	bool HasItem(int nID);
 
 	void SetCancelID(int nCancelID);
+	static void SetDefaultCancelID(int nCancelID);
 
 	void SetWindowProc( FARWINDOWPROC lpWindowProc,  long lParam);
 	void SetWindowProc(CFARWINDOWPROC lpCWindowProc, long lParam);
@@ -110,6 +111,7 @@ protected:
 
 	bool	m_bUseID;
 	int		m_nCancelID;
+	static int	m_nDefaultCancelID;
 
 	bool	m_bAutoHotkeys;
 	set<TCHAR>	m_setHotkeys;

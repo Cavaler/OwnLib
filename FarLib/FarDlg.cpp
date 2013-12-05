@@ -17,13 +17,13 @@ namespace FarLib {
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
 m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),
-m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1),m_bAutoHotkeys(AutoHotkeys)
+m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(m_nDefaultCancelID),m_bAutoHotkeys(AutoHotkeys)
 {}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
 m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),
-m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(-1),m_bAutoHotkeys(AutoHotkeys)
+m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(m_nDefaultCancelID),m_bAutoHotkeys(AutoHotkeys)
 {}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
@@ -378,6 +378,12 @@ void CFarDialog::SetCancelID(int nCancelID)
 {
 	m_bUseID = true;
 	m_nCancelID = nCancelID;
+}
+
+int CFarDialog::m_nDefaultCancelID = -1;
+void CFarDialog::SetDefaultCancelID(int nCancelID)
+{
+	m_nDefaultCancelID = nCancelID;
 }
 
 int CFarDialog::Index(int nIndexOrID)
