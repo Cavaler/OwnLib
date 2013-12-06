@@ -58,16 +58,40 @@ int CFarDialog::AddButton(int nId) {
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,nId));
 }
 
-int CFarDialog::AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle) {
+int CFarDialog::AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle)
+{
 	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
 	Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,TRUE,OKTitle));
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,CancelTitle));
 }
 
-int CFarDialog::AddButtons(int OKId,int CancelId) {
+int CFarDialog::AddButtons(const TCHAR *OKTitle, const TCHAR *CancelTitle, const TCHAR *Title3, const TCHAR *Title4, const TCHAR *Title5)
+{
+	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
+	Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,TRUE,OKTitle));
+	int res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,CancelTitle));
+	if (Title3) res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,Title3));
+	if (Title4) res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,Title4));
+	if (Title5) res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,Title5));
+	return res;
+}
+
+int CFarDialog::AddButtons(int OKId,int CancelId)
+{
 	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
 	Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,TRUE,OKId));
 	return Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,CancelId));
+}
+
+int CFarDialog::AddButtons(int OKId, int CancelId, int Id3, int Id4, int Id5)
+{
+	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;
+	Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,TRUE,OKId));
+	int res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,CancelId));
+	if (Id3) res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,Id3));
+	if (Id4) res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,Id4));
+	if (Id5) res = Add(new CFarButtonItem(0,Y,DIF_CENTERGROUP,FALSE,Id5));
+	return res;
 }
 
 void CFarDialog::SetFocus(int Focus, int Shift) {

@@ -25,9 +25,11 @@ void SetItemText(FarDialogItem *pItem, const TCHAR *szText) {
 #endif
 }
 
-CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText):
+CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,int MinWidth):
 	X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Flags(dwFlags),Text(szText),m_nOwnID(szText.ID())
 {
+	if (Text.length() < MinWidth)
+		Text += tstring(MinWidth-Text.length(), ' ');
 }
 
 void CFarDialogItem::CreateItem(FarDialogItem *Item) {
@@ -107,8 +109,8 @@ tstring *CFarTextItem::HotkeyText()
 
 // ********************** BUTTON ***********************
 
-CFarButtonItem::CFarButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags,BOOL bDefault, const CFarText &szText):
-CFarDialogItem(X,Y,0,0,dwFlags,szText),Default(bDefault) {}
+CFarButtonItem::CFarButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags,BOOL bDefault, const CFarText &szText,int MinWidth):
+CFarDialogItem(X,Y,0,0,dwFlags,szText,MinWidth),Default(bDefault) {}
 
 void CFarButtonItem::CreateItem(FarDialogItem *Item) {
 	Item->Type=DI_BUTTON;

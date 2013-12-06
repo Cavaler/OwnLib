@@ -46,8 +46,10 @@ public:
 	int  Add(CFarDialogItem *Item, int nOwnID);
 	int  AddButton(const TCHAR *szTitle);
 	int  AddButton(int nId);
-	int  AddButtons(const TCHAR *OKTitle,const TCHAR *CancelTitle);
-	int  AddButtons(int OKId,int CancelId);
+	int  AddButtons(const TCHAR *OKTitle, const TCHAR *CancelTitle);
+	int  AddButtons(const TCHAR *OKTitle, const TCHAR *CancelTitle, const TCHAR *Title3, const TCHAR *Title4 = NULL, const TCHAR *Title5 = NULL);
+	int  AddButtons(int OKId, int CancelId);
+	int  AddButtons(int OKId, int CancelId, int Id3, int Id4 = 0, int Id5 = 0);
 
 	//	Management
 	void SetFocus(int Focus, int Shift = 0);
@@ -330,7 +332,7 @@ protected:
 
 class CFarDialogItem {
 public:
-	CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText=CFarText());
+	CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText=CFarText(),int MinWidth=0);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual bool Validate(FarDialogItem *Item) {return true;};
 	virtual void StoreData(FarDialogItem *Item) {};
@@ -379,7 +381,7 @@ protected:
 
 class CFarButtonItem:public CFarDialogItem {
 public:
-	CFarButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags,BOOL bDefault,const CFarText &szText);
+	CFarButtonItem(int X,int Y,FARDIALOGITEMFLAGS dwFlags,BOOL bDefault,const CFarText &szText,int MinWidth=0);
 	virtual void CreateItem(FarDialogItem *Item);
 	virtual tstring *HotkeyText();
 protected:
