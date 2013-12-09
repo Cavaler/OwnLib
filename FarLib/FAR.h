@@ -370,6 +370,10 @@ void StdFreeFindData(PluginPanelItem *PanelItems, int ItemsNumber);
 void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName = NULL, bool bAnotherPanel = false);
 void SetPanelSelection(CPanelInfo &Info, bool bAnotherPanel, bool bRedraw);
 
+#define FMENU_RETURNCODE		0x01000000
+#define FMENU_NORETURNCODE		(~FMENU_RETURNCODE)
+int ReturnMenu(int nResult, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode);
+
 #if defined(_VECTOR_) || defined (_STLP_VECTOR)
 int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,

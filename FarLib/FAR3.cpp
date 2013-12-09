@@ -269,8 +269,8 @@ int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const
 		arrItems[I].Text = _wcsdup(ppszItems[I]);
 	}
 
-	return StartupInfo.Menu(-1, -1, 0, uiFlags, Title, Bottom,
-		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size());
+	return ReturnMenu(StartupInfo.Menu(-1, -1, 0, uiFlags&FMENU_NORETURNCODE, Title, Bottom,
+		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size()), uiFlags, piBreakKeys, nBreakCode);
 }
 
 int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...)
@@ -304,8 +304,8 @@ int  ChooseMenu(std::vector<std::tstring> &arrText, const TCHAR *Title, const TC
 		arrItems[I].Text = _wcsdup(arrText[I].c_str());
 	}
 
-	return StartupInfo.Menu(-1, -1, 0, uiFlags, Title, Bottom,
-		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size());
+	return ReturnMenu(StartupInfo.Menu(-1, -1, 0, uiFlags&FMENU_NORETURNCODE, Title, Bottom,
+		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size()), uiFlags, piBreakKeys, nBreakCode);
 }
 
 //////////////////////////////////////////////////////////////////////////

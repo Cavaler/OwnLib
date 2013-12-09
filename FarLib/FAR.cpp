@@ -589,6 +589,13 @@ tstring CFarSplitString::Combine() {
 	return strResult;
 }
 
+int ReturnMenu(int nResult, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode)
+{
+	if (((uiFlags & FMENU_RETURNCODE) != 0) && (*nBreakCode >= 0))
+		*nBreakCode = piBreakKeys[*nBreakCode];
+	return nResult;
+}
+
 #ifdef UNICODE
 
 #ifndef FAR3

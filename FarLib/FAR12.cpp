@@ -134,7 +134,7 @@ int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const
 		Items[I].Separator=FALSE;
 	}
 
-	int Result=StartupInfo.Menu(-1,-1,0,uiFlags,Title,Bottom,
+	int Result=StartupInfo.Menu(-1,-1,0,uiFlags&FMENU_NORETURNCODE,Title,Bottom,
 		HelpTopic,piBreakKeys,nBreakCode,Items,ItemCount);
 
 #ifdef _UNICODE
@@ -142,10 +142,11 @@ int ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, const
 #endif
 	delete[] Items;
 
-	return Result;
+	return ReturnMenu(Result, uiFlags, piBreakKeys, nBreakCode);
 }
 
-int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...) {
+int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...)
+{
 	FarMenuItem *Items=new FarMenuItem[ItemCount];
 	va_list List;
 	va_start(List,ItemCount);
@@ -182,7 +183,8 @@ int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
 }
 
 int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
-			 int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode) {
+			 int iDefault, unsigned int uiFlags, const int *piBreakKeys, int *nBreakCode)
+{
 	FarMenuItem *Items=new FarMenuItem[arrItems.size()];
 	for (size_t I = 0; I < arrItems.size(); I++) {
 		Items[I].Checked=Items[I].Selected=FALSE;
@@ -196,14 +198,15 @@ int  ChooseMenu(std::vector<std::tstring> &arrItems, const TCHAR *Title, const T
 		Items[I].Separator=FALSE;
 	}
 
-	int Result=StartupInfo.Menu(-1,-1,0,uiFlags,Title,Bottom,
+	int Result=StartupInfo.Menu(-1,-1,0,uiFlags&FMENU_NORETURNCODE,Title,Bottom,
 		HelpTopic,piBreakKeys,nBreakCode,Items,arrItems.size());
 
 #ifdef _UNICODE
 	for (size_t I=0; I<arrItems.size(); I++) if (Items[I].Text) free((void *)Items[I].Text);
 #endif
 	delete[] Items;
-	return Result;
+
+	return ReturnMenu(Result, uiFlags, piBreakKeys, nBreakCode);
 }
 
 //////////////////////////////////////////////////////////////////////////
