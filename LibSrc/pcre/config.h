@@ -27,7 +27,7 @@
 #define SUPPORT_UCP 1
 /* #undef EBCDIC */
 /* #undef EBCDIC_NL25 */
-/* #undef BSR_ANYCRLF */
+#define BSR_ANYCRLF
 /* #undef NO_RECURSE */
 
 #define HAVE_LONG_LONG 1
