@@ -41,12 +41,12 @@ public:
   shared_ptr( int n )
     : m_pN(0), m_p(0)
   {
-    ATLASSERT(n == 0);
+    assert(n == 0);
   }
 
   shared_ptr & operator= ( int n )
   {
-    ATLASSERT(n == 0);
+    assert(n == 0);
     release();
     return *this;
   }
