@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm> // for std::swap
+#include <assert.h>
 
 #if _MSC_VER >= 1500 && _MSC_FULL_VER > 150021022
 
