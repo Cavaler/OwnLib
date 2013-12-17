@@ -387,6 +387,9 @@ int  ChooseMenu(int ItemCount, const TCHAR **ppszItems, const TCHAR *Title, cons
 			 int iDefault, unsigned int uiFlags = FMENU_WRAPMODE|FMENU_AUTOHIGHLIGHT,
 			 const int *piBreakKeys = NULL, int *nBreakCode = NULL);
 int  ChooseMenu(const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic, int ItemCount, ...);
+int  ChooseMenu(unsigned int uiFlags, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
+				const int *piBreakKeys, int *nBreakCode, const FarMenuItem *pItems, int nItemCount);
+
 int  Message(UINT uiFlags, const TCHAR *szHelpTopic, int iItemsNumber, int iButtonsNumber, ...);
 void ShowMessage(const TCHAR *pszTitle, const TCHAR *pszMessage1, const TCHAR *pszMessage2 = NULL);
 void ShowError(const TCHAR *pszMessage1, const TCHAR *pszMessage2 = NULL);

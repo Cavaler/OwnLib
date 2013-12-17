@@ -308,6 +308,13 @@ int  ChooseMenu(std::vector<std::tstring> &arrText, const TCHAR *Title, const TC
 		HelpTopic, piBreakKeys, nBreakCode, &arrItems[0], arrItems.size()), uiFlags, piBreakKeys, nBreakCode);
 }
 
+int  ChooseMenu(unsigned int uiFlags, const TCHAR *Title, const TCHAR *Bottom, const TCHAR *HelpTopic,
+				const int *piBreakKeys, int *nBreakCode, const FarMenuItem *pItems, int nItemCount)
+{
+	return ReturnMenu(StartupInfo.Menu(-1, -1, 0, uiFlags&FMENU_NORETURNCODE, Title, Bottom,
+		HelpTopic, piBreakKeys, nBreakCode, pItems, nItemCount), uiFlags, piBreakKeys, nBreakCode);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 CFarSettingsKey::CFarSettingsKey()
