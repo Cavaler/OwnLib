@@ -9,7 +9,8 @@ using namespace std;
 #include <Directory.h>
 #include <StringEx.h>
 
-BOOL DirectoryExists(const TCHAR *DirName) {
+BOOL DirectoryExists(const TCHAR *DirName)
+{
 	int Length=_tcslen(DirName);
 	if (Length==0) return TRUE;
 	if ((Length==1)&&(DirName[0]=='\\')) return TRUE;
@@ -26,7 +27,8 @@ BOOL DirectoryExists(const TCHAR *DirName) {
 	return ((Attr!=0xFFFFFFFF)&&(Attr&FILE_ATTRIBUTE_DIRECTORY));
 }
 
-TCHAR *AddSlash(TCHAR *Path) {
+TCHAR *AddSlash(TCHAR *Path)
+{
 	int Length=_tcslen(Path);
 	if (!Length) return Path;
 ///	if (!Length) {strcpy(Path,".\\");return Path;}
@@ -35,7 +37,8 @@ TCHAR *AddSlash(TCHAR *Path) {
 	return Path;
 }
 
-TCHAR *DelSlash(TCHAR *Path) {
+TCHAR *DelSlash(TCHAR *Path)
+{
 	int Length=_tcslen(Path);
 	if ((Length==1)&&(Path[2]=='\\')) return NULL;
 	if ((Length==3)&&(Path[1]==':')&&(Path[2]=='\\')) return NULL;
@@ -50,7 +53,8 @@ LPCTSTR GetNameOnly(LPCTSTR szPath)
 	return (szNameOnly) ? szNameOnly+1 : szPath;
 }
 
-BOOL CreateDirectories(const TCHAR *DirName) {
+BOOL CreateDirectories(const TCHAR *DirName)
+{
 	TCHAR FullName[MAX_PATH];
 	if (DirName[0]==0) return TRUE;
 	if (!GetFullPathName(DirName,MAX_PATH,FullName,NULL)) return FALSE;
@@ -73,7 +77,8 @@ BOOL CreateDirectories(const TCHAR *DirName) {
 	return TRUE;
 }
 
-BOOL CreateDirectoriesForFile(const TCHAR *FileName) {
+BOOL CreateDirectoriesForFile(const TCHAR *FileName)
+{
 	TCHAR *FName=(TCHAR *)_tcsrchr(FileName,'\\');
 	if (!FName) return TRUE;
 	*FName=0;
@@ -82,25 +87,29 @@ BOOL CreateDirectoriesForFile(const TCHAR *FileName) {
 	return Result;
 }
 
-tstring DelSlash(const tstring &strPath) {
+tstring DelSlash(const tstring &strPath)
+{
 	if (strPath.length() == 0) return strPath;
 	if ((strPath.length() == 3) && (strPath[1] == ':')) return strPath;
 	if (strPath[strPath.length() - 1] == '\\') return strPath.substr(0, strPath.length()-1);
 	return strPath;
 }
 
-tstring AddSlash(const tstring &strPath) {
+tstring AddSlash(const tstring &strPath)
+{
 	if (strPath.length() == 0) return strPath;
 	if ((strPath.length() == 2) && (strPath[1] == ':')) return strPath;
 	if (strPath[strPath.length() - 1] != '\\') return strPath + _T('\\');
 	return strPath;
 }
 
-tstring CatFile(const tstring &strPath, const tstring &strFile) {
+tstring CatFile(const tstring &strPath, const tstring &strFile)
+{
 	return AddSlash(strPath) + strFile;
 }
 
-tstring GetFileName(const tstring &strPath) {
+tstring GetFileName(const tstring &strPath)
+{
 	int nPosS = strPath.rfind('\\');
 	int nPosC = strPath.rfind(':');
 	int nPos = (nPosS == tstring::npos) ? nPosC :
@@ -138,7 +147,8 @@ tstring GetFullFileName(const tstring &strPath)
 #endif
 }
 
-tstring GetFullFileName(const tstring &strPath, const tstring &strBase) {
+tstring GetFullFileName(const tstring &strPath, const tstring &strBase)
+{
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, szCurDir);
 	SetCurrentDirectory(strBase.c_str());
@@ -147,7 +157,8 @@ tstring GetFullFileName(const tstring &strPath, const tstring &strBase) {
 	return strFull;
 }
 
-tstring CleanFileName(const tstring &strPath) {
+tstring CleanFileName(const tstring &strPath)
+{
 	tstring strResult = strPath;
 
 	for (size_t nPos = 0; nPos < strResult.length(); nPos++) {
@@ -170,4 +181,24 @@ tstring CleanFileName(const tstring &strPath) {
 	}
 
 	return strResult;
+}
+
+const LPCWSTR g_szUNCPrefix = L"\\\\?\\";
+
+std::tstring ExtendedFileName(const std::tstring &strPath)
+{
+#ifdef UNICODE
+	return (strPath.substr(0, 4) == g_szUNCPrefix) ? strPath : g_szUNCPrefix + strPath;
+#else
+	return strPath;
+#endif
+}
+
+std::tstring ContractedFileName(const std::tstring &strPath)
+{
+#ifdef UNICODE
+	return (strPath.substr(0, 4) == g_szUNCPrefix) ? strPath.substr(4) : strPath;
+#else
+		return strPath;
+#endif
 }
