@@ -248,6 +248,29 @@ void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuIt
 
 #include "FarSettings.h"
 
+struct FIND_DATA
+{
+	FIND_DATA();
+	FIND_DATA(const WIN32_FIND_DATA &fd);
+#ifndef FAR3
+	FIND_DATA(const FAR_FIND_DATA &fd);
+#endif
+
+	DWORD    dwFileAttributes;
+	FILETIME ftCreationTime;
+	FILETIME ftLastAccessTime;
+	FILETIME ftLastWriteTime;
+	unsigned __int64 nFileSize;
+	tstring strFileName;
+	tstring strAlternateFileName;
+
+	__declspec(property(get=GetFileName)) LPCTSTR cFileName;
+	LPCTSTR GetFileName() const { return strFileName.c_str(); }
+
+	__declspec(property(get=GetAlternateFileName)) LPCTSTR cAlternateFileName;
+	LPCTSTR GetAlternateFileName() const { return strAlternateFileName.c_str(); }
+};
+
 #ifdef UNICODE
 
 #ifdef FAR3
@@ -256,8 +279,8 @@ void UpgradeMenuItemVector(const vector<CFarMenuItem> &arrSrc, vector<CFarMenuIt
 #define FarPanelAttr(pi) (pi).FileAttributes
 #define FarPanelUserData(pi) (pi).UserData.Data
 #define SetFarPanelUserData(pi, value) { (pi).UserData.Data = (void *)value; (pi).UserData.FreeData = NULL; }
-typedef WIN32_FIND_DATA WF_FIND_DATA;
 WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item);
+FIND_DATA PanelToFD(const PluginPanelItem &Item);
 #define FarPanelSize(pi) (pi).FileSize
 #define FarPanelCTime(pi) (pi).CreationTime
 #define FarPanelATime(pi) (pi).LastAccessTime
@@ -272,7 +295,7 @@ WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item);
 #define SetFarPanelUserData(pi, value) (pi).UserData = (DWORD)value
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 #define PanelToWFD(Item) FFDtoWFD(Item.FindData)
-typedef FAR_FIND_DATA WF_FIND_DATA;
+#define PanelToFD(Item)  (FIND_DATA(Item.FindData))
 #define FarPanelSize(pi) (pi).FindData.nFileSize
 #define FarPanelCTime(pi) (pi).FindData.ftCreationTime
 #define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
@@ -288,6 +311,7 @@ struct CPluginPanelItem : PluginPanelItem
 	void operator = (const  PluginPanelItem &item);
 	void operator = (const CPluginPanelItem &item);
 	void SetFindData(const WIN32_FIND_DATA &fd);
+	void SetFindData(const FIND_DATA &fd);
 
 #ifdef FAR3
 	DWORD &UData() { return *((DWORD *)&UserData.Data); }
@@ -335,11 +359,9 @@ struct CPanelInfo : PanelInfo
 #ifdef _FAR_USE_WIN32_FIND_DATA
 #define FFDtoWFD(Data) (Data)
 #define PanelToWFD(Item) Item.FindData
-typedef WIN32_FIND_DATA WF_FIND_DATA;
 #else
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 #define PanelToWFD(Item) FFDtoWFD(Item.FindData)
-typedef FAR_FIND_DATA WF_FIND_DATA;
 #endif
 #define FarPanelSize(pi) (pi).FindData.nFileSizeLow
 #define FarPanelCTime(pi) (pi).FindData.ftCreationTime
@@ -357,6 +379,7 @@ struct CPluginPanelItem : PluginPanelItem
 	CPluginPanelItem() {}
 	CPluginPanelItem(const  PluginPanelItem &item) : PluginPanelItem(item) {}
 	void SetFindData(const WIN32_FIND_DATA &fd);
+	void SetFindData(const FIND_DATA &fd);
 
 	DWORD_PTR &UData() { return UserData; }
 };

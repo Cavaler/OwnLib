@@ -596,6 +596,41 @@ int ReturnMenu(int nResult, unsigned int uiFlags, const int *piBreakKeys, int *n
 	return nResult;
 }
 
+FIND_DATA::FIND_DATA()
+: dwFileAttributes(INVALID_FILE_ATTRIBUTES)
+{
+}
+
+FIND_DATA::FIND_DATA(const WIN32_FIND_DATA &fd)
+{
+	dwFileAttributes		= fd.dwFileAttributes;
+	ftCreationTime			= fd.ftCreationTime;
+	ftLastAccessTime		= fd.ftLastAccessTime;
+	ftLastWriteTime			= fd.ftLastWriteTime;
+	nFileSize				= ((__int64)fd.nFileSizeHigh << 32) + fd.nFileSizeLow;
+	strFileName				= fd.cFileName;
+	strAlternateFileName	= fd.cAlternateFileName;
+}
+
+#ifndef FAR3
+FIND_DATA::FIND_DATA(const FAR_FIND_DATA &fd)
+{
+	dwFileAttributes		= fd.dwFileAttributes;
+	ftCreationTime			= fd.ftCreationTime;
+	ftLastAccessTime		= fd.ftLastAccessTime;
+	ftLastWriteTime			= fd.ftLastWriteTime;
+#ifdef UNICODE
+	nFileSize				= fd.nFileSize;
+	strFileName				= fd.lpwszFileName;
+	strAlternateFileName	= fd.lpwszAlternateFileName;
+#else
+	nFileSize				= ((__int64)fd.nFileSizeHigh << 32) + fd.nFileSizeLow;
+	strFileName				= fd.cFileName;
+	strAlternateFileName	= fd.cAlternateFileName;
+#endif
+}
+#endif
+
 #ifdef UNICODE
 
 #ifndef FAR3
@@ -680,6 +715,27 @@ void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
 	FindData.ftLastAccessTime = fd.ftLastAccessTime;
 	FindData.ftLastWriteTime = fd.ftLastWriteTime;
 	FindData.nFileSize = (((__int64)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
+	FindData.lpwszFileName = _wcsdup(fd.cFileName);
+	FindData.lpwszAlternateFileName = _wcsdup(fd.cAlternateFileName);
+#endif
+}
+
+void CPluginPanelItem::SetFindData(const FIND_DATA &fd)
+{
+#ifdef FAR3
+	FileAttributes = fd.dwFileAttributes;
+	CreationTime = fd.ftCreationTime;
+	LastAccessTime = fd.ftLastAccessTime;
+	LastWriteTime = fd.ftLastWriteTime;
+	FileSize = fd.nFileSize;
+	FileName = _wcsdup(fd.cFileName);
+	AlternateFileName = _wcsdup(fd.cAlternateFileName);
+#else
+	FindData.dwFileAttributes = fd.dwFileAttributes;
+	FindData.ftCreationTime = fd.ftCreationTime;
+	FindData.ftLastAccessTime = fd.ftLastAccessTime;
+	FindData.ftLastWriteTime = fd.ftLastWriteTime;
+	FindData.nFileSize = fd.nFileSize;
 	FindData.lpwszFileName = _wcsdup(fd.cFileName);
 	FindData.lpwszAlternateFileName = _wcsdup(fd.cAlternateFileName);
 #endif
@@ -834,9 +890,23 @@ void CPluginPanelItem::SetFindData(const WIN32_FIND_DATA &fd)
 	FindData.nFileSizeHigh = fd.nFileSizeHigh;
 	FindData.dwReserved0 = fd.dwReserved0;
 	FindData.dwReserved1 = fd.dwReserved1;
-	strcpy(FindData.cFileName, fd.cFileName);
-	strcpy(FindData.cAlternateFileName, fd.cAlternateFileName);
+	strncpy_s(FindData.cFileName, MAX_PATH, fd.cFileName, _TRUNCATE);
+	strncpy_s(FindData.cAlternateFileName, 14, fd.cAlternateFileName, _TRUNCATE);
 #endif
+}
+
+void CPluginPanelItem::SetFindData(const FIND_DATA &fd)
+{
+	FindData.dwFileAttributes = fd.dwFileAttributes;
+	FindData.ftCreationTime = fd.ftCreationTime;
+	FindData.ftLastAccessTime = fd.ftLastAccessTime;
+	FindData.ftLastWriteTime = fd.ftLastWriteTime;
+	FindData.nFileSizeLow  = (DWORD)(fd.nFileSize & 0xFFFFFFFF);
+	FindData.nFileSizeHigh = (DWORD)(fd.nFileSize >> 32);
+	FindData.dwReserved0 = 0;
+	FindData.dwReserved1 = 0;
+	strncpy_s(FindData.cFileName, MAX_PATH, fd.cFileName, _TRUNCATE);
+	strncpy_s(FindData.cAlternateFileName, 14, fd.cAlternateFileName, _TRUNCATE);
 }
 
 void UpdatePanel(bool bClearSelection, const TCHAR *szCurrentName, bool bAnotherPanel)

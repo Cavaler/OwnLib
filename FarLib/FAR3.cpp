@@ -233,6 +233,20 @@ WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item)
 	return fd;
 }
 
+FIND_DATA PanelToFD(const PluginPanelItem &Item)
+{
+	FIND_DATA fd;
+
+	fd.dwFileAttributes = Item.FileAttributes;
+	fd.ftCreationTime   = Item.CreationTime;
+	fd.ftLastAccessTime = Item.LastAccessTime;
+	fd.ftLastWriteTime  = Item.LastWriteTime;
+	fd.nFileSize        = Item.FileSize;
+	fd.strFileName      = Item.FileName;
+
+	return fd;
+}
+
 vector<FarKey> ConvertKeys(const int *piBreakKeys)
 {
 	vector<FarKey> arrKeys;
