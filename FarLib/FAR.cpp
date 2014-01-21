@@ -770,10 +770,10 @@ bool CPanelInfo::GetInfo(HANDLE hPanel)
 
 	if (!StartupInfo.Control(hPanel, FCTL_GETPANELINFO, 0, (LONG_PTR)(PanelInfo *)this)) return false;
 
-	wchar_t szCurDir[MAX_PATH];
-	StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, MAX_PATH, (LONG_PTR)szCurDir);
-	strCurDir = szCurDir;
-	CurDir = strCurDir.c_str();
+	INT_PTR nSize = StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, 0, NULL);
+	arrCurDir.resize(nSize);
+	StartupInfo.Control(hPanel, FCTL_GETCURRENTDIRECTORY, arrCurDir.size(), (LONG_PTR)&arrCurDir[0]);
+	CurDir = &arrCurDir[0];
 
 	GetPanelItems(ItemsNumber, false, hPanel, PanelItems, PanelBuffers);
 	GetPanelItems(SelectedItemsNumber, true, hPanel, SelectedItems, SelectedBuffers);

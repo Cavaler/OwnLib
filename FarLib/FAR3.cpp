@@ -90,12 +90,14 @@ intptr_t CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, L
 	case FCTL_GETPANELHOSTFILE:*/
 
 	case FCTL_GETPANELDIRECTORY:{
-		BYTE szBuffer[MAX_PATH*7];
-		FarPanelDirectory *pDirectory = (FarPanelDirectory *)szBuffer;
+		LONG_PTR nSize = __super::PanelControl(hPanel, fCommand, 0, NULL);
+		vector<BYTE> arrBuffer(nSize);
+		FarPanelDirectory *pDirectory = (FarPanelDirectory *)&arrBuffer[0];
 		pDirectory->StructSize = sizeof(*pDirectory);
-		LONG_PTR nRes = __super::PanelControl(hPanel, fCommand, MAX_PATH*7, szBuffer);
-		wcscpy((LPWSTR)Param2, pDirectory->Name);
-		return nRes;
+		LONG_PTR nRes = __super::PanelControl(hPanel, fCommand, nSize, &arrBuffer[0]);
+		if (Param2 != NULL)
+			wcsncpy_s((LPWSTR)Param2, Param1, pDirectory->Name, _TRUNCATE);
+		return wcslen(pDirectory->Name)+1;
 								}
 
 	case FCTL_CLOSEPLUGIN:

@@ -317,7 +317,7 @@ struct CPanelInfo : PanelInfo
 
 	bool GetInfo(bool bAnotherPanel = false);
 	bool GetInfo(HANDLE hPanel);
-	wstring strCurDir;
+	vector<wchar_t> arrCurDir;
 
 	int Find(LPCTSTR szFileName);
 #ifdef FAR3
