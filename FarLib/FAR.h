@@ -363,6 +363,7 @@ struct CPanelInfo : PanelInfo
 WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 #define PanelToWFD(Item) FFDtoWFD(Item.FindData)
 #endif
+#define PanelToFD(Item)  (FIND_DATA(Item.FindData))
 #define FarPanelSize(pi) (pi).FindData.nFileSizeLow
 #define FarPanelCTime(pi) (pi).FindData.ftCreationTime
 #define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
