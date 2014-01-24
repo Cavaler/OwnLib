@@ -194,6 +194,11 @@ std::tstring ExtendedFileName(const std::tstring &strPath)
 #endif
 }
 
+std::tstring FullExtendedFileName(const std::tstring &strPath)
+{
+	return ExtendedFileName(GetFullFileName(strPath));
+}
+
 std::tstring ContractedFileName(const std::tstring &strPath)
 {
 #ifdef UNICODE

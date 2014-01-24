@@ -19,6 +19,10 @@ std::tstring GetFullFileName(const std::tstring &strPath);
 std::tstring GetFullFileName(const std::tstring &strPath, const std::tstring &strBase);
 
 std::tstring CleanFileName(const std::tstring &strPath);
+
+std::tstring ExtendedFileName(const std::tstring &strPath);
+std::tstring FullExtendedFileName(const std::tstring &strPath);
+std::tstring ContractedFileName(const std::tstring &strPath);
 }
 
 #endif
