@@ -332,6 +332,10 @@ void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems);
 
 struct CPanelInfo : PanelInfo
 {
+	CPanelInfo() {}
+	CPanelInfo(bool bAnotherPanel) { GetInfo(false); }
+	CPanelInfo(HANDLE hPanel)      { GetInfo(hPanel); }
+
 	LPCWSTR CurDir;
 	panelitem_vector PanelItems;
 	panelitem_vector SelectedItems;
@@ -369,7 +373,12 @@ WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data);
 #define FarPanelATime(pi) (pi).FindData.ftLastAccessTime
 #define FarPanelWTime(pi) (pi).FindData.ftLastWriteTime
 
-struct CPanelInfo : PanelInfo {
+struct CPanelInfo : PanelInfo
+{
+	CPanelInfo() {}
+	CPanelInfo(bool bAnotherPanel) { GetInfo(false); }
+	CPanelInfo(HANDLE hPanel)      { GetInfo(hPanel); }
+
 	bool GetInfo(bool bAnotherPanel = false);
 	bool GetInfo(HANDLE hPanel);
 	int Find(LPCTSTR szFileName);
