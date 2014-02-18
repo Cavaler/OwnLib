@@ -12,8 +12,8 @@ template<> static int CStringT<wchar_t>::ctoi(const wchar_t *sz) { return _wtoi(
 template<> static char *    CStringT<char>   ::ctoa(int n, char    *sz) { return _itoa(n, sz, 10); }
 template<> static wchar_t * CStringT<wchar_t>::ctoa(int n, wchar_t *sz) { return _itow(n, sz, 10); }
 
-template<> static int CStringT<char>   ::cstrlen(const char   *sz)  { return strlen(sz); }
-template<> static int CStringT<wchar_t>::cstrlen(const wchar_t *sz) { return wcslen(sz); }
+template<> static int CStringT<char>   ::cstrlen(const char   *sz)  { return (sz != NULL) ? strlen(sz) : 0; }
+template<> static int CStringT<wchar_t>::cstrlen(const wchar_t *sz) { return (sz != NULL) ? wcslen(sz) : 0; }
 
 template<> static       char    *CStringT<char   >::cstrchr(      char    *sz, char    c) { return strchr(sz, c); }
 template<> static const char    *CStringT<char   >::cstrchr(const char    *sz, char    c) { return strchr(sz, c); }
