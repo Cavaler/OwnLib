@@ -43,7 +43,7 @@
 /* #undef SUPPORT_VALGRIND */
 /* #undef SUPPORT_GCOV */
 
-#define NEWLINE			10
+#define NEWLINE			-1
 #define POSIX_MALLOC_THRESHOLD	10
 #define LINK_SIZE		2
 #define PARENS_NEST_LIMIT       250
