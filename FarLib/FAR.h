@@ -276,6 +276,7 @@ struct FIND_DATA
 #ifdef FAR3
 
 #define FarPanelFileName(pi) (pi).FileName
+#define FarPanelShortFileName(pi) (pi).AlternateFileName
 #define FarPanelAttr(pi) (pi).FileAttributes
 #define FarPanelUserData(pi) (pi).UserData.Data
 #define SetFarPanelUserData(pi, value) { (pi).UserData.Data = (void *)value; (pi).UserData.FreeData = NULL; }
@@ -289,7 +290,9 @@ FIND_DATA PanelToFD(const PluginPanelItem &Item);
 #else	// FAR3
 
 #define FarFileName(fd) (fd).lpwszFileName
+#define FarShortFileName(fd) (fd).lpwszAlternateFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
+#define FarPanelShortFileName(pi) FarShortFileName((pi).FindData)
 #define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
 #define FarPanelUserData(pi) (pi).UserData
 #define SetFarPanelUserData(pi, value) (pi).UserData = (DWORD)value
@@ -356,7 +359,9 @@ struct CPanelInfo : PanelInfo
 #else		//	UNICODE
 
 #define FarFileName(fd) (fd).cFileName
+#define FarShortFileName(fd) (fd).cAlternateFileName
 #define FarPanelFileName(pi) FarFileName((pi).FindData)
+#define FarPanelShortFileName(pi) FarShortFileName((pi).FindData)
 #define FarPanelAttr(pi) (pi).FindData.dwFileAttributes
 #define FarPanelUserData(pi) (pi).UserData
 #define SetFarPanelUserData(pi, value) (pi).UserData = (DWORD)value
