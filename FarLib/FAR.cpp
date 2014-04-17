@@ -361,7 +361,7 @@ tstring FarMaskToRE(const TCHAR *szMask) {
 	return strRE;
 }
 
-CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
+CFarMaskSet::CFarMaskSet(const TCHAR *szMasks, bool bCaseSensitive)
 : m_pInclude(NULL), m_pIncludeExtra(NULL), m_pExclude(NULL), m_pExcludeExtra(NULL)
 {
 	bool bExclude = false;
@@ -369,6 +369,8 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
 
 	setlocale(LC_ALL, ".OCP");
 	m_pOEMTable = pcre_maketables();
+
+	int nFlags = (bCaseSensitive) ? 0 : PCRE_CASELESS;
 
 	while (*szMasks) {
 		switch (*szMasks) {
@@ -383,7 +385,7 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
 				bExclude = true;
 				const TCHAR *szErr;
 				int nErr;
-				m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
+				m_pInclude = pcre_compile(strCurMask.c_str(), nFlags, &szErr, &nErr, m_pOEMTable);
 				if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
 				strCurMask = _T("");
 			}
@@ -416,12 +418,12 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks)
 	if (bExclude) {
 		const TCHAR *szErr;
 		int nErr;
-		m_pExclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
+		m_pExclude = pcre_compile(strCurMask.c_str(), nFlags, &szErr, &nErr, m_pOEMTable);
 		if (m_pExclude) m_pExcludeExtra = pcre_study(m_pInclude, 0, &szErr);
 	} else {
 		const TCHAR *szErr;
 		int nErr;
-		m_pInclude = pcre_compile(strCurMask.c_str(), PCRE_CASELESS, &szErr, &nErr, m_pOEMTable);
+		m_pInclude = pcre_compile(strCurMask.c_str(), nFlags, &szErr, &nErr, m_pOEMTable);
 		if (m_pInclude) m_pIncludeExtra = pcre_study(m_pInclude, 0, &szErr);
 
 		m_pExclude = NULL;

@@ -128,7 +128,7 @@ tstring FarMaskToRE(const TCHAR *szMask);
 
 class CFarMaskSet {
 public:
-	CFarMaskSet(const TCHAR *szMasks);
+	CFarMaskSet(const TCHAR *szMasks, bool bCaseSensitive = false);
 	bool operator()(const TCHAR *szFileName);
 	bool Valid();
 	~CFarMaskSet();
