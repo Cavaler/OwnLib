@@ -188,7 +188,7 @@ const LPCWSTR g_szUNCPrefix = L"\\\\?\\";
 std::tstring ExtendedFileName(const std::tstring &strPath)
 {
 #ifdef UNICODE
-	return (strPath.substr(0, 4) == g_szUNCPrefix) ? strPath : g_szUNCPrefix + strPath;
+	return (strPath.substr(0, 2) == L"\\\\") ? strPath : g_szUNCPrefix + strPath;
 #else
 	return strPath;
 #endif
@@ -204,6 +204,6 @@ std::tstring ContractedFileName(const std::tstring &strPath)
 #ifdef UNICODE
 	return (strPath.substr(0, 4) == g_szUNCPrefix) ? strPath.substr(4) : strPath;
 #else
-		return strPath;
+	return strPath;
 #endif
 }
