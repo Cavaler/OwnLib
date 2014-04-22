@@ -199,7 +199,7 @@ CFarCheckBoxItem::~CFarCheckBoxItem() {
 // ********************* CHECKBOX3 **********************
 
 CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,CFarIntegerStorage piStorage):
-CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(1),m_piStorage(new CFarIntegerStorage(piStorage)) {}
+CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(0),m_piStorage(new CFarIntegerStorage(piStorage)) {}
 
 CFarCheckBox3Item::CFarCheckBox3Item(int X,int Y,FARDIALOGITEMFLAGS dwFlags, const CFarText &szText,DWORD *pdwCleared,DWORD *pdwSet,DWORD dwMaskValue):
 CFarDialogItem(X,Y,0,0,dwFlags|DIF_3STATE,szText),m_nMethod(1),m_pdwCleared(pdwCleared),m_pdwSet(pdwSet),m_dwMaskValue(dwMaskValue) {}
