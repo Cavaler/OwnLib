@@ -9,7 +9,7 @@
 /*
   DlgBuilder.hpp
 
-  Dynamic construction of dialogs for FAR Manager 3.0 build 3132
+  Dynamic construction of dialogs for FAR Manager 3.0 build 3874
 */
 
 /*
@@ -77,7 +77,7 @@ struct CheckBoxBinding: public DialogItemBinding<T>
 		int Mask;
 
 	public:
-		CheckBoxBinding(BOOL *aValue, int aMask) : Value(aValue), Mask(aMask) { }
+		CheckBoxBinding(int *aValue, int aMask) : Value(aValue), Mask(aMask) { }
 
 		virtual void SaveValue(T *Item, int RadioGroupIndex)
 		{
@@ -188,7 +188,7 @@ class DialogBuilderBase
 			// AddDialogItem и аналогичных методов, поэтому размер массива подбираем такой,
 			// чтобы все нормальные диалоги помещались без реаллокации
 			// TODO хорошо бы, чтобы они вообще не инвалидировались
-			DialogItemsAllocated += 32;
+			DialogItemsAllocated += 64;
 			if (!DialogItems)
 			{
 				DialogItems = new T[DialogItemsAllocated];
@@ -271,7 +271,8 @@ class DialogBuilderBase
 		void UpdateBorderSize()
 		{
 			T *Title = &DialogItems[0];
-			Title->X2 = Title->X1 + MaxTextWidth() + 3;
+			intptr_t MaxWidth = MaxTextWidth();
+			Title->X2 = Title->X1 + MaxWidth + 3;
 			Title->Y2 = DialogItems [DialogItemsCount-1].Y2 + 1;
 
 			for (int i=1; i<DialogItemsCount; i++)
@@ -280,6 +281,10 @@ class DialogBuilderBase
 				{
 					Indent = 2;
 					DialogItems[i].X2 = Title->X2;
+				}
+				else if (DialogItems[i].Type == DI_TEXT && (DialogItems[i].Flags & DIF_CENTERTEXT))
+				{//BUGBUG: two columns items are not supported
+					DialogItems[i].X2 = DialogItems[i].X1 + MaxWidth - 1;
 				}
 			}
 
@@ -334,7 +339,7 @@ class DialogBuilderBase
 			Bindings [DialogItemsCount-1] = Binding;
 		}
 
-		int GetItemID(T *Item)
+		int GetItemID(T *Item) const
 		{
 			int Index = static_cast<int>(Item - DialogItems);
 			if (Index >= 0 && Index < DialogItemsCount)
@@ -375,7 +380,7 @@ class DialogBuilderBase
 			return -1;
 		}
 
-		virtual DialogItemBinding<T> *CreateCheckBoxBinding(BOOL *Value, int Mask)
+		virtual DialogItemBinding<T> *CreateCheckBoxBinding(int *Value, int Mask)
 		{
 			return nullptr;
 		}
@@ -396,8 +401,7 @@ class DialogBuilderBase
 		{
 			for(int i=0; i<DialogItemsCount; i++)
 			{
-				if (Bindings [i])
-					delete Bindings [i];
+				delete Bindings [i];
 			}
 			delete [] DialogItems;
 			delete [] Bindings;
@@ -405,7 +409,7 @@ class DialogBuilderBase
 
 	public:
 
-		int GetLastID()
+		int GetLastID() const
 		{
 			return DialogItemsCount-1;
 		}
@@ -427,7 +431,7 @@ class DialogBuilderBase
 		}
 
 		// Добавляет чекбокс.
-		T *AddCheckbox(int TextMessageId, BOOL *Value, int Mask=0, bool ThreeState=false)
+		T *AddCheckbox(int TextMessageId, int *Value, int Mask=0, bool ThreeState=false)
 		{
 			T *Item = AddDialogItem(DI_CHECKBOX, GetLangString(TextMessageId));
 			if (ThreeState && !Mask)
@@ -437,7 +441,7 @@ class DialogBuilderBase
 			if (!Mask)
 				Item->Selected = *Value;
 			else
-				Item->Selected = (*Value & Mask) ? TRUE : FALSE ;
+				Item->Selected = (*Value & Mask) != 0;
 			SetLastItemBinding(CreateCheckBoxBinding(Value, Mask));
 			return Item;
 		}
@@ -468,6 +472,11 @@ class DialogBuilderBase
 			return nullptr;
 		}
 
+		virtual T *AddUIntEditField(unsigned int *Value, int Width)
+		{
+			return nullptr;
+		}
+
 		// Добавляет указанную текстовую строку слева от элемента RelativeTo.
 		T *AddTextBefore(T *RelativeTo, int LabelId)
 		{
@@ -488,11 +497,11 @@ class DialogBuilderBase
 		}
 
 		// Добавляет указанную текстовую строку справа от элемента RelativeTo.
-		T *AddTextAfter(T *RelativeTo, const wchar_t* Label)
+		T *AddTextAfter(T *RelativeTo, const wchar_t* Label, int skip=1)
 		{
 			T *Item = AddDialogItem(DI_TEXT, Label);
 			Item->Y1 = Item->Y2 = RelativeTo->Y1;
-			Item->X1 = RelativeTo->X1 + ItemWidth(*RelativeTo) - 1 + 2;
+			Item->X1 = RelativeTo->X1 + ItemWidth(*RelativeTo) + skip;
 
 			DialogItemBinding<T> *Binding = FindBinding(RelativeTo);
 			if (Binding)
@@ -501,9 +510,9 @@ class DialogBuilderBase
 			return Item;
 		}
 
-		T *AddTextAfter(T *RelativeTo, int LabelId)
+		T *AddTextAfter(T *RelativeTo, int LabelId, int skip=1)
 		{
-			return AddTextAfter(RelativeTo, GetLangString(LabelId));
+			return AddTextAfter(RelativeTo, GetLangString(LabelId), skip);
 		}
 
 		// Добавляет кнопку справа от элемента RelativeTo.
@@ -663,11 +672,11 @@ protected:
 
 class PluginCheckBoxBinding: public DialogAPIBinding
 {
-	BOOL *Value;
+	int *Value;
 	int Mask;
 
 public:
-	PluginCheckBoxBinding(const PluginStartupInfo &aInfo, HANDLE *aHandle, int aID, BOOL *aValue, int aMask)
+	PluginCheckBoxBinding(const PluginStartupInfo &aInfo, HANDLE *aHandle, int aID, int *aValue, int aMask)
 		: DialogAPIBinding(aInfo, aHandle, aID),
 		  Value(aValue), Mask(aMask)
 	{
@@ -675,7 +684,7 @@ public:
 
 	virtual void SaveValue(FarDialogItem *Item, int RadioGroupIndex)
 	{
-		BOOL Selected = static_cast<BOOL>(Info.SendDlgMessage(*DialogHandle, DM_GETCHECK, ID, 0));
+		int Selected = static_cast<int>(Info.SendDlgMessage(*DialogHandle, DM_GETCHECK, ID, 0));
 		if (!Mask)
 		{
 			*Value = Selected;
@@ -760,7 +769,45 @@ public:
 		return Buffer;
 	}
 
-	const wchar_t *GetMask()
+	const wchar_t *GetMask() const
+	{
+		return Mask;
+	}
+};
+
+class PluginUIntEditFieldBinding: public DialogAPIBinding
+{
+private:
+	unsigned int *Value;
+	wchar_t Buffer[32];
+	wchar_t Mask[32];
+
+public:
+	PluginUIntEditFieldBinding(const PluginStartupInfo &aInfo, HANDLE *aHandle, int aID, unsigned int *aValue, int Width)
+		: DialogAPIBinding(aInfo, aHandle, aID),
+		  Value(aValue)
+	{
+		memset(Buffer, 0, sizeof(Buffer));
+		aInfo.FSF->sprintf(Buffer, L"%u", *aValue);
+		int MaskWidth = Width < 31 ? Width : 31;
+		for(int i=1; i<MaskWidth; i++)
+			Mask[i] = L'9';
+		Mask[0] = L'#';
+		Mask[MaskWidth] = L'\0';
+	}
+
+	virtual void SaveValue(FarDialogItem *Item, int RadioGroupIndex)
+	{
+		const wchar_t *DataPtr = (const wchar_t *) Info.SendDlgMessage(*DialogHandle, DM_GETCONSTTEXTPTR, ID, 0);
+		*Value = (unsigned int)Info.FSF->atoi64(DataPtr);
+	}
+
+	wchar_t *GetBuffer()
+	{
+		return Buffer;
+	}
+
+	const wchar_t *GetMask() const
 	{
 		return Mask;
 	}
@@ -804,7 +851,7 @@ class PluginDialogBuilder: public DialogBuilderBase<FarDialogItem>
 			return Info.DialogRun(DialogHandle);
 		}
 
-		virtual DialogItemBinding<FarDialogItem> *CreateCheckBoxBinding(BOOL *Value, int Mask)
+		virtual DialogItemBinding<FarDialogItem> *CreateCheckBoxBinding(int *Value, int Mask)
 		{
 			return new PluginCheckBoxBinding(Info, &DialogHandle, DialogItemsCount-1, Value, Mask);
 		}
@@ -838,6 +885,20 @@ public:
 			Item->Flags |= DIF_MASKEDIT;
 			PluginIntEditFieldBinding *Binding;
 			Binding = new PluginIntEditFieldBinding(Info, &DialogHandle, DialogItemsCount-1, Value, Width);
+			Item->Data = Binding->GetBuffer();
+			Item->Mask = Binding->GetMask();
+			SetNextY(Item);
+			Item->X2 = Item->X1 + Width - 1;
+			SetLastItemBinding(Binding);
+			return Item;
+		}
+
+		virtual FarDialogItem *AddUIntEditField(unsigned int *Value, int Width)
+		{
+			FarDialogItem *Item = AddDialogItem(DI_FIXEDIT, L"");
+			Item->Flags |= DIF_MASKEDIT;
+			PluginUIntEditFieldBinding *Binding;
+			Binding = new PluginUIntEditFieldBinding(Info, &DialogHandle, DialogItemsCount-1, Value, Width);
 			Item->Data = Binding->GetBuffer();
 			Item->Mask = Binding->GetMask();
 			SetNextY(Item);
