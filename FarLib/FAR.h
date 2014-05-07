@@ -42,6 +42,7 @@
 
 #ifdef UNICODE
 #ifdef FAR3
+
 #pragma pack(push,8)
 #include <plugin3.hpp>
 #include <farcolor3.hpp>
@@ -59,20 +60,29 @@ enum FAR_PKF_FLAGS
 	PKF_ALT         = 0x00000002,
 	PKF_SHIFT       = 0x00000004,
 };
-#else
+typedef size_t	fuint;
+
+#else		//	FAR2
+
 #include <plugin2.hpp>
 #include <farkeys2.hpp>
 #include <farcolor2.hpp>
 #define FCTL_GETCURRENTDIRECTORY FCTL_GETPANELDIR
 #define NO_PANEL_HANDLE INVALID_HANDLE_VALUE
+typedef int	fuint;
+
 #endif
 #define FAR_EXPORT(name) name##W
-#else
+
+#else		//	FAR1
+
 #include <plugin.hpp>
 #include <farkeys.hpp>
 #include <farcolor.hpp>
 #define FAR_EXPORT(name) name
 #define NO_PANEL_HANDLE INVALID_HANDLE_VALUE
+typedef int	fuint;
+
 #endif
 
 #define PSI140SIZE	312
