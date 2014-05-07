@@ -225,3 +225,23 @@ string URLEncode(const char *szString)
 
 	return strResult;
 }
+
+string URLEncodeANSI(const string &strOEMString)
+{
+	return URLEncode(ANSIFromUnicode(OEMToUnicode(strOEMString)).c_str());
+}
+
+string URLEncodeUTF8(const string &strOEMString)
+{
+	return URLEncode(UTF8FromUnicode(OEMToUnicode(strOEMString)).c_str());
+}
+
+wstring URLEncodeANSI(const wstring &strString)
+{
+	return ANSIToUnicode(URLEncode(ANSIFromUnicode(strString).c_str()));
+}
+
+wstring URLEncodeUTF8(const wstring &strString)
+{
+	return ANSIToUnicode(URLEncode(UTF8FromUnicode(strString).c_str()));
+}

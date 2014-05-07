@@ -49,7 +49,11 @@ void   StrToStr(const  string &strFrom, wstring &strTo, UINT nCP);
 void   StrToStr(const wstring &strFrom,  string &strTo, UINT nCP);
 void   StrToStr(const wstring &strFrom, wstring &strTo, UINT nCP);
 
-string URLEncode(const char *szString);
+string  URLEncode(const char *szString);
+string  URLEncodeANSI(const  string &strOEMString);
+string  URLEncodeUTF8(const  string &strOEMString);
+wstring URLEncodeANSI(const wstring &strString);
+wstring URLEncodeUTF8(const wstring &strString);
 
 template<class CHAR, class Iterator>
 void ParseWordsToIter(const CHAR *szLine, Iterator &iter)
