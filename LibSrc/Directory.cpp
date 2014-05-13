@@ -183,12 +183,14 @@ tstring CleanFileName(const tstring &strPath)
 	return strResult;
 }
 
-const LPCWSTR g_szUNCPrefix = L"\\\\?\\";
+const LPCWSTR g_szLongPrefix = L"\\\\?\\";
+const LPCWSTR g_szUNCPrefix  = L"\\\\?\\UNC\\";
 
 std::tstring ExtendedFileName(const std::tstring &strPath)
 {
 #ifdef UNICODE
-	return (strPath.substr(0, 2) == L"\\\\") ? strPath : g_szUNCPrefix + strPath;
+	return (strPath.substr(0, 4) == g_szLongPrefix) ? strPath :
+		   (strPath.substr(0, 2) == L"\\\\") ? g_szUNCPrefix + strPath.substr(2) : g_szLongPrefix + strPath;
 #else
 	return strPath;
 #endif
@@ -202,7 +204,8 @@ std::tstring FullExtendedFileName(const std::tstring &strPath)
 std::tstring ContractedFileName(const std::tstring &strPath)
 {
 #ifdef UNICODE
-	return (strPath.substr(0, 4) == g_szUNCPrefix) ? strPath.substr(4) : strPath;
+	return (strPath.substr(0, 8) == g_szUNCPrefix) ? L"\\\\" + strPath.substr(8) :
+		   (strPath.substr(0, 4) == g_szLongPrefix) ? strPath.substr(4) : strPath;
 #else
 	return strPath;
 #endif
