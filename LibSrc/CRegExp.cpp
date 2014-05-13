@@ -80,13 +80,13 @@ int pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
 #ifdef UNICODE
 	options |= PCRE_NO_START_OPTIMIZE;
 #endif
-	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), szSubject.length(), char2utf[start_offset],
+	int nResult = pcre_exec(argument_re, extra_data, szSubject.c_str(), (int)szSubject.length(), (int)char2utf[start_offset],
 		options, offsetcount ? &g_origOffsets[0] : NULL, offsetcount);
 
 	if ((nResult >= 0) && offsets && offsetcount) {
 		for (int nMatch = 0; nMatch < nResult; nMatch++) {
-			offsets[nMatch*2  ] = utf2char[g_origOffsets[nMatch*2  ]];
-			offsets[nMatch*2+1] = utf2char[g_origOffsets[nMatch*2+1]];
+			offsets[nMatch*2  ] = (int)utf2char[g_origOffsets[nMatch*2  ]];
+			offsets[nMatch*2+1] = (int)utf2char[g_origOffsets[nMatch*2+1]];
 		}
 	}
 
@@ -118,7 +118,7 @@ int pcre_get_named_substring(const pcre *code, const wchar_t *subject, int *ovec
 	wchar_t *wszString = (wchar_t *)pcre_malloc(strString.size()*2+2);
 	memmove(wszString, strString.c_str(), strString.size()*2+2);
 	*stringptr = wszString;
-	return strString.size();
+	return (int)strString.size();
 }
 
 int pcre_get_stringnumber(const pcre *code, const wchar_t *stringname) {
@@ -174,16 +174,19 @@ int pcre_get_stringlist(const pcre *code, vector<string> &arrNames)
 }
 
 template<class CHAR>
-CRegExpT<CHAR>::CRegExpT() : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL), m_iRefCount(0) {
+CRegExpT<CHAR>::CRegExpT() : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL), m_iRefCount(0)
+{
 }
 
 template<class CHAR>
-CRegExpT<CHAR>::CRegExpT(cstring strPattern, int iCompileFlags) : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL) {
+CRegExpT<CHAR>::CRegExpT(cstring strPattern, int iCompileFlags) : m_pPattern(NULL), m_pPatternExtra(NULL), m_piRefs(NULL)
+{
 	Compile(strPattern, iCompileFlags);
 }
 
 template<class CHAR>
-bool CRegExpT<CHAR>::Compile(cstring strPattern, int iCompileFlags) {
+bool CRegExpT<CHAR>::Compile(cstring strPattern, int iCompileFlags)
+{
 	Release();
 
 	m_pPattern = pcre_compile(strPattern.c_str(), iCompileFlags, &m_pszErrPtr, &m_iErrOffset,NULL);
@@ -198,7 +201,8 @@ bool CRegExpT<CHAR>::Compile(cstring strPattern, int iCompileFlags) {
 }
 
 template<class CHAR>
-void CRegExpT<CHAR>::Release() {
+void CRegExpT<CHAR>::Release()
+{
 	if (m_piRefs) {delete[] m_piRefs; m_piRefs = NULL;}
 	if (m_pPattern) {pcre_free(m_pPattern); m_pPattern = NULL;}
 	if (m_pPatternExtra) {pcre_free(m_pPatternExtra); m_pPatternExtra = NULL;}
@@ -211,7 +215,8 @@ CRegExpT<CHAR>::~CRegExpT() {
 }
 
 template<class CHAR>
-void CRegExpT<CHAR>::FillReferences(cstring &strAnalyze, int iCount, vector<cstring> *arrReferences) {
+void CRegExpT<CHAR>::FillReferences(cstring &strAnalyze, int iCount, vector<cstring> *arrReferences)
+{
 	arrReferences->clear();
 	for (int i = 0; i < iCount; i++) {
 		if (m_piRefs[i*2] >= 0)
@@ -222,8 +227,9 @@ void CRegExpT<CHAR>::FillReferences(cstring &strAnalyze, int iCount, vector<cstr
 }
 
 template<class CHAR>
-bool CRegExpT<CHAR>::Match(cstring strAnalyze, int iExecFlags, vector<cstring> *arrReferences) {
-	int iResult = pcre_exec(m_pPattern, m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), 0, iExecFlags, m_piRefs, m_iRefCount*3);
+bool CRegExpT<CHAR>::Match(cstring strAnalyze, int iExecFlags, vector<cstring> *arrReferences)
+{
+	int iResult = pcre_exec(m_pPattern, m_pPatternExtra, strAnalyze.data(), (int)strAnalyze.size(), 0, iExecFlags, m_piRefs, m_iRefCount*3);
 	if (iResult < 0)
 	{
 		return false;
@@ -234,14 +240,16 @@ bool CRegExpT<CHAR>::Match(cstring strAnalyze, int iExecFlags, vector<cstring> *
 }
 
 template<class CHAR>
-CHAR CRegExpT<CHAR>::ConvertCase(CHAR C) {
+CHAR CRegExpT<CHAR>::ConvertCase(CHAR C)
+{
 	C = CStringT<CHAR>::ConvertCase(C, OneCaseConvert);
 	OneCaseConvert=CaseConvert;
 	return C;
 }
 
 template<class CHAR>
-void CRegExpT<CHAR>::AddChar(cstring &strResult, CHAR C) {
+void CRegExpT<CHAR>::AddChar(cstring &strResult, CHAR C)
+{
 	strResult += ConvertCase(C);
 }
 
@@ -336,7 +344,7 @@ bool CRegExpT<CHAR>::CreateReplace(cstring strAnalyze, cstring strReplacePattern
 template<class CHAR>
 bool CRegExpT<CHAR>::Replace(cstring &strAnalyze, cstring strReplacePattern, bool bGlobal, int iExecFlags)
 {
-	int iStart = 0;
+	size_t iStart = 0;
 	do {
 		cstring strReplace;
 		bool bResult = CreateReplace(strAnalyze.substr(iStart), strReplacePattern, strReplace, iExecFlags);
@@ -382,7 +390,7 @@ bool CRegExpT<CHAR>::Split(cstring strAnalyze, cstring strPattern,  vector<cstri
 	int iStart = 0;
 
 	do {
-		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), iStart,
+		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), (int)strAnalyze.size(), iStart,
 			iExecFlags & ~PCRE_SPLIT_FLAGS, RegExp.m_piRefs, RegExp.m_iRefCount*3);
 		if (iResult < 0) break;
 		if (((iExecFlags&PCRE_SPLIT_STRIPLEADING) == 0) ||
@@ -412,7 +420,7 @@ bool CRegExpT<CHAR>::Grep(cstring strAnalyze, cstring strPattern, cstring strRep
 	arrFound->clear();
 	int iStart = 0;
 	do {
-		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), strAnalyze.size(), iStart, iExecFlags, RegExp.m_piRefs, RegExp.m_iRefCount*3);
+		int iResult = pcre_exec(RegExp.m_pPattern, RegExp.m_pPatternExtra, strAnalyze.data(), (int)strAnalyze.size(), iStart, iExecFlags, RegExp.m_piRefs, RegExp.m_iRefCount*3);
 		if (iResult < 0) break;
 		vector<cstring> arrReferences;
 		RegExp.FillReferences(strAnalyze, iResult, &arrReferences);
