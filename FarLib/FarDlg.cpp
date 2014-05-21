@@ -462,42 +462,50 @@ LRESULT CFarDialog::SendDlgMessage(int nMsg, int nParam1, LONG_PTR lParam2)
 
 tstring CFarDialog::GetDlgItemText(int nID)
 {
+	if (m_bUseID && !HasItem(nID)) return _T("");
 	return FarLib::GetDlgItemText(m_hDlg, Index(nID));
 }
 
 void CFarDialog::SetDlgItemText(int nID, const TCHAR *szText)
 {
+	if (m_bUseID && !HasItem(nID)) return;
 	FarLib::SetDlgItemText(m_hDlg, Index(nID), szText);
 }
 
 void CFarDialog::ShowDlgItem(int nID, bool bShow)
 {
+	if (m_bUseID && !HasItem(nID)) return;
 	FarLib::ShowDlgItem(m_hDlg, Index(nID), bShow);
 }
 
 void CFarDialog::EnableDlgItem(int nID, bool bEnable, int nOffset)
 {
+	if (m_bUseID && !HasItem(nID)) return;
 	FarLib::EnableDlgItem(m_hDlg, Index(nID)+nOffset, bEnable);
 }
 
 void CFarDialog::EnableCheckBox(int nID, bool bEnable, bool bDisabledState)
 {
+	if (m_bUseID && !HasItem(nID)) return;
 	EnableDlgItem(nID, bEnable);
 	if (!bEnable) CheckDlgItem(nID, bDisabledState);
 }
 
 bool CFarDialog::IsDlgItemChecked(int nID)
 {
+	if (m_bUseID && !HasItem(nID)) return false;
 	return FarLib::IsDlgItemChecked(m_hDlg, Index(nID));
 }
 
 void CFarDialog::CheckDlgItem(int nID, bool bCheck)
 {
+	if (m_bUseID && !HasItem(nID)) return;
 	FarLib::CheckDlgItem(m_hDlg, Index(nID), bCheck);
 }
 
 void CFarDialog::EnableCheckDlgItem(int nID, bool bEnable)
 {
+	if (m_bUseID && !HasItem(nID)) return;
 	FarLib::EnableDlgItem(m_hDlg, Index(nID), bEnable);
 	if (!bEnable) FarLib::CheckDlgItem(m_hDlg, Index(nID), false);
 }
