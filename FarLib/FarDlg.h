@@ -159,6 +159,7 @@ protected:
 class CFarListData {
 public:
 	CFarListData();
+	CFarListData(const CFarListData *pData);
 	CFarListData(FarList *pList, bool bCopy = false);
 	CFarListData(const TCHAR **ppszItems,int iItemCount);
 	CFarListData(const vector<CFarText> arrItems);

@@ -109,19 +109,24 @@ int  CFarDialog::GetFocus()
 	return ID(StartupInfo.SendDlgMessage(m_hDlg, DM_GETFOCUS, 0, NULL));
 }
 
+typedef std::map<HANDLE, CFarDialog *> dialog_map;
+static dialog_map sDlgMap;
+
 #ifdef FAR3
 intptr_t WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, intptr_t Msg, intptr_t Param1, void *Param2)
 #else
 LONG_PTR WINAPI CFarDialog::s_WindowProc(HANDLE hDlg, int Msg, int Param1, LONG_PTR Param2)
 #endif
 {
-	static std::map<HANDLE, CFarDialog *> sDlgMap;
 	CFarDialog *pDlg;
 	if (Msg == DN_INITDIALOG) {
 		pDlg = (CFarDialog *)Param2;
 		sDlgMap[hDlg] = pDlg;
 	} else {
-		pDlg = sDlgMap[hDlg];
+		dialog_map::iterator it = sDlgMap.find(hDlg);
+		if (it == sDlgMap.end())
+			return StartupInfo.DefDlgProc(hDlg, Msg, Param1, (LONG_PTR)Param2);
+		pDlg = it->second;
 	}
 
 #ifdef FAR3
@@ -291,6 +296,8 @@ int CFarDialog::Display(int ValidExitCodes,...)
 #endif
 	}
 #endif
+
+	sDlgMap.erase(hDlg);
 
 	return Result;
 }
@@ -552,6 +559,21 @@ void SetListItemText(FarListItem &Item, const TCHAR *szText)
 #endif
 }
 
+void CopyListItem(FarListItem &Item, const FarListItem &From)
+{
+	Item.Flags = From.Flags;
+	Item.Reserved[0] = From.Reserved[0];
+	Item.Reserved[1] = From.Reserved[1];
+#ifndef FAR3
+	Item.Reserved[2] = From.Reserved[2];
+#endif
+#ifdef UNICODE
+	Item.Text = _tcsdup(From.Text);
+#else
+	strncpy(Item.Text, From.Text, sizeof(Item.Text));
+#endif
+}
+
 CFarListData::CFarListData() : m_bFree(true), m_pList(new FarList)
 {
 #ifdef FAR3
@@ -559,6 +581,21 @@ CFarListData::CFarListData() : m_bFree(true), m_pList(new FarList)
 #endif
 	m_pList->Items = NULL;
 	m_pList->ItemsNumber = 0;
+}
+
+CFarListData::CFarListData(const CFarListData *pData)
+{
+	m_pList = new FarList;
+#ifdef FAR3
+	m_pList->StructSize = sizeof(FarList);
+#endif
+
+	m_pList->Items = new FarListItem[m_pList->ItemsNumber = pData->m_pList->ItemsNumber];
+
+	for (fuint nIndex = 0; nIndex < pData->m_pList->ItemsNumber; nIndex++)
+	{
+		CopyListItem(m_pList->Items[nIndex], pData->m_pList->Items[nIndex]);
+	}
 }
 
 CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy)
@@ -569,8 +606,11 @@ CFarListData::CFarListData(FarList *pList, bool bCopy) : m_bFree(bCopy)
 		m_pList->StructSize = sizeof(FarList);
 #endif
 		m_pList->Items = new FarListItem[m_pList->ItemsNumber = pList->ItemsNumber];
-		for (int nIndex = 0; nIndex < pList->ItemsNumber; nIndex++)
-			m_pList->Items[nIndex] = pList->Items[nIndex];
+
+		for (fuint nIndex = 0; nIndex < pList->ItemsNumber; nIndex++)
+		{
+			CopyListItem(m_pList->Items[nIndex], pList->Items[nIndex]);
+		}
 	} else {
 		m_pList = pList;
 	}
@@ -612,7 +652,7 @@ CFarListData::~CFarListData()
 {
 	if (m_bFree) {
 #ifdef UNICODE
-		for (int nItem = 0; nItem < m_pList->ItemsNumber; nItem++)
+		for (fuint nItem = 0; nItem < m_pList->ItemsNumber; nItem++)
 			free((TCHAR *)m_pList->Items[nItem].Text);
 #endif
 		free(m_pList->Items);
