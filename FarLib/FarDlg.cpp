@@ -295,9 +295,11 @@ int CFarDialog::Display(int ValidExitCodes,...)
 		if (DialogItems[nItem].PtrData) free((TCHAR *)DialogItems[nItem].PtrData);
 #endif
 	}
-#endif
-
 	sDlgMap.erase(hDlg);
+
+#else
+	sDlgMap.erase(m_hDlg);
+#endif
 
 	return Result;
 }
