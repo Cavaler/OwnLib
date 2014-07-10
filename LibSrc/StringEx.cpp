@@ -204,11 +204,15 @@ bool DefCharFromUnicode() {
 
 string URLEncode(const char *szString)
 {
+	return URLEncode(string(szString));
+}
+
+string URLEncode(const string &strString)
+{
 	string strResult;
 
-	while (szString[0]) {
-		BYTE c = (BYTE)szString[0];
-
+	for each (BYTE c in strString)
+	{
 		if (
 			((c >= 'a') && (c <= 'z')) ||
 			((c >= 'A') && (c <= 'Z')) ||
@@ -216,16 +220,14 @@ string URLEncode(const char *szString)
 			(c == '-') || (c == '.') || (c == '_') || (c == '~')
 			)
 		{
-			strResult += szString[0];
+			strResult += (char)c;
 		} else {
 			strResult += FormatStrA("%%%02X", c);
 		}
-		szString++;
 	}
 
 	return strResult;
 }
-
 string URLEncodeANSI(const string &strOEMString)
 {
 	return URLEncode(ANSIFromUnicode(OEMToUnicode(strOEMString)).c_str());
