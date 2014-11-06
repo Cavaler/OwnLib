@@ -8,7 +8,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		StructMemberAlignment="3"
-		EnableEnhancedInstructionSet="2"
+		EnableEnhancedInstructionSet="1"
 	/>
 	<Tool
 		Name="VCMIDLTool"
