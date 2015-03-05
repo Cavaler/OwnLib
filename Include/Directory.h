@@ -8,6 +8,16 @@ BOOL CreateDirectories(const TCHAR *DirName);
 BOOL CreateDirectoriesForFile(const TCHAR *FileName);
 LPCTSTR GetNameOnly(LPCTSTR szPath);
 
+class CCurrentDirectoryBackup
+{
+public:
+	CCurrentDirectoryBackup();
+	CCurrentDirectoryBackup(const TCHAR *szNewDir);
+	~CCurrentDirectoryBackup();
+protected:
+	TCHAR m_szCurDir[MAX_PATH];
+};
+
 __if_exists(std::string) {
 #include "tstring.h"
 std::tstring DelSlash(const std::tstring &strPath);

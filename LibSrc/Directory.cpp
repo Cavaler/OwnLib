@@ -147,14 +147,27 @@ tstring GetFullFileName(const tstring &strPath)
 #endif
 }
 
+CCurrentDirectoryBackup::CCurrentDirectoryBackup()
+{
+	GetCurrentDirectory(MAX_PATH, m_szCurDir);
+}
+
+CCurrentDirectoryBackup::CCurrentDirectoryBackup(const TCHAR *szNewDir)
+{
+	GetCurrentDirectory(MAX_PATH, m_szCurDir);
+	SetCurrentDirectory(szNewDir);
+}
+
+CCurrentDirectoryBackup::~CCurrentDirectoryBackup()
+{
+	SetCurrentDirectory(m_szCurDir);
+}
+
 tstring GetFullFileName(const tstring &strPath, const tstring &strBase)
 {
-	TCHAR szCurDir[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, szCurDir);
-	SetCurrentDirectory(strBase.c_str());
-	tstring strFull = GetFullFileName(strPath);
-	SetCurrentDirectory(szCurDir);
-	return strFull;
+	CCurrentDirectoryBackup _cdb(strBase.c_str());
+
+	return GetFullFileName(strPath);
 }
 
 tstring CleanFileName(const tstring &strPath)
