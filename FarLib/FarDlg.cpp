@@ -7,6 +7,8 @@
 #undef _FAR_NO_NAMELESS_UNIONS
 #include <FarDlg.h>
 #include <StringEx.h>
+#include <CGuid.h>
+#include <MD5.h>
 
 #ifndef FAR_NO_NAMESPACE
 namespace FarLib {
@@ -14,17 +16,35 @@ namespace FarLib {
 
 // ************************ DIALOG ************************
 
+#ifdef FAR3
+void StringToGUID(const wchar_t *szHelpTopic, GUID &guid)
+{
+	guid = GUID_NULL;
+	if (szHelpTopic != NULL)
+	{
+		CMD5 md5((const BYTE *)szHelpTopic, wcslen(szHelpTopic)*2+2);
+		md5.Final((BYTE *)&guid);
+	}
+}
+#else
+#define StringToGUID(szHelpTopic, guid)
+#endif
+
 CFarDialog::CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags):
 X1(-1),Y1(-1),X2(iX),Y2(iY),Focused(0),HelpTopic(szHelpTopic),
 m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),
 m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(m_nDefaultCancelID),m_bAutoHotkeys(AutoHotkeys)
-{}
+{
+	StringToGUID(szHelpTopic, m_GUID);
+}
 
 CFarDialog::CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags):
 X1(iX1),Y1(iY1),X2(iX2),Y2(iY2),Focused(0),HelpTopic(szHelpTopic),
 m_hDlg(NULL),m_pWindowProc(NULL),m_pCWindowProc(NULL),m_lParam(0),
 m_dwFlags(dwFlags),m_bUseID(false),m_nCancelID(m_nDefaultCancelID),m_bAutoHotkeys(AutoHotkeys)
-{}
+{
+	StringToGUID(szHelpTopic, m_GUID);
+}
 
 int CFarDialog::Add(CFarDialogItem *Item) {
 	Items.push_back(Item);
