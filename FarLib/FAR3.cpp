@@ -199,11 +199,10 @@ intptr_t CPluginStartupInfo::ViewerControl(int Command, void *Param)
 	case VCTL_GETFILENAME:
 		return __super::ViewerControl(-1, fCommand, MAX_PATH, Param);
 	case VCTL_QUIT:
+	case VCTL_REDRAW:
 		return __super::ViewerControl(-1, fCommand, 0, 0);
 	case VCTL_GETINFO:
-		return __super::ViewerControl(-1, fCommand, 0, Param);
 	case VCTL_SETPOSITION:
-		return __super::ViewerControl(-1, fCommand, 0, Param);
 	case VCTL_SELECT:
 		return __super::ViewerControl(-1, fCommand, 0, Param);
 	default:
