@@ -57,16 +57,26 @@ int CFarDialog::Add(CFarDialogItem *Item, int nOwnID) {
 	return Add(Item);
 }
 
-int CFarDialog::AddFrame(const TCHAR *Title) {
+int CFarDialog::AddFrame(const TCHAR *Title)
+{
 	int X,Y;
 	X=(X1==-1)?X2-4:X2-X1-1;
 	Y=(Y1==-1)?Y2-2:Y2-Y1-1;
 
-	return Add(new CFarBoxItem(TRUE,3,1,X,Y,0,Title));
+	CFarBoxItem *pBox = new CFarBoxItem(TRUE,3,1,X,Y,0,Title);
+	pBox->RemoveAmpersands();
+	return Add(pBox);
 }
 
-int CFarDialog::AddFrame(int TitleId) {return AddFrame(GetMsg(TitleId));}
-int CFarDialog::AddFrame() {return AddFrame((TCHAR *)NULL);}
+int CFarDialog::AddFrame(int TitleId)
+{
+	return AddFrame(GetMsg(TitleId));
+}
+
+int CFarDialog::AddFrame()
+{
+	return AddFrame((TCHAR *)NULL);
+}
 
 int CFarDialog::AddButton(const TCHAR *szTitle) {
 	int Y=(Y1==-1)?Y2-4:Y2-Y1-3;

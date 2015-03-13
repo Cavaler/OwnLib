@@ -32,6 +32,13 @@ CFarDialogItem::CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAG
 		Text += tstring(MinWidth-Text.length(), ' ');
 }
 
+void CFarDialogItem::RemoveAmpersands()
+{
+	size_t nPos;
+	while ((nPos = Text.find('&')) != tstring::npos)
+		Text.erase(nPos, 1);
+}
+
 void CFarDialogItem::CreateItem(FarDialogItem *Item) {
 	Item->X1=X1;
 	Item->Y1=Y1;

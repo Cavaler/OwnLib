@@ -335,8 +335,8 @@ class CFarDialogItem {
 public:
 	CFarDialogItem(int iX1,int iY1,int iX2,int iY2,FARDIALOGITEMFLAGS dwFlags,const CFarText &szText=CFarText(),int MinWidth=0);
 	virtual void CreateItem(FarDialogItem *Item);
-	virtual bool Validate(FarDialogItem *Item) {return true;};
-	virtual void StoreData(FarDialogItem *Item) {};
+	virtual bool Validate  (FarDialogItem *Item) { return true; }
+	virtual void StoreData (FarDialogItem *Item) {}
 	virtual tstring *HotkeyText() {return NULL;}
 	virtual ~CFarDialogItem();
 protected:
@@ -352,6 +352,7 @@ public:
 	int     SelectedItem() const;
 #endif
 public:
+	void	RemoveAmpersands();
 	int		m_nOwnID;
 };
 
