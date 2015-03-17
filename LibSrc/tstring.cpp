@@ -103,6 +103,15 @@ CStringT<CHAR>::MakeString(const CHAR *szString, size_t nLength) {
 	return (nLength == 0) ? cstring() : cstring(szString, nLength);
 }
 
+template<class CHAR>
+typename CStringT<CHAR>::cstring
+CStringT<CHAR>::AssureLength(const cstring &String, int nLength, CHAR cFill = ' ')
+{
+	if ((int)String.size() >= nLength) return String;
+
+	return String + cstring(nLength - String.size(), cFill);
+}
+
 template class CStringT<char>;
 #ifdef UNICODE
 template class CStringT<wchar_t>;

@@ -43,6 +43,8 @@ public:
 
 	//	Same as cstring(szString, nLength), but no error on string(NULL, 0);
 	static cstring MakeString(const CHAR *szString, size_t nLength);
+
+	static cstring AssureLength(const cstring &String, int nLength, CHAR cFill = ' ');
 };
 
 #define _T2(sz) __T2(sz, L ## sz)
