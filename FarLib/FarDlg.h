@@ -37,8 +37,8 @@ typedef LONG_PTR(WINAPI *CFARWINDOWPROC)(
 class CFarDialog {
 public:
 	//	Building
-	CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags=0);
-	CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags=0);
+	CFarDialog(int iX,int iY,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags=0,bool bUseID=false);
+	CFarDialog(int iX1,int iY1,int iX2,int iY2,const TCHAR *szHelpTopic,FARDIALOGFLAGS dwFlags=0,bool bUseID=false);
 	int  AddFrame(const TCHAR *Title);
 	int  AddFrame(int TitleId);
 	int  AddFrame();
