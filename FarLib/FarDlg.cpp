@@ -247,6 +247,8 @@ int CFarDialog::Display(int ValidExitCodes,...)
 		Items[nItem]->m_hDlg = hDlg;
 		Items[nItem]->m_nItem = nItem;
 	}
+#else
+	m_hDlg = (HANDLE)~NULL;
 #endif
 
 	do {
@@ -324,12 +326,18 @@ int CFarDialog::Display(int ValidExitCodes,...)
 #else
 		if (DialogItems[nItem].PtrData) free((TCHAR *)DialogItems[nItem].PtrData);
 #endif
+
+#ifdef UNICODE
+		Items[nItem]->m_hDlg = NULL;
+#endif
 	}
 	sDlgMap.erase(hDlg);
 
 #else
 	sDlgMap.erase(m_hDlg);
 #endif
+
+	m_hDlg = NULL;
 
 	return Result;
 }
@@ -514,13 +522,23 @@ void CFarDialog::SetDlgItemText(int nID, const TCHAR *szText)
 void CFarDialog::ShowDlgItem(int nID, bool bShow)
 {
 	if (m_bUseID && !HasItem(nID)) return;
-	FarLib::ShowDlgItem(m_hDlg, Index(nID), bShow);
+
+	if (m_hDlg != NULL) {
+		FarLib::ShowDlgItem(m_hDlg, Index(nID), bShow);
+	} else {
+		Items[Index(nID)]->SetFlag(DIF_HIDDEN, !bShow);
+	}
 }
 
 void CFarDialog::EnableDlgItem(int nID, bool bEnable, int nOffset)
 {
 	if (m_bUseID && !HasItem(nID)) return;
-	FarLib::EnableDlgItem(m_hDlg, Index(nID)+nOffset, bEnable);
+	
+	if (m_hDlg != NULL) {
+		FarLib::EnableDlgItem(m_hDlg, Index(nID)+nOffset, bEnable);
+	} else {
+		Items[Index(nID)]->SetFlag(DIF_DISABLE, !bEnable);
+	}
 }
 
 void CFarDialog::EnableCheckBox(int nID, bool bEnable, bool bDisabledState)

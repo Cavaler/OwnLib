@@ -348,11 +348,13 @@ public:
 	HANDLE	m_hDlg;
 	int     m_nItem;
 	int     IsSelected() const;
-	wstring GetText() const;
 	int     SelectedItem() const;
 #endif
+	tstring GetText() const;
+	void    SetText(const tstring &text);
 public:
 	void	RemoveAmpersands();
+	void    SetFlag(FARDIALOGITEMFLAGS Flag, bool bSet);
 	int		m_nOwnID;
 };
 

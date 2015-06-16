@@ -58,15 +58,38 @@ void CFarDialogItem::CreateItem(FarDialogItem *Item) {
 	SetItemText(Item, Text.c_str());
 }
 
+void CFarDialogItem::SetFlag(FARDIALOGITEMFLAGS Flag, bool bSet)
+{
+	if (bSet)
+		Flags |= Flag;
+	else
+		Flags &= ~Flag;
+}
+
+tstring CFarDialogItem::GetText() const
+{
+#ifdef UNICODE
+	if (m_hDlg)
+		return (const wchar_t *)StartupInfo.SendDlgMessage(m_hDlg, DM_GETCONSTTEXTPTR, m_nItem, 0);
+	else
+#endif
+		return Text;
+}
+
+void CFarDialogItem::SetText(const tstring &text)
+{
+#ifdef UNICODE
+	if (m_hDlg)
+		FarLib::SetDlgItemText(m_hDlg, m_nItem, text.c_str());
+	else
+#endif
+		Text = text;
+}
+
 #ifdef UNICODE
 int CFarDialogItem::IsSelected() const
 {
 	return StartupInfo.SendDlgMessage(m_hDlg, DM_GETCHECK, m_nItem, 0);
-}
-
-wstring CFarDialogItem::GetText() const
-{
-	return (const wchar_t *)StartupInfo.SendDlgMessage(m_hDlg, DM_GETCONSTTEXTPTR, m_nItem, 0);
 }
 
 int CFarDialogItem::SelectedItem() const
