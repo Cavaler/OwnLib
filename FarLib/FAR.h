@@ -327,7 +327,7 @@ struct CPluginPanelItem : PluginPanelItem
 	void SetFindData(const FIND_DATA &fd);
 
 #ifdef FAR3
-	DWORD &UData() { return *((DWORD *)&UserData.Data); }
+	DWORD_PTR &UData() { return *((DWORD_PTR *)&UserData.Data); }
 #else
 	DWORD_PTR &UData() { return UserData; }
 #endif
