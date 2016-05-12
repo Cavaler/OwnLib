@@ -467,7 +467,7 @@ int  CFarDialog::GetIndex(int nID)
 
 bool CFarDialog::HasItem(int nID)
 {
-	return m_mapCodes.find(nID) != m_mapCodes.end();
+	return m_mapCodes.find(nID & 0xFFFF) != m_mapCodes.end();
 }
 
 void CFarDialog::SetCancelID(int nCancelID)
