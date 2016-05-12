@@ -119,6 +119,22 @@ tstring GetFileName(const tstring &strPath)
 	return (nPos == tstring::npos) ? strPath : strPath.substr(nPos + 1);
 }
 
+tstring GetFileNameOnly(const tstring &strPath, bool bLongExt)
+{
+	tstring strName = GetFileName(strPath);
+	int nPos = bLongExt ? strName.find('.') : strName.rfind('.');
+
+	return (nPos == tstring::npos) ? strName : strName.substr(0, nPos);
+}
+
+tstring GetFileExtension(const tstring &strPath, bool bLongExt)
+{
+	tstring strName = GetFileName(strPath);
+	int nPos = bLongExt ? strName.find('.') : strName.rfind('.');
+
+	return (nPos == tstring::npos) ? tstring() : strName.substr(nPos);
+}
+
 tstring GetPath(const tstring &strPath)
 {
 	int nPosS = strPath.rfind('\\');

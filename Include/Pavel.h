@@ -11,6 +11,7 @@
 #include <StringEx.h>
 #include <UTF8.h>
 #include <XLat.h>
+#include <Templates.h>
 
 #define LIB_NAME "Pavel"
 #include "GenLibName.h"

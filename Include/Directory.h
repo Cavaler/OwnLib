@@ -23,8 +23,12 @@ __if_exists(std::string) {
 std::tstring DelSlash(const std::tstring &strPath);
 std::tstring AddSlash(const std::tstring &strPath);
 std::tstring CatFile(const std::tstring &strPath, const std::tstring &strFile);
+
 std::tstring GetFileName(const std::tstring &strPath);
+std::tstring GetFileNameOnly(const std::tstring &strPath, bool bLongExt = true);
+std::tstring GetFileExtension(const std::tstring &strPath, bool bLongExt = true);
 std::tstring GetPath(const std::tstring &strPath);
+
 std::tstring GetFullFileName(const std::tstring &strPath);
 std::tstring GetFullFileName(const std::tstring &strPath, const std::tstring &strBase);
 
