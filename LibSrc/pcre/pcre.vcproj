@@ -20,7 +20,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -75,7 +75,7 @@
 		<Configuration
 			Name="Debug|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -130,7 +130,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			WholeProgramOptimization="1"
@@ -188,7 +188,7 @@
 		<Configuration
 			Name="Release|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			WholeProgramOptimization="1"
@@ -246,7 +246,7 @@
 		<Configuration
 			Name="Debug Unicode|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -302,7 +302,7 @@
 		<Configuration
 			Name="Debug Unicode|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -358,7 +358,7 @@
 		<Configuration
 			Name="Release Unicode|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -417,7 +417,7 @@
 		<Configuration
 			Name="Release Unicode|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
+			InheritedPropertySheets="$(SolutionDir)OwnLibPath.vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(ConfigurationName).vsprops;$(OWN_LIB_PATH)\PropSheets\Base $(PlatformName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
