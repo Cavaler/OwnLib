@@ -441,6 +441,11 @@ void CFarDialog::SetUseID(bool bUseID)
 	m_bUseID = bUseID;
 }
 
+bool CFarDialog::UseID() const
+{
+	return m_bUseID;
+}
+
 int  CFarDialog::GetID(int nIndex)
 {
 	if ((nIndex < 0) || (nIndex >= (int)Items.size())) return 0;

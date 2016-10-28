@@ -60,6 +60,7 @@ public:
 	void EnableAutoHotkeys(bool bEnable);
 
 	void SetUseID(bool bUseID);
+	bool UseID() const;
 	int  GetID (int nIndex);
 	int  MakeID(int nID, int nOffset = 0);
 	int  GetIndex(int nID);
