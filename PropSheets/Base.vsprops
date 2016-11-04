@@ -8,6 +8,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(OWN_LIB_PATH)\Include;$(OWN_LIB_PATH)\FarLib"
 		PreprocessorDefinitions="WIN32;FAR_USE_NAMESPACE;PCRE_STATIC;HAVE_CONFIG_H;NONDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS"
 		StringPooling="true"
 		UsePrecompiledHeader="2"
@@ -22,6 +23,7 @@
 		Name="VCLinkerTool"
 		IgnoreImportLibrary="true"
 		LinkLibraryDependencies="false"
+		AdditionalLibraryDirectories="$(OWN_LIB_PATH)\Lib"
 		GenerateDebugInformation="true"
 		SubSystem="2"
 		OptimizeForWindows98="1"
