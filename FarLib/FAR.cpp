@@ -317,7 +317,8 @@ tstring FarMaskToRE(const TCHAR *szMask) {
 	while (*szCur) {
 		switch (*szCur) {
 		case '.':
-			strRE += _T("\\.");
+			if (*(szCur+1) != '*')
+				strRE += _T("\\.");
 			break;
 		case '?':
 			strRE += _T(".");
@@ -357,7 +358,8 @@ tstring FarMaskToRE(const TCHAR *szMask) {
 		szCur++;
 	}
 
-	if (_tcscspn(szMask, _T(".?*[")) != _tcslen(szMask)) strRE += '$';	// Masks without any of these are non-terminal
+	strRE += '$';
+
 	return strRE;
 }
 
@@ -434,7 +436,6 @@ CFarMaskSet::CFarMaskSet(const TCHAR *szMasks, bool bCaseSensitive)
 bool CFarMaskSet::operator()(const TCHAR *szFileName) {
 	const TCHAR *szName = _tcsrchr(szFileName, '\\');
 	tstring strName = (szName) ? szName + 1 :szFileName;
-	if (strName.find('.') == string::npos) strName += '.';
 
 	if (m_pExclude && (pcre_exec(m_pExclude, m_pExcludeExtra, strName.c_str(), strName.length(), 0, 0, NULL, 0) >= 0)) return false;
 	return (m_pInclude && (pcre_exec(m_pInclude, m_pIncludeExtra, strName.c_str(), strName.length(), 0, 0, NULL, 0)) >= 0);
