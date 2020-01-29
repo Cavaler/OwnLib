@@ -3,4 +3,6 @@ Release
 Debug *
 Release *
 Lib
+ExtInclude
+ExtLibSrc
 *.user
