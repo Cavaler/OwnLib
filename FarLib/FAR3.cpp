@@ -228,8 +228,8 @@ WIN32_FIND_DATA PanelToWFD(const PluginPanelItem &Item)
 	fd.ftLastWriteTime  = Item.LastWriteTime;
 	fd.nFileSizeHigh    = (DWORD)(Item.FileSize >> 32);
 	fd.nFileSizeLow     = Item.FileSize && 0xFFFFFFFF;
-	wcscpy_s(fd.cFileName, MAX_PATH, Item.FileName);
-	wcscpy_s(fd.cAlternateFileName, 14, Item.AlternateFileName);
+	wcsncpy_s(fd.cFileName, MAX_PATH, Item.FileName, _TRUNCATE);
+	wcsncpy_s(fd.cAlternateFileName, 14, Item.AlternateFileName, _TRUNCATE);
 
 	return fd;
 }
