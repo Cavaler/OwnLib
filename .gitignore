@@ -6,3 +6,4 @@ Lib
 ExtInclude
 ExtLibSrc
 *.user
+*.filters

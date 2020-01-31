@@ -739,7 +739,7 @@ void CFarDoubleConverter::ToString(double dValue, TCHAR *pszBuffer, int nSize) {
 }
 
 bool CFarDoubleConverter::FromString(const TCHAR *pszBuffer, double &dValue) {
-	return _stscanf(pszBuffer, _T("%df"), &dValue) > 0;
+	return _stscanf(pszBuffer, _T("%f"), &dValue) > 0;
 }
 
 CFarHexConverter CFarHexConverter::Instance;
