@@ -2,7 +2,7 @@
 #define __FAR_H
 
 #ifdef FAR3
-#define LIB_APPEND "_3"
+//#define LIB_APPEND "_3"
 #endif
 #define LIB_NAME "FarLib"
 #include "GenLibName.h"
