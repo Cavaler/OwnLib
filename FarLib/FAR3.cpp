@@ -63,32 +63,6 @@ intptr_t CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, L
 
 	switch (Command)
 	{
-/*	
-	case FCTL_GETCMDLINE:
-	case FCTL_SETCMDLINE:
-	case FCTL_SETSELECTION:
-	case FCTL_INSERTCMDLINE:
-	case FCTL_SETUSERSCREEN:
-	case FCTL_SETPANELDIR:
-	case FCTL_SETCMDLINEPOS:
-	case FCTL_GETCMDLINEPOS:
-	case FCTL_GETCMDLINESELECTEDTEXT:
-	case FCTL_SETCMDLINESELECTION:
-	case FCTL_GETCMDLINESELECTION:
-	case FCTL_SETNUMERICSORT:
-	case FCTL_GETUSERSCREEN:
-	case FCTL_GETPANELITEM:
-	case FCTL_GETSELECTEDPANELITEM:
-	case FCTL_GETCURRENTPANELITEM:
-	case FCTL_GETCOLUMNTYPES:
-	case FCTL_GETCOLUMNWIDTHS:
-	case FCTL_BEGINSELECTION:
-	case FCTL_ENDSELECTION:
-	case FCTL_CLEARSELECTION:
-	case FCTL_SETDIRECTORIESFIRST:
-	case FCTL_GETPANELFORMAT:
-	case FCTL_GETPANELHOSTFILE:*/
-
 	case FCTL_GETPANELDIRECTORY:{
 		LONG_PTR nSize = __super::PanelControl(hPanel, fCommand, 0, NULL);
 		vector<BYTE> arrBuffer(nSize);
@@ -119,8 +93,6 @@ intptr_t CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, L
 	case FCTL_SETVIEWMODE:
 	case FCTL_SETSORTMODE:
 	case FCTL_SETSORTORDER:
-	case FCTL_SETNUMERICSORT:
-	case FCTL_SETCASESENSITIVESORT:
 		return __super::PanelControl(hPanel, fCommand, Param1, NULL);
 	case FCTL_CHECKPANELSEXIST:
 	case FCTL_ISACTIVEPANEL:
@@ -128,9 +100,11 @@ intptr_t CPluginStartupInfo::Control(HANDLE hPanel, DWORD Command, int Param1, L
 	case FCTL_ENDSELECTION:
 		return __super::PanelControl(hPanel, fCommand, 0, NULL);
 	default:
-		assert(0);
-		return 0;
+		//assert(0);
+		//return 0;
+		break;
 	}
+
 	return __super::PanelControl(hPanel, (FILE_CONTROL_COMMANDS)Command, Param1, (void *)Param2);
 }
 

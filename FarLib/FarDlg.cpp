@@ -606,7 +606,7 @@ CFarDialog::~CFarDialog() {
 void SetListItemText(FarListItem &Item, const TCHAR *szText)
 {
 	Item.Flags = 0;
-	memset(Item.Reserved, 0, sizeof(Item.Reserved));
+	memset(&Item.Reserved, 0, sizeof(Item.Reserved));
 #ifdef UNICODE
 	Item.Text= _tcsdup(szText);
 #else
@@ -617,10 +617,12 @@ void SetListItemText(FarListItem &Item, const TCHAR *szText)
 void CopyListItem(FarListItem &Item, const FarListItem &From)
 {
 	Item.Flags = From.Flags;
+#ifndef FAR3
 	Item.Reserved[0] = From.Reserved[0];
 	Item.Reserved[1] = From.Reserved[1];
-#ifndef FAR3
 	Item.Reserved[2] = From.Reserved[2];
+#else
+	Item.Reserved = From.Reserved;
 #endif
 #ifdef UNICODE
 	Item.Text = _tcsdup(From.Text);
