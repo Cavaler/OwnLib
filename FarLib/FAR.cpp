@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <locale.h>
 #undef _FAR_NO_NAMELESS_UNIONS
 #include <FAR.h>
 #include <Pavel.h>
