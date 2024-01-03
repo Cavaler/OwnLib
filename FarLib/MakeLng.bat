@@ -12,4 +12,4 @@ if (%2) == () (
 	set HEADER=%2
 )
 
-perl "%~dp0\MakeMsg.pl" "%NAME%.msg" "%HEADER%" %NAME%Eng.lng %NAME%Rus.lng %3&
+python "%~dp0\MakeMsg.py" "%NAME%.msg" "%HEADER%" %NAME%Eng.lng %NAME%Rus.lng %3&
