@@ -660,16 +660,7 @@ WIN32_FIND_DATA FFDtoWFD(const FAR_FIND_DATA &Data) {
 
 CPluginPanelItem::CPluginPanelItem()
 {
-#ifdef FAR3
-	FileName = NULL;
-	AlternateFileName = NULL;
-	UserData.FreeData = NULL;
-#else
-	FindData.lpwszFileName = NULL;
-	FindData.lpwszAlternateFileName = NULL;
-#endif
-	Description = NULL;
-	Owner = NULL;
+	memset((PluginPanelItem *)this, 0, sizeof(PluginPanelItem));
 }
 
 CPluginPanelItem::CPluginPanelItem(const CPluginPanelItem &item)
