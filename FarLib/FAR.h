@@ -22,6 +22,10 @@
 // This forces us to use pack(2), which violates MS guidelines
 // #define _FAR_USE_WIN32_FIND_DATA
 
+#ifdef _WIN64
+#pragma warning(disable: 4244 4267)
+#endif
+
 #ifndef _WIN64
 #ifdef FAR3
 #pragma pack(push, 4)

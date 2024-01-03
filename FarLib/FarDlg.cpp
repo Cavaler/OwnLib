@@ -356,7 +356,7 @@ TCHAR OEMUpper(TCHAR cKey)
 	cKey = (int)CharUpperA((LPSTR)(BYTE)cKey);
 	CharToOemBuffA(&cKey, &cKey, 1);
 #else
-	cKey = (int)CharUpper((LPWSTR)(WORD)cKey);
+	cKey = (intptr_t)CharUpper((LPWSTR)(WORD)cKey);
 #endif
 	return cKey;
 }
@@ -581,7 +581,7 @@ int  CFarDialog::GetCursorPos(int nID)
 
 void CFarDialog::SetCursorPos(int nID, int nPos)
 {
-	COORD coord = {nPos, 0};
+	COORD coord = {(SHORT)nPos, 0};
 	StartupInfo.SendDlgMessage(m_hDlg, DM_SETCURSORPOS, Index(nID), (LONG_PTR)&coord);
 }
 

@@ -1,7 +1,7 @@
 #ifndef __HANDLES_H
 #define __HANDLES_H
 
-template<class HandleType, int Null = (int)INVALID_HANDLE_VALUE, void *CloseFn = CloseHandle> class CHandleTempl {
+template<class HandleType, HandleType Null = (HandleType)INVALID_HANDLE_VALUE, void *CloseFn = CloseHandle> class CHandleTempl {
 public:
 	CHandleTempl() : m_hHandle((HandleType)Null) {}
 	CHandleTempl(HandleType handle) : m_hHandle(handle) {}
@@ -33,7 +33,7 @@ protected:
 };
 
 typedef CHandleTempl<HANDLE> CHandle;
-typedef CHandleTempl<HANDLE, (int)INVALID_HANDLE_VALUE, FindClose> CHFind;
+typedef CHandleTempl<HANDLE, INVALID_HANDLE_VALUE, FindClose> CHFind;
 typedef CHandleTempl<HKEY, NULL, RegCloseKey> CHKey;
 
 #endif
