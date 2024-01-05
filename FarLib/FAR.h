@@ -55,7 +55,7 @@
 #define FCTL_CLOSEPLUGIN FCTL_CLOSEPANEL
 #define FMENU_USEEXT 0
 #define FCTL_SETPANELDIR FCTL_SETPANELDIRECTORY
-#define NO_PANEL_HANDLE NULL
+#define NO_PANEL_HANDLE (HANDLE)NULL
 #define CP_AUTODETECT CP_DEFAULT
 typedef OpenPanelInfo OpenPluginInfo;
 enum FAR_PKF_FLAGS
@@ -332,8 +332,10 @@ struct CPluginPanelItem : PluginPanelItem
 
 #ifdef FAR3
 	DWORD_PTR &UData() { return *((DWORD_PTR *)&UserData.Data); }
+	const DWORD_PTR &UData() const { return *((DWORD_PTR *)&UserData.Data); }
 #else
 	DWORD_PTR &UData() { return UserData; }
+	const DWORD_PTR &UData() const { return UserData; }
 #endif
 
 	~CPluginPanelItem();
@@ -350,7 +352,7 @@ void SetPanelSelection(bool bAnotherPanel, const panelitem_vector &arrItems);
 struct CPanelInfo : PanelInfo
 {
 	CPanelInfo() {}
-	CPanelInfo(bool bAnotherPanel) { GetInfo(false); }
+	CPanelInfo(bool bAnotherPanel) { GetInfo(bAnotherPanel); }
 	CPanelInfo(HANDLE hPanel)      { GetInfo(hPanel); }
 
 	LPCWSTR CurDir;
